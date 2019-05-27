@@ -3,6 +3,7 @@
 <head>
   <title>24 Perception</title>
   <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="./css/style.css">
   <script src="http://code.jquery.com/jquery-1.12.4.js"></script>
   <script type="text/javascript" src="../main.js"></script>
 </head>
@@ -11,11 +12,68 @@
   <div class="row">
     <div class="col-sm-6 col-md-offset-3" id="content">
       <h1>Perception</h1>
-      <p>TODO</p>
 
+      <h3>Introduction</h3>
+			<p>
+				For many of us, it is easy to find both the objects in a picture and their boundaries.
+				Humans are very good at identifying what something is and where it is given a clear line of vision,
+				but what if we need to find the boundaries of objects in an impossibly large number photos?
+				While we could put a room full of toddlers at work with markers and tell them to trace all
+				the photos, we can do better in both performance and morals by making a computer do this task for us!
+				In fact, in computer vision, this is a general problem known as <strong>edge detection.</strong> Formally, edge detection
+				deals with determining the line segments that break up stark jumps in the brightness or <strong>intensity</strong> of pixels
+				within a given image. One of the key benefits of doing edge detection is that it does away with much of the
+				extraneous information provided by an image, giving back only the outlines of the objects.
+			</p>
+			
+			<img src="../third-party/photo-edge-detection.png" class="center" height=400>
+			<br><br>
+			
+			<h3>A Naive Approach</h3>
+			<p>
+				So how do we approach detecting edges? One way is to simply run through all the pixels and, for each pixel, determine
+				whether we see a large jump in intensity compared to its neighbors. While this approach goes in the right direction,
+				one of its problems is that it is very susceptible to noise. Our current approach would count a single bright pixel
+				in a sea of dark pixels as an edge which is undesirable.
+			</p>
+			
+			<h3>Gaussian Smoothing</h3>
+			<p>
+				One way to reduce noise in an image is to apply <strong>Gaussian smoothing</strong>. In this process, a <strong>Gaussian function</strong>, or
+				normal distribution, is applied to an array of image intensities in a method known as a <strong>convolution</strong>.
+			</p>
+			
+			<img src="images/img_02.png" class="center" height=400>
+			<br><br>
+			
+			<p>
+				Convolution can be thought of as a way of “blending” two functions. In our example, we can do a convolution
+				by dragging a kernel or <strong>filter</strong>, a 2D array representation, of the Gaussian function throughout the entire image.
+				Each time the filter is applied to the image, all the intensities are multiplied with their corresponding values
+				in the filter and the sum of these values is the result in the new image at the location of where the center of
+				the filter was.
+			</p>
+			
+			<img src="images/img_03.jpg" class="center" height=400>
+			<br><br>
+			
+			<h3>Filter Demo</h3>
+			<p>
+				Below is a simple example of how a filter operates. Change the values in the
+				input and filter and move the filter with the buttons to see how the values
+				change as the filter is applied in various places.
+			</p>
+      <br>
+      <div id="convolution-root"></div>
+      <br>
       
     </div>
   </div>
 
+
+  <!-- Replace with third party -->
+  <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+  <script type="text/javascript" src="./js/convolutionDemo.js"></script>
 </body>
 </html>

@@ -1,0 +1,32 @@
+.square-grid-5 {
+    display: grid;
+    justify-content: center;
+    align-content: center;
+    grid-template-columns: repeat(5, 3vw);
+    grid-template-rows: repeat(5, 3vw);
+}
+
+.square-grid-3 {
+    display: grid;
+    justify-content: center;
+    align-content: center;
+    grid-template-columns: repeat(3, 3vw);
+    grid-template-rows: repeat(3, 3vw);
+}
+
+.square {
+    background: white;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 0.1vw solid black;
+}
+
+.center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 80%;
+    height: 80%;
+}
