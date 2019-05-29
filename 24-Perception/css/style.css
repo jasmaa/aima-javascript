@@ -1,3 +1,11 @@
+.square-grid-20 {
+    display: grid;
+    justify-content: center;
+    align-content: center;
+    grid-template-columns: repeat(20, 3vw);
+    grid-template-rows: repeat(20, 3vw);
+}
+
 .square-grid-5 {
     display: grid;
     justify-content: center;

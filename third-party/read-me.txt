@@ -7,3 +7,6 @@ Australia Map svg from Lokal_Profil [CC BY-SA 2.5 (http://creativecommons.org/li
 mousetrap.min.js from https://craig.is/killing/mice, Apache v2 license
 
 photo-edge-detection.png from Jon McLoone, Wikimedia Commons under CC-BY-SA-3 https://commons.wikimedia.org/wiki/File:%C3%84%C3%A4retuvastuse_n%C3%A4ide.png
+
+gaussian-2d.png from Krishnavedala, Wikimedia Commons under CC0 1.0 https://commons.wikimedia.org/wiki/File:Gaussian_2d.svg
+
