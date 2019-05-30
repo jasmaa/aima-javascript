@@ -1,36 +1,4 @@
-// Convolution demo
-
-const e = React.createElement;
-
-/**
- * Converts greyscale value to rgb string
- * @param {integer} value - Greyscale value to convert
- */
-function grey2RGB(value){
-    return `rgb(${value}, ${value}, ${value})`
-}
-
-/**
- * Grid cell
- */
-class Cell extends React.Component {
-
-    render(){
-        let bgColor = this.props.isHighlighted ? "red" : "white";
-        let textColor = this.props.isHighlighted ? "white" : "black";
-
-        return e('div', {
-                className:'square',
-                style: {
-                    'background-color': bgColor,
-                }
-            },
-            e('div', {style: {color: textColor}},
-                this.props.value
-            )
-        );
-    }    
-}
+// Convolution demo UI
 
 /**
  * Convolution result grid
@@ -57,6 +25,7 @@ class ConvolutionResult extends React.Component {
                 }
 
                 cells.push(e(Cell, {
+                    key: `cell-${i}-${j}`,
                     value: value,
                     isHighlighted: isTarget,
                 }, null));
@@ -77,7 +46,7 @@ class ConvolutionResult extends React.Component {
 }
 
 /**
- * Convolution flter application grid
+ * Source grid with filter applied
  */
 class ConvolutionGrid extends React.Component {
 
@@ -89,7 +58,7 @@ class ConvolutionGrid extends React.Component {
                 // Highlight cells
                 let isWithinFilter =    i >= this.props.filterData.y - parseInt(this.props.filterData.h / 2) &&
                                         i <= this.props.filterData.y + parseInt(this.props.filterData.h / 2) &&
-                                        j >= this.props.filterData.x - parseInt(this.props.filterData.w / 2)&&
+                                        j >= this.props.filterData.x - parseInt(this.props.filterData.w / 2) &&
                                         j <= this.props.filterData.x + parseInt(this.props.filterData.w / 2);
 
                 let value = this.props.source[i][j];
@@ -100,6 +69,7 @@ class ConvolutionGrid extends React.Component {
                 }
 
                 cells.push(e(Cell, {
+                    key: `cell-${i}-${j}`,
                     value: value,
                     isHighlighted: isWithinFilter,
                 }, null));
@@ -127,15 +97,25 @@ class ConvolutionControl extends React.Component {
         return e('div', {
             className:'square-grid-3'
         },[
-            e('div', null, null),
-            e('div', {className: 'btn btn-primary', onClick: ()=>this.props.moveHandler(0, -1)}, "^"),
-            e('div', null, null),
-            e('div', {className: 'btn btn-primary', onClick: ()=>this.props.moveHandler(-1, 0)}, "<"),
-            e('div', {className: 'btn btn-danger', onClick: ()=>this.props.resetHandler()}, ""),
-            e('div', {className: 'btn btn-primary', onClick: ()=>this.props.moveHandler(1, 0)}, ">"),
-            e('div', null, null),
-            e('div', {className: 'btn btn-primary', onClick: ()=>this.props.moveHandler(0, 1)}, "v"),
-            e('div', null, null),
+            e('div', {key: 'cell-0-0'}, null),
+            e('div', {key: 'cell-0-1', className: 'btn btn-primary', onClick: ()=>this.props.moveHandler(0, -1)},
+                e('i', {className: 'fas fa-arrow-up'}, null)
+            ),
+            e('div', {key: 'cell-0-2'}, null),
+            e('div', {key: 'cell-1-0', className: 'btn btn-primary', onClick: ()=>this.props.moveHandler(-1, 0)},
+                e('i', {className: 'fas fa-arrow-left'}, null)
+            ),
+            e('div', {key: 'cell-1-1', className: 'btn btn-danger', onClick: ()=>this.props.resetHandler()},
+                e('i', {className: 'fas fa-undo'}, null)
+            ),
+            e('div', {key: 'cell-1-2', className: 'btn btn-primary', onClick: ()=>this.props.moveHandler(1, 0)},
+                e('i', {className: 'fas fa-arrow-right'}, null)
+            ),
+            e('div', {key: 'cell-2-0'}, null),
+            e('div', {key: 'cell-2-1', className: 'btn btn-primary', onClick: ()=>this.props.moveHandler(0, 1)},
+                e('i', {className: 'fas fa-arrow-down'}, null)
+            ),
+            e('div', {key: 'cell-2-2'}, null),
         ]);
     }
 }
@@ -149,7 +129,9 @@ class ConvolutionFilterInput extends React.Component {
         let cells = [];
         for(let i=0; i < 3; i++){
             for(let j=0; j < 3; j++){
+
                 cells.push(e('input', {
+                    key: `cell-${i}-${j}`,
                     className: 'square',
                     id: `convolution-filter-cell-${i}-${j}`,
                     value: this.props.filter[i][j],
@@ -178,7 +160,9 @@ class ConvolutionSourceInput extends React.Component {
         let cells = [];
         for(let i=0; i < 5; i++){
             for(let j=0; j < 5; j++){
+
                 cells.push(e('input', {
+                    key: `cell-${i}-${j}`,
                     className: 'square',
                     id: `convolution-source-cell-${i}-${j}`,
                     value: this.props.source[i][j],
@@ -207,13 +191,13 @@ class ConvolutionDemo extends React.Component {
 
     constructor(props){
         super(props);
-        this.reset()
+        this.reset();
     }
 
     /**
      * Move filter
-     * @param {integer} x 
-     * @param {integer} y 
+     * @param {integer} x - Columns to move filter
+     * @param {integer} y - Rows to move filter
      */
     move(x, y){
         
@@ -249,20 +233,21 @@ class ConvolutionDemo extends React.Component {
     }
 
     /**
-     * Updates 2d data array with value
+     * Updates 2d data array with value at (row, col)
      * @param {Array} data 
      * @param {integer} value 
      * @param {integer} row 
      * @param {integer} col 
      */
     updateData(data, value, row, col){
-
-        // screen values
+        // Prevent non-numerical input
         if(isNaN(value)){
             return;
         }
 
+        // Clamp input
         let clampedValue = +value;
+
         if(clampedValue >= 10){
             return;
         }
@@ -280,42 +265,47 @@ class ConvolutionDemo extends React.Component {
     }
 
     render(){
+        
         return e('div', null, [
-            e('br', null, null),
-            e('div', {className: 'row'}, [
-                e('div', {className: 'col-md-4'}, [
-                    e('h4', {align: 'center'}, "Filter"),
+            e('br', {key: 'space'}, null),
+            e('div', {key: 'top-row', className: 'row'}, [
+                e('div', {key: 'col-0', className: 'col-md-4'}, [
+                    e('h4', {key: 'filter-header', align: 'center'}, "Filter"),
                     e(ConvolutionFilterInput, {
+                        key: 'filter-input',
                         filter: this.filter,
                         updateFilterHandler: (v, i, j)=>this.updateData(this.filter, v, i, j)
                     }, null)
                 ]),
-                e('div', {className: 'col-md-4'}, 
+                e('div', {key: 'col-1', className: 'col-md-4'}, 
                     e(ConvolutionControl, {
                         moveHandler: (x, y)=>this.move(x, y),
                         resetHandler: ()=>this.reset(),
                     }, null)
                 ),
-                e('div', {className: 'col-md-4'}, [
-                    e('h4', {align: 'center'}, "Source"),
+                e('div', {key: 'col-2', className: 'col-md-4'}, [
+                    e('h4', {key: 'source-header', align: 'center'}, "Source"),
                     e(ConvolutionSourceInput, {
+                        key: 'source-input',
                         source: this.source,
                         updateSourceHandler: (v, i, j)=>this.updateData(this.source, v, i, j)
                     }, null)
                 ]),
             ]),
-            e('div', {className: 'row'}, [
-                e('div', {className: 'col-md-6'}, [
-                    e('h4', {align: 'center'}, "Applied"),
+            e('div', {key: 'bottom-row', className: 'row'}, [
+                e('div', {key: 'col-0', className: 'col-md-6'}, [
+                    e('h4', {key: 'applied-header', align: 'center'}, "Applied"),
                     e(ConvolutionGrid, {
+                        key: 'applied-output',
                         filter: this.filter,
                         filterData: this.filterData,
                         source: this.source,
                     }, null)
                 ]),
-                e('div', {className: 'col-md-6'}, [
-                    e('h4', {align: 'center'}, "Result"),
+                e('div', {key: 'col-1', className: 'col-md-6'}, [
+                    e('h4', {key: 'res-header', align: 'center'}, "Result"),
                     e(ConvolutionResult, {
+                        key: 'res-output',
                         filter: this.filter,
                         filterData: this.filterData,
                         source: this.source,
@@ -323,6 +313,7 @@ class ConvolutionDemo extends React.Component {
                 ]),
             ])
         ]);
+
     }
 }
 
