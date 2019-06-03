@@ -23,11 +23,3 @@ class Cell extends React.Component {
         );
     }    
 }
-
-/**
- * Converts greyscale value to rgb string
- * @param {integer} value - Greyscale value to convert
- */
-function grey2RGB(value){
-    return `rgb(${value}, ${value}, ${value})`
-}
