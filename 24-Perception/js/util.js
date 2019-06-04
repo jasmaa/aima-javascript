@@ -2,22 +2,26 @@
 
 /**
  * Loads input file as img
- * @param {*} id 
- * @param {*} input 
+ * @param {*} imgId 
+ * @param {*} input
  */
-function readURL(id, input) {
-    if (input.files && input.files[0]) {
-        var reader = new FileReader();
+function readURL(imgId, input) {
 
-        reader.onload = function (e) {
-            $(`#${id}`)
-                .attr('src', e.target.result)
-                .width(200)
-                .height(200);
-        };
+    return new Promise((resolve, reject) => {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
 
-        reader.readAsDataURL(input.files[0]);
-    }
+            reader.onload = function (e) {
+                $(`#${imgId}`)
+                    .attr('src', e.target.result)
+                    .width(200)
+                    .height(200);
+                resolve(null);
+            };
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    });
 }
 
 /**

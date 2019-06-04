@@ -56,7 +56,9 @@ class SobelImageDemo extends React.Component {
         // Calculate hypotenuse
         for(let i=0; i < sourceData.height; i++){
             for(let j=0; j < sourceData.width; j++){
-                let value = Math.sqrt(Math.pow(sobelXData.data[4*(sourceData.width*i + j) + 0], 2) + Math.pow(sobelYData.data[4*(sourceData.width*i + j) + 0], 2));
+                let value = Math.sqrt(
+                                Math.pow(sobelXData.data[4*(sourceData.width*i + j) + 0], 2) +
+                                Math.pow(sobelYData.data[4*(sourceData.width*i + j) + 0], 2));
                 
                 sourceData.data[4*(sourceData.width*i + j) + 0] = value;
                 sourceData.data[4*(sourceData.width*i + j) + 1] = value;
@@ -75,13 +77,21 @@ class SobelImageDemo extends React.Component {
         return e('div', null, [
             e('div', {key: 'control-row', className: 'row'}, [
                 e('div', {key: 'col-1', className: 'col-md-9'},
-                    e('input', {
-                        id: 'sobel-image-input',
-                        type: 'file',
-                        name: 'sobel-image-input',
-                        accept: 'image/*',
-                        onChange: ()=>readURL('sobel-image-img', document.getElementById('sobel-image-input')),
-                    }, null)),
+                    e('label', {className: 'btn btn-success'}, [
+                        e('input', {
+                            id: 'sobel-image-input',
+                            type: 'file',
+                            name: 'sobel-image-input',
+                            accept: 'image/*',
+                            style: {display: 'none'},
+                            onChange: ()=>{
+                                readURL('sobel-image-img', document.getElementById('sobel-image-input'))
+                                    //.then(() => this.process());
+                            },
+                        }, null),
+                        'Upload Image',
+                    ])
+                ),
                 e('div', {key: 'col2', className: 'col-md-3'},
                     e('div', {
                         className: 'btn btn-primary',
