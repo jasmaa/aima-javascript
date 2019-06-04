@@ -11,11 +11,6 @@
 </head>
 <body>
 
-		<label class="btn btn-primary">
-				<input type="file" style="display:none"/>
-				Custom Upload
-		</label>
-
   <div class="row">
     <div class="col-sm-6 col-md-offset-3" id="content">
       <h1>Perception</h1>
@@ -75,14 +70,39 @@
 				input filter and source and then move the filter with the control panel to see how the values
 				change as the filter is applied in various locations on the source grid.
 			</p>
+
       <br>
       <div id="convolution-root"></div>
 			<br>
 			
 			<h3>Edge Detection Operators</h3>
-			TODO
-			<br>
+			<p>
+					Now that we have a much smoother image, we need a way of finding where the edges are. A common way
+					to do this is by using differential edge detectors, such as the <strong>Sobel operator</strong>. The Sobel operator
+					is one of several edge detectors and works by approximating the <strong>gradient</strong>, or “flow”, of intensities
+					within an image.
+			</p>
 			
+			<br>
+			<div id="gradient-root"></div>
+			<br>
+
+			<p>
+					How is this done exactly? This is where convolution comes back. Gradient detection works by convolving two kernels on
+					an image to find the gradients in the horizontal and vertical directions. Once we compute these values, it is possible
+					to use them to find the magnitude and direction of the “flow” of intensities at any given pixel in the image, creating
+					a “map of flows” or a <strong>vector field</strong>. Areas where the change in intensity is strong, that is, the gradient flow is large,
+					become identifiable as potential edges.
+			</p>
+
+			<img src="#" class="center" height=400>
+			<br><br>
+
+			<p>
+					Starting from a photograph, we can crudely find edges by converting the image to grayscale, smoothing it, and detecting
+					gradients. Below is a demo of our edge detecting process so far. Upload an image and see how the image changes at each stage.
+			</p>
+
 			<br>
 			<div id="sobel-image-root"></div>
 			<br>

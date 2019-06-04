@@ -15,8 +15,8 @@ function readURL(imgId, input) {
                 $(`#${imgId}`)
                     .attr('src', e.target.result)
                     .width(200)
-                    .height(200);
-                resolve(null);
+                    .height(200)
+                    .load(()=> resolve(null));
             };
 
             reader.readAsDataURL(input.files[0]);

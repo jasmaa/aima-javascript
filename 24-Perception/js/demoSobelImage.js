@@ -13,6 +13,9 @@ class SobelImageDemo extends React.Component {
         const context = canvas.getContext('2d');
         const img = document.getElementById("sobel-image-img");
 
+        // Clear canvas
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
         context.drawImage(img, 0, 0, 200, 200);
         let data = context.getImageData(0, 0, 200, 200);
         let sourceData = new Array2D([...data.data], data.width, data.height);
@@ -82,21 +85,21 @@ class SobelImageDemo extends React.Component {
                             id: 'sobel-image-input',
                             type: 'file',
                             name: 'sobel-image-input',
-                            accept: 'image/*',
+                            accept: 'image/x-png,image/gif,image/jpeg',
                             style: {display: 'none'},
                             onChange: ()=>{
                                 readURL('sobel-image-img', document.getElementById('sobel-image-input'))
-                                    //.then(() => this.process());
+                                    .then((result) => this.process());
                             },
                         }, null),
                         'Upload Image',
                     ])
                 ),
                 e('div', {key: 'col2', className: 'col-md-3'},
-                    e('div', {
+                    e('div', {                                                      // Replace with webcam??
                         className: 'btn btn-primary',
-                        onClick: ()=>this.process(),
-                    }, 'Process')),
+                        //onClick: ()=>this.process(),
+                    }, 'TODO')),
             ]),
             e('br', {key: 'space-1'}, null),
             e('br', {key: 'space-2'}, null),
