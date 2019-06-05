@@ -6,7 +6,7 @@
 class SobelImageDemo extends React.Component {
 
     /**
-     * Do image processing on inputted image
+     * Do edge detection pipeline on inputted image
      */
     process(){
         const canvas = document.getElementById('sobel-image-canvas');
@@ -17,16 +17,16 @@ class SobelImageDemo extends React.Component {
         context.clearRect(0, 0, canvas.width, canvas.height);
 
         context.drawImage(img, 0, 0, 200, 200);
-        let data = context.getImageData(0, 0, 200, 200);
-        let sourceData = new Array2D([...data.data], data.width, data.height);
+        let imgData = context.getImageData(0, 0, 200, 200);
+        let source = new Array2D([...imgData.data], imgData.width, imgData.height);
         
-        // Convert to grey
-        greyscale(sourceData);
+        // Convert to grayscale
+        grayscale(source);
         
-        fillArray(data.data, sourceData.data, data.data.length);
-        context.putImageData(data, 200, 0);
+        fillArray(imgData.data, source.data, imgData.data.length);
+        context.putImageData(imgData, 200, 0);
         
-        // Do gaussian blur
+        // Do gaussian blur with 5x5 filter
         let gaussianBlur = new Array2D([
                 1/273, 4/273, 7/273, 4/273, 1/273,
                 4/273, 16/273, 26/273, 16/273, 4/273,
@@ -34,13 +34,13 @@ class SobelImageDemo extends React.Component {
                 4/273, 16/273, 26/273, 16/273, 4/273,
                 1/273, 4/273, 7/273, 4/273, 1/273
             ], 5, 5);
-        convolve(sourceData, gaussianBlur);
+        convolve(source, gaussianBlur);
         
-        fillArray(data.data, sourceData.data, data.data.length);
-        context.putImageData(data, 400, 0);
+        fillArray(imgData.data, source.data, imgData.data.length);
+        context.putImageData(imgData, 400, 0);
         
-        // Apply Sobel operator
-        let sobelXData = new Array2D([...sourceData.data], sourceData.width, sourceData.height);
+        // Apply Sobel operator horizontally
+        let sobelXData = new Array2D([...source.data], source.width, source.height);
         let sobelX = new Array2D([
                 -1, 0, 1,
                 -2, 0, 2,
@@ -48,7 +48,8 @@ class SobelImageDemo extends React.Component {
             ], 3, 3);
         convolve(sobelXData, sobelX);
         
-        let sobelYData = new Array2D([...sourceData.data], sourceData.width, sourceData.height);
+        // Apply Sobel operator vertically
+        let sobelYData = new Array2D([...source.data], source.width, source.height);
         let sobelY = new Array2D([
                 1, 2, 1,
                 0, 0, 0,
@@ -56,24 +57,24 @@ class SobelImageDemo extends React.Component {
             ], 3, 3);
         convolve(sobelYData, sobelY);
         
-        // Calculate hypotenuse
-        for(let i=0; i < sourceData.height; i++){
-            for(let j=0; j < sourceData.width; j++){
+        // Calculate magnitude of gradients
+        for(let i=0; i < source.height; i++){
+            for(let j=0; j < source.width; j++){
                 let value = Math.sqrt(
-                                Math.pow(sobelXData.data[4*(sourceData.width*i + j) + 0], 2) +
-                                Math.pow(sobelYData.data[4*(sourceData.width*i + j) + 0], 2));
+                                Math.pow(sobelXData.data[4*(source.width*i + j) + 0], 2) +
+                                Math.pow(sobelYData.data[4*(source.width*i + j) + 0], 2));
                 
-                sourceData.data[4*(sourceData.width*i + j) + 0] = value;
-                sourceData.data[4*(sourceData.width*i + j) + 1] = value;
-                sourceData.data[4*(sourceData.width*i + j) + 2] = value;
+                source.data[4*(source.width*i + j) + 0] = value;
+                source.data[4*(source.width*i + j) + 1] = value;
+                source.data[4*(source.width*i + j) + 2] = value;
             }
         }
 
         // Stretch color for display
-        stretchColor(sourceData);
+        stretchColor(source);
 
-        fillArray(data.data, sourceData.data, data.data.length);
-        context.putImageData(data, 600, 0);
+        fillArray(imgData.data, source.data, imgData.data.length);
+        context.putImageData(imgData, 600, 0);
     }
 
     render(){
@@ -82,6 +83,7 @@ class SobelImageDemo extends React.Component {
                 e('div', {key: 'col-1', className: 'col-md-9'},
                     e('label', {className: 'btn btn-success'}, [
                         e('input', {
+                            key: 'sobel-image-input',
                             id: 'sobel-image-input',
                             type: 'file',
                             name: 'sobel-image-input',
@@ -95,11 +97,14 @@ class SobelImageDemo extends React.Component {
                         'Upload Image',
                     ])
                 ),
+                /*
                 e('div', {key: 'col2', className: 'col-md-3'},
-                    e('div', {                                                      // Replace with webcam??
+                    e('div', {
                         className: 'btn btn-primary',
                         //onClick: ()=>this.process(),
-                    }, 'TODO')),
+                    }, 'TODO')
+                ),
+                */
             ]),
             e('br', {key: 'space-1'}, null),
             e('br', {key: 'space-2'}, null),

@@ -4,24 +4,33 @@
  * 2D array
  */
 class Array2D {
+
 	constructor(data, width, height){
 		this.data = data;
 		this.width = width;
 		this.height = height;
 	}
-	
+    
+    /**
+     * Gets center row index
+     */
 	get centerRow(){
 		return parseInt(this.height / 2);
-	}
+    }
+    
+    /**
+     * Gets center column index
+     */
 	get centerCol(){
 		return parseInt(this.width / 2);
 	}
 }
 
 /**
- * Gaussian filter approximation
+ * Gaussian filter rough approximation
  */
 class GaussianFilter extends Array2D {
+
 	constructor(size, sigma=1){
 		super([], size, size);
 	
@@ -42,41 +51,42 @@ class GaussianFilter extends Array2D {
 		for(let i=0; i < size*size; i++){
 			this.data[i] /= total;
 		}
-	
 	}
 }
 
 /**
  * Converts image to greyscale
- * @param {Array2D} sourceData 
+ * @param {Array2D} source - RGBA source
  */
-function greyscale(sourceData){
-    for(let i=0; i < sourceData.height; i++){
-        for(let j=0; j < sourceData.width; j++){
-            let index = 4*(sourceData.width*i + j);
-            let avg = (sourceData.data[index + 0] + sourceData.data[index + 1] + sourceData.data[index + 2]) / 3;
-            sourceData.data[index + 0] = avg;
-            sourceData.data[index + 1] = avg;
-            sourceData.data[index + 2] = avg;
+function grayscale(source){
+    for(let i=0; i < source.height; i++){
+        for(let j=0; j < source.width; j++){
+            let index = 4*(source.width*i + j);
+            let avg = (source.data[index + 0] + source.data[index + 1] + source.data[index + 2]) / 3;
+            source.data[index + 0] = avg;
+            source.data[index + 1] = avg;
+            source.data[index + 2] = avg;
         }
     }
 }
 
 /**
- * Convolves filter on sourceData
- * @param {*} sourceData 
- * @param {*} filter 
+ * Convolves filter on RGBA source
+ * @param {Array2D} source - RGBA source
+ * @param {Array2D} filter - Convolving filter 
+ * @param {integer} defaultValue - Default out of bounds value 
  */
-function convolve(sourceData, filter){
+function convolve(source, filter, defaultValue=255){
 
-    buffer = [...sourceData.data];
+    // Copy data to buffer for output
+    buffer = [...source.data];
 
-    for(let i=0; i < sourceData.height; i++){
-        for(let j=0; j < sourceData.width; j++){
-            let index = 4*(sourceData.width*i + j);
+    for(let i=0; i < source.height; i++){
+        for(let j=0; j < source.width; j++){
             
-            // apply filter for rgb channels
+            // Apply filter for RGB channels
             for(let chan=0; chan < 3; chan++){
+
                 let value = 0;
                 
                 for(let filterRow=0; filterRow < filter.height; filterRow++){
@@ -84,56 +94,57 @@ function convolve(sourceData, filter){
                         let srcRow = i + filterRow - filter.centerRow;
                         let srcCol = j + filterCol - filter.centerCol;
                         let filterValue = filter.data[filter.height*(filter.height - filterRow - 1) + (filter.width - filterCol - 1)];
-                        // calculate if within
-                        if(srcRow >= 0 && srcRow < sourceData.height && srcCol >= 0 && srcCol < sourceData.width){
-                            value += sourceData.data[4*(sourceData.width*srcRow + srcCol) + chan] * filterValue;
+
+                        // Calculate if within source
+                        if(srcRow >= 0 && srcRow < source.height && srcCol >= 0 && srcCol < source.width){
+                            value += source.data[4*(source.width*srcRow + srcCol) + chan] * filterValue;
                         }
-                        // assume 255 outside image
+                        // Use default value if out of bounds
                         else{
-                            value += 255 * filterValue;
+                            value += defaultValue * filterValue;
                         }
                     }
                 }
                 
-                buffer[4*(sourceData.width*i + j) + chan] = value;
+                buffer[4*(source.width*i + j) + chan] = value;
             }
             
         }
     }
 
-    // copy buffer over
-    fillArray(sourceData.data, buffer, sourceData.data.length);
+    // Copy buffer over
+    fillArray(source.data, buffer, source.data.length);
 }
 
 /**
- * Stretches color of sourceData between 0-255
- * @param {*} sourceData 
+ * Stretches color of source to between 0-255
+ * @param {Array2D} source - RGBA source
  */
-function stretchColor(sourceData){
+function stretchColor(source){
 
-    let max = Math.max(...sourceData.data);
-    let min = Math.min(...sourceData.data);
+    let max = Math.max(...source.data);
+    let min = Math.min(...source.data);
 
-    for(let i=0; i < sourceData.height; i++){
-        for(let j=0; j < sourceData.width; j++){
+    for(let i=0; i < source.height; i++){
+        for(let j=0; j < source.width; j++){
             for(let k=0; k < 3; k++){
-                value = sourceData.data[4*(sourceData.width*i + j) + k];
+                value = source.data[4*(source.width*i + j) + k];
                 value = (value-min) / (max-min) * 255;
                 
-                sourceData.data[4*(sourceData.width*i + j) + k] = value;
+                source.data[4*(source.width*i + j) + k] = value;
             }
         }
     }
 }
 
 /**
- * Copies length values from target to source
- * @param {*} source 
- * @param {*} target 
- * @param {*} length 
+ * Copies length values from source to target
+ * @param {Array} targetData - RGBA target pixel data
+ * @param {Array} sourceData - RGBA source pixel data
+ * @param {integer} length - Amount of data to copy
  */
-function fillArray(source, target, length){
+function fillArray(targetData, sourceData, length){
     for(let i=0; i < length; i++){
-        source[i] = target[i];
+        targetData[i] = sourceData[i];
     }
 }
