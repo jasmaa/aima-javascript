@@ -8,7 +8,7 @@ class ConvolutionResult extends React.Component {
     renderCells(){
 
         // Perform convolution
-        let sourceCopy = new Array2D([...this.props.source.data], this.props.source.width, this.props.source.height);
+        let sourceCopy = new Array2D([...this.props.source.data], this.props.source.width, this.props.source.height, 4);
         convolve(sourceCopy, this.props.filter, 0);
 
         // Add cells
@@ -133,6 +133,11 @@ class ConvolutionDemo extends React.Component {
      */
     move(r, c){
         
+        if(this.filterLocation.col + c >= this.source.width || this.filterLocation.col + c < 0 ||
+            this.filterLocation.row + r >= this.source.height || this.filterLocation.row + r < 0){
+                return;
+        }
+
         this.filterLocation.col += c;
         this.filterLocation.row += r;
 
@@ -184,7 +189,7 @@ class ConvolutionDemo extends React.Component {
      * @param {integer} col 
      */
     updateData(grid, value, row, col){
-        
+
         // Prevent non-numerical input
         if(isNaN(value)){
             return;

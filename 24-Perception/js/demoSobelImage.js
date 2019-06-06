@@ -27,34 +27,17 @@ class SobelImageDemo extends React.Component {
         context.putImageData(imgData, 200, 0);
         
         // Do gaussian blur with 5x5 filter
-        let gaussianBlur = new Array2D([
-                1/273, 4/273, 7/273, 4/273, 1/273,
-                4/273, 16/273, 26/273, 16/273, 4/273,
-                7/273, 26/273, 41/273, 26/273, 7/273,
-                4/273, 16/273, 26/273, 16/273, 4/273,
-                1/273, 4/273, 7/273, 4/273, 1/273
-            ], 5, 5);
-        convolve(source, gaussianBlur);
+        convolve(source, gaussianBlur5);
         
         fillArray(imgData.data, source.data, imgData.data.length);
         context.putImageData(imgData, 400, 0);
         
         // Apply Sobel operator horizontally
-        let sobelXData = new Array2D([...source.data], source.width, source.height);
-        let sobelX = new Array2D([
-                -1, 0, 1,
-                -2, 0, 2,
-                -1, 0, 1
-            ], 3, 3);
+        let sobelXData = new Array2D([...source.data], source.width, source.height, 4);
         convolve(sobelXData, sobelX);
         
         // Apply Sobel operator vertically
-        let sobelYData = new Array2D([...source.data], source.width, source.height);
-        let sobelY = new Array2D([
-                1, 2, 1,
-                0, 0, 0,
-                -1, -2, -1
-            ], 3, 3);
+        let sobelYData = new Array2D([...source.data], source.width, source.height, 4);
         convolve(sobelYData, sobelY);
         
         // Calculate magnitude of gradients

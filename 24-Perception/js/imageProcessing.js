@@ -86,7 +86,7 @@ function convolve(source, filter, defaultValue=255){
         for(let j=0; j < source.width; j++){
             
             // Apply filter for RGB channels
-            for(let chan=0; chan < source.channels; chan++){
+            for(let chan=0; chan < 3; chan++){
 
                 let value = 0;
                 
@@ -98,7 +98,7 @@ function convolve(source, filter, defaultValue=255){
 
                         // Calculate if within source
                         if(srcRow >= 0 && srcRow < source.height && srcCol >= 0 && srcCol < source.width){
-                            value += source.data[4*(source.width*srcRow + srcCol) + chan] * filterValue;
+                            value += source.data[source.channels*(source.width*srcRow + srcCol) + chan] * filterValue;
                         }
                         // Use default value if out of bounds
                         else{
@@ -107,7 +107,7 @@ function convolve(source, filter, defaultValue=255){
                     }
                 }
                 
-                buffer[4*(source.width*i + j) + chan] = value;
+                buffer[source.channels*(source.width*i + j) + chan] = value;
             }
             
         }
@@ -149,3 +149,25 @@ function fillArray(targetData, sourceData, length){
         targetData[i] = sourceData[i];
     }
 }
+
+// === FILTERS ===
+
+const gaussianBlur5 = new Array2D([
+    1/273, 4/273, 7/273, 4/273, 1/273,
+    4/273, 16/273, 26/273, 16/273, 4/273,
+    7/273, 26/273, 41/273, 26/273, 7/273,
+    4/273, 16/273, 26/273, 16/273, 4/273,
+    1/273, 4/273, 7/273, 4/273, 1/273
+], 5, 5);
+
+const sobelX = new Array2D([
+    -1, 0, 1,
+    -2, 0, 2,
+    -1, 0, 1
+], 3, 3);
+
+const sobelY = new Array2D([
+    1, 2, 1,
+    0, 0, 0,
+    -1, -2, -1
+], 3, 3);

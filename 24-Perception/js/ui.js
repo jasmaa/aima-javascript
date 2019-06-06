@@ -55,8 +55,8 @@ class GridInput extends React.Component {
         return e('div', {
             className:'square-grid-base',
             style: {
-                'grid-template-columns': `repeat(${this.props.grid.width}, 3vw)`,
-                'grid-template-rows': `repeat(${this.props.grid.height}, 3vw)`,
+                gridTemplateColumns: `repeat(${this.props.grid.width}, 3vw)`,
+                gridTemplateRows: `repeat(${this.props.grid.height}, 3vw)`,
             },
         },
             this.renderCells()
