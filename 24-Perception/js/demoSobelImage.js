@@ -18,7 +18,7 @@ class SobelImageDemo extends React.Component {
 
         context.drawImage(img, 0, 0, 200, 200);
         let imgData = context.getImageData(0, 0, 200, 200);
-        let source = new Array2D([...imgData.data], imgData.width, imgData.height);
+        let source = new Array2D([...imgData.data], imgData.width, imgData.height, 4);
         
         // Convert to grayscale
         grayscale(source);

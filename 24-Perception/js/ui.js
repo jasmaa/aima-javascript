@@ -23,3 +23,43 @@ class Cell extends React.Component {
         );
     }    
 }
+
+/**
+ * Grid input grid
+ */
+class GridInput extends React.Component {
+
+    renderCells(){
+        let cells = [];
+
+        for(let i=0; i < this.props.grid.height; i++){
+            for(let j=0; j < this.props.grid.width; j++){
+
+                cells.push(e('input', {
+                    key: `cell-${i}-${j}`,
+                    className: 'square',
+                    id: `${this.props.idBase}-${i}-${j}`,
+                    value: this.props.grid.data[this.props.grid.channels*(this.props.grid.width*i + j) + 0],
+                    onInput: ()=>this.props.updateGridHandler(
+                        document.getElementById(`${this.props.idBase}-${i}-${j}`).value, i, j
+                    ),
+                }, null));
+            }
+        }
+
+        return cells;
+    }
+
+    render(){
+
+        return e('div', {
+            className:'square-grid-base',
+            style: {
+                'grid-template-columns': `repeat(${this.props.grid.width}, 3vw)`,
+                'grid-template-rows': `repeat(${this.props.grid.height}, 3vw)`,
+            },
+        },
+            this.renderCells()
+        );
+    }
+}

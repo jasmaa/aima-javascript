@@ -1,14 +1,15 @@
 // Image processing
 
 /**
- * 2D array
+ * 2x2 grid with channels
  */
 class Array2D {
 
-	constructor(data, width, height){
+	constructor(data, width, height, channels=1){
 		this.data = data;
 		this.width = width;
-		this.height = height;
+        this.height = height;
+        this.channels = channels;
 	}
     
     /**
@@ -85,7 +86,7 @@ function convolve(source, filter, defaultValue=255){
         for(let j=0; j < source.width; j++){
             
             // Apply filter for RGB channels
-            for(let chan=0; chan < 3; chan++){
+            for(let chan=0; chan < source.channels; chan++){
 
                 let value = 0;
                 

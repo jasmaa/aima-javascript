@@ -2,6 +2,12 @@
     margin: 0.1vw 0.1vw 0.1vw 0.1vw;
 }
 
+.square-grid-base {
+    display: grid;
+    justify-content: center;
+    align-content: center;
+}
+
 .square-grid-20 {
     display: grid;
     justify-content: center;
