@@ -45,8 +45,27 @@ function gray2RGB(value){
 }
 
 /**
+ * Draws arrow on canvas
+ * https://stackoverflow.com/questions/808826/draw-arrow-on-canvas-tag
+ * @param {*} context 
+ * @param {*} fromx 
+ * @param {*} fromy 
+ * @param {*} tox 
+ * @param {*} toy 
+ */
+function canvas_arrow(context, fromx, fromy, tox, toy){
+    var headlen = 5;   // length of head in pixels
+    var angle = Math.atan2(toy-fromy,tox-fromx);
+    context.moveTo(fromx, fromy);
+    context.lineTo(tox, toy);
+    context.lineTo(tox-headlen*Math.cos(angle-Math.PI/6),toy-headlen*Math.sin(angle-Math.PI/6));
+    context.moveTo(tox, toy);
+    context.lineTo(tox-headlen*Math.cos(angle+Math.PI/6),toy-headlen*Math.sin(angle+Math.PI/6));
+}
+
+/**
  * takes wavelength in nm and returns an rgba value
- * Taken from Science Primer
+ * Taken from Science Primer: http://scienceprimer.com/javascript-code-convert-light-wavelength-color
  * @param {*} wavelength 
  */
 function wavelengthToColor(wavelength) {

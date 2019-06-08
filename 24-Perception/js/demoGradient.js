@@ -8,27 +8,56 @@ class GradientDemo extends React.Component {
     constructor(props){
         super(props);
 
+        // Generate source array2d
         let size = 7;
-        // Generate 5x5 array2d of random values
         let src = Array.from({length: 4*size*size}, ()=>0);
+
         for(let i=0; i < size; i++){
             for(let j=0; j < size; j++){
 
-                src[4*(size*i + j) + 0] = parseInt(Math.abs(i-parseInt(size/2))/parseInt(size/2) * 206);
+                let value = Math.floor(Math.abs(Math.floor(size/2) - i) / Math.floor(size/2) * 206);
+
+                src[4*(size*i + j) + 0] = value;
+                src[4*(size*i + j) + 1] = value;
+                src[4*(size*i + j) + 2] = value;
             }
         }
 
         this.source = new Array2D(src, size, size, 4);
+
+        $(document).ready(()=>this.processGradient());
     }
 
+    reset(){
+
+        // Reset values
+        for(let i=0; i < this.source.height; i++){
+            for(let j=0; j < this.source.width; j++){
+
+                let value = Math.floor(Math.abs(Math.floor(this.source.width/2) - i) / Math.floor(this.source.width/2) * 206);
+
+                this.source.data[4*(this.source.width*i + j) + 0] = value;
+                this.source.data[4*(this.source.width*i + j) + 1] = value;
+                this.source.data[4*(this.source.width*i + j) + 2] = value;
+
+            }
+        }
+
+        this.processGradient();
+
+        this.setState({
+            grid: this.source,
+        });
+    }
 
     processGradient(){
 
         const canvas = document.getElementById('gradient-canvas');
         const context = canvas.getContext('2d');
 
-        let unit = parseInt(canvas.width / this.source.height);
-        let halfUnit = parseInt(unit / 2);
+        let unit = Math.floor(canvas.width / this.source.height);
+        let halfUnit = Math.floor(unit / 2);
+        let quarterUnit = Math.floor(halfUnit / 2);
 
         context.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -40,14 +69,27 @@ class GradientDemo extends React.Component {
         let sobelYData = new Array2D([...this.source.data], this.source.width, this.source.height, 4);
         convolve(sobelYData, sobelY);
 
+        // Find and scale magnitudes
+        let mags = [];
         for(let i=0; i < this.source.height; i++){
             for(let j=0; j < this.source.width; j++){
                 let mag = Math.sqrt(
                     Math.pow(sobelXData.data[4*(this.source.width*i + j) + 0], 2) +
                     Math.pow(sobelYData.data[4*(this.source.width*i + j) + 0], 2)
                 );
+                mags.push(mag);
+            }
+        }
 
-                let angle = Math.atan2(sobelYData.data[4*(this.source.width*i + j) + 0], sobelXData.data[4*(this.source.width*i + j) + 0]);
+        let minMag = Math.min(...mags);
+        let maxMag = Math.max(...mags);
+
+        for(let i=0; i < this.source.height; i++){
+            for(let j=0; j < this.source.width; j++){
+
+                // Convert magnitude to light spectrum wavelength
+                let mag = mags[this.source.width*i + j];
+                let wavelength = (mag - minMag) / (maxMag - minMag) * 250 + 450;
 
                 // Color cell
                 context.fillStyle = gray2RGB(this.source.data[4*(this.source.width*i + j) + 0]);
@@ -55,9 +97,14 @@ class GradientDemo extends React.Component {
 
                 // Draw vector
                 context.beginPath();
-                context.strokeStyle = 'cyan';
-                context.moveTo(unit*j + halfUnit, unit*i + halfUnit);
-                context.lineTo(unit*j + unit, unit*i + halfUnit*Math.sin(angle) + halfUnit);
+                context.strokeStyle = wavelengthToColor(wavelength)[0];
+                canvas_arrow(
+                    context,
+                    unit*j + halfUnit,
+                    unit*i + halfUnit,
+                    unit*j + halfUnit + quarterUnit*(sobelXData.data[4*(this.source.width*i + j) + 0] / mag),
+                    unit*i + halfUnit + quarterUnit*(sobelYData.data[4*(this.source.width*i + j) + 0] / mag),
+                );
                 context.stroke();
                 context.closePath();
             }
@@ -97,23 +144,31 @@ class GradientDemo extends React.Component {
     }
 
     render(){
-
-        return e('div', {className: 'row'}, [
-            e('div', {className: 'col-md-6'},
-                e(GridInput, {
-                    key: 'source-input',
-                    idBase: 'gradient-cell',
-                    grid: this.source,
-                    updateGridHandler: (v, i, j)=>this.updateData(this.source, v, i, j)
-                }, null)
+        
+        return e('div', null, [
+            e('div', {className: 'row'},
+                e('div', {key: 'cell-1-1', className: 'btn btn-danger', onClick: ()=>this.reset()},
+                    e('i', {className: 'fas fa-undo'}, null)
+                )
             ),
-            e('div', {className: 'col-md-6'},
-                e('canvas', {
-                    id: 'gradient-canvas',
-                    width: 400,
-                    height: 400,
-                }, null)
-            ),
+            e('br', null, null),
+            e('div', {className: 'row'}, [
+                e('div', {className: 'col-md-6'},
+                    e(GridInput, {
+                        key: 'source-input',
+                        idBase: 'gradient-cell',
+                        grid: this.source,
+                        updateGridHandler: (v, i, j)=>this.updateData(this.source, v, i, j)
+                    }, null)
+                ),
+                e('div', {className: 'col-md-6'},
+                    e('canvas', {
+                        id: 'gradient-canvas',
+                        width: 400,
+                        height: 400,
+                    }, null)
+                ),
+            ])
         ]);
     }
 

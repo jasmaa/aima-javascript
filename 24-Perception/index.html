@@ -44,7 +44,7 @@
 			
 			<h3>Gaussian Smoothing</h3>
 			<p>
-				One way to reduce the noise in an image is to apply <strong>Gaussian smoothing</strong>. In this process, a <strong>Gaussian function</strong>, also known as
+				To reduce the noise in an image, we can choose to apply <strong>Gaussian smoothing</strong>. In this process, a <strong>Gaussian function</strong>, also known as
 				normal distribution, is applied to an array of image intensities in a method known as a <strong>convolution</strong>.
 			</p>
 			
@@ -54,7 +54,7 @@
 			<p>
 				Convolution can be thought of as a way of “blending” two functions. In our example, we can do a convolution
 				by dragging a kernel or <strong>filter</strong> of the Gaussian function, a 2D array representation of the distribution, throughout the entire image.
-				Each time the filter is applied to the image, all the intensities are multiplied with their corresponding values
+				Each time the filter is applied to the image, all intensities are multiplied with their corresponding values
 				in the filter and the sum of these values is the result in the new image at the location of where the center of
 				the filter was. Of note is that in a convolution, the filter is flipped both horizontally and vertically before being applied to the source
 				image.

@@ -9,6 +9,7 @@ class SobelImageDemo extends React.Component {
      * Do edge detection pipeline on inputted image
      */
     process(){
+
         const canvas = document.getElementById('sobel-image-canvas');
         const context = canvas.getContext('2d');
         const img = document.getElementById("sobel-image-img");
@@ -96,6 +97,7 @@ class SobelImageDemo extends React.Component {
                 src: '#',
                 id: 'sobel-image-img',
                 hidden: true,
+                //onLoad: ()=>this.process(),
             }, null),
             e('canvas', {
                 key: 'sobel-image-canvas',
