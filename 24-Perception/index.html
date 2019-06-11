@@ -60,11 +60,6 @@
 				image.
 			</p>
 			
-			<!--
-			<img src="images/img_03.jpg" class="center" height=400>
-			<br><br>
-			-->
-			
 			<p>
 				Below is a simple example of how a filter would operate. Change the values in the
 				input filter and source and then move the filter with the control panel to see how the values
@@ -95,9 +90,6 @@
 					become identifiable as potential edges.
 			</p>
 
-			<img src="#" class="center" height=400>
-			<br><br>
-
 			<p>
 					Starting from a photograph, we can crudely find edges by converting the image to grayscale, smoothing it, and detecting
 					gradients. Below is a demo of our edge detecting process so far. Upload an image and see how the image changes at each stage.
@@ -105,6 +97,10 @@
 
 			<br>
 			<div id="sobel-image-root"></div>
+			<br>
+
+			<br>
+			<div id="topology-root"></div>
 			<br>
 			
 			<h3>Non-Maximum Suppression</h3>
@@ -131,6 +127,7 @@
   <!-- Replace with third party -->
   <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
 	<script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
 	
 	<script type="text/javascript" src="./js/util.js"></script>
 	<script type="text/javascript" src="./js/ui.js"></script>
@@ -139,5 +136,6 @@
 	<script type="text/javascript" src="./js/demoConvolution.js"></script>
 	<script type="text/javascript" src="./js/demoGradient.js"></script>
 	<script type="text/javascript" src="./js/demoSobelImage.js"></script>
+	<script type="text/javascript" src="./js/demoTopology.js"></script>
 </body>
 </html>

@@ -5,14 +5,19 @@
  */
 class SobelImageDemo extends React.Component {
 
+    constructor(props){
+        super(props);
+        this.imageId = 'sobel-image';
+    }
+
     /**
      * Do edge detection pipeline on inputted image
      */
     process(){
 
-        const canvas = document.getElementById('sobel-image-canvas');
+        const canvas = document.getElementById(`${this.imageId}-canvas`);
         const context = canvas.getContext('2d');
-        const img = document.getElementById("sobel-image-img");
+        const img = document.getElementById(`${this.imageId}-img`);
 
         // Clear canvas
         context.clearRect(0, 0, canvas.width, canvas.height);
@@ -26,7 +31,7 @@ class SobelImageDemo extends React.Component {
         
         fillArray(imgData.data, source.data, imgData.data.length);
         context.putImageData(imgData, 200, 0);
-        
+
         // Do gaussian blur with 5x5 filter
         convolve(source, gaussianBlur5);
         
@@ -63,45 +68,20 @@ class SobelImageDemo extends React.Component {
 
     render(){
         return e('div', null, [
-            e('div', {key: 'control-row', className: 'row'}, [
+            e('div', {key: 'control-row', className: 'row'},
                 e('div', {key: 'col-1', className: 'col-md-9'},
-                    e('label', {className: 'btn btn-success'}, [
-                        e('input', {
-                            key: 'sobel-image-input',
-                            id: 'sobel-image-input',
-                            type: 'file',
-                            name: 'sobel-image-input',
-                            accept: 'image/x-png,image/gif,image/jpeg',
-                            style: {display: 'none'},
-                            onChange: ()=>{
-                                readURL('sobel-image-img', document.getElementById('sobel-image-input'))
-                                    .then((result) => this.process());
-                            },
-                        }, null),
-                        'Upload Image',
-                    ])
-                ),
-                /*
-                e('div', {key: 'col2', className: 'col-md-3'},
-                    e('div', {
-                        className: 'btn btn-primary',
-                        //onClick: ()=>this.process(),
-                    }, 'TODO')
-                ),
-                */
-            ]),
+                    e(ImageUploader, {
+                        imageId: this.imageId,
+                        defaultImage: 'images/test.png',
+                        processHandler: () => this.process(),
+                    }, null)
+                )
+            ),
             e('br', {key: 'space-1'}, null),
             e('br', {key: 'space-2'}, null),
-            e('img', {
-                key: 'sobel-image-img',
-                src: '#',
-                id: 'sobel-image-img',
-                hidden: true,
-                //onLoad: ()=>this.process(),
-            }, null),
             e('canvas', {
-                key: 'sobel-image-canvas',
-                id: 'sobel-image-canvas',
+                key: `${this.imageId}-canvas`,
+                id: `${this.imageId}-canvas`,
                 width: '800',
                 height: '200'
             }, null),

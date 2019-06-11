@@ -1,6 +1,7 @@
 // Common UI elements
 
-const e = React.createElement; // Create element shortcut
+// Create element shortcut
+const e = React.createElement;
 
 /**
  * Grid cell
@@ -60,6 +61,40 @@ class GridInput extends React.Component {
             },
         },
             this.renderCells()
+        );
+    }
+}
+
+/**
+ * Upload image button
+ * Image added to DOM and processed
+ */
+class ImageUploader extends React.Component {
+
+    render(){
+        return e('div', null,
+            e('label', {className: 'btn btn-success'}, [
+                e('input', {
+                    key: `${this.props.imageId}-input`,
+                    id: `${this.props.imageId}-input`,
+                    type: 'file',
+                    name: `${this.props.imageId}-input`,
+                    accept: 'image/x-png,image/gif,image/jpeg',
+                    style: {display: 'none'},
+                    onChange: ()=>{
+                        readURL(`${this.props.imageId}-img`, document.getElementById(`${this.props.imageId}-input`))
+                            .then((result) => this.props.processHandler());
+                    },
+                }, null),
+                e('img', {
+                    key: `${this.props.imageId}-img`,
+                    src: this.props.defaultImage,
+                    id: `${this.props.imageId}-img`,
+                    hidden: true,
+                    onLoad: ()=>this.props.processHandler(),
+                }, null),
+                'Upload Image',
+            ])
         );
     }
 }
