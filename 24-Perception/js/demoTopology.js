@@ -6,16 +6,33 @@ class TopologyDemo extends React.Component {
         super(props);
         this.imageId = 'topology-image';
         this.size = 400;
+
+        this.canvas = null;
+        this.graphContainer = null;
+        $(window).resize(()=>this.resize());
+    }
+
+    resize(){
+        if(innerWidth > 1000){
+            this.canvas.style.width = (innerWidth / 4)+'px';
+            this.graphContainer.childNodes[0].style.width = (innerWidth / 4)+'px';
+            this.graphContainer.childNodes[0].style.height = (innerWidth / 4)+'px';
+        }
+        else{
+            this.canvas.style.width = (innerWidth / 2 - 30)+'px';
+            this.graphContainer.childNodes[0].style.width = (innerWidth / 2 - 30)+'px';
+            this.graphContainer.childNodes[0].style.height = (innerWidth / 2 - 30)+'px';
+        }
     }
 
     process(){
 
-        const canvas = document.getElementById(`${this.imageId}-canvas`);
-        const context = canvas.getContext('2d');
+        this.canvas = document.getElementById(`${this.imageId}-canvas`);
+        const context = this.canvas.getContext('2d');
         const img = document.getElementById(`${this.imageId}-img`);
 
         // Clear canvas
-        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         context.drawImage(img, 0, 0, this.size, this.size);
         let imgData = context.getImageData(0, 0, this.size, this.size);
@@ -55,16 +72,18 @@ class TopologyDemo extends React.Component {
             verticalRatio: 0.5
         };
 
-        let container = document.getElementById(`${this.imageId}-topology`);
-        let graph = new vis.Graph3d(container, topoData, options);
+        this.graphContainer = document.getElementById(`${this.imageId}-topology`);
+        let graph = new vis.Graph3d(this.graphContainer, topoData, options);
         graph.setCameraPosition({horizontal: 0, vertical: Math.PI / 2, distance: 1.2});
+
+        this.resize();
     }
 
     render(){
 
         return e('div', null, [
             e('div', {key: 'control-row', className: 'row'},
-                e('div', {key: 'col-1', className: 'col-md-9'},
+                e('div', {key: 'col-1', className: 'col-md-12'},
                     e(ImageUploader, {
                         imageId: this.imageId,
                         defaultImage: 'images/test.png',
@@ -74,8 +93,8 @@ class TopologyDemo extends React.Component {
             ),
             e('br', {key: 'space-1'}, null),
             e('br', {key: 'space-2'}, null),
-            e('div', {key: 'control-row', className: 'row'}, [
-                e('div', {key: 'col-1', className: 'col-md-6'},
+            e('div', {key: 'display-row', className: 'row'}, [
+                e('div', {key: 'col-1', className: 'col-md-6 col-sm-7 col-xs-6'},
                     e('canvas', {
                         key: `${this.imageId}-canvas`,
                         id: `${this.imageId}-canvas`,
@@ -83,7 +102,7 @@ class TopologyDemo extends React.Component {
                         height: this.size,
                     }, null)
                 ),
-                e('div', {key: 'col-2', className: 'col-md-6'},
+                e('div', {key: 'col-2', className: 'col-md-6 col-sm-7 col-xs-6'},
                     e('div', {
                         id: `${this.imageId}-topology`,
                     }, null)

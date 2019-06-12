@@ -1,5 +1,5 @@
 .btn {
-    margin: 0.1vw 0.1vw 0.1vw 0.1vw;
+    margin: 0.1em 0.1em 0.1em 0.1em;
 }
 
 .square-grid-base {
@@ -12,24 +12,24 @@
     display: grid;
     justify-content: center;
     align-content: center;
-    grid-template-columns: repeat(20, 3vw);
-    grid-template-rows: repeat(20, 3vw);
+    grid-template-columns: repeat(20, 3em);
+    grid-template-rows: repeat(20, 3em);
 }
 
 .square-grid-5 {
     display: grid;
     justify-content: center;
     align-content: center;
-    grid-template-columns: repeat(5, 3vw);
-    grid-template-rows: repeat(5, 3vw);
+    grid-template-columns: repeat(5, 3em);
+    grid-template-rows: repeat(5, 3em);
 }
 
 .square-grid-3 {
     display: grid;
     justify-content: center;
     align-content: center;
-    grid-template-columns: repeat(3, 3vw);
-    grid-template-rows: repeat(3, 3vw);
+    grid-template-columns: repeat(3, 3em);
+    grid-template-rows: repeat(3, 3em);
 }
 
 .square {

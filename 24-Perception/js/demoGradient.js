@@ -26,6 +26,9 @@ class GradientDemo extends React.Component {
         this.source = new Array2D(src, size, size, 4);
 
         $(document).ready(()=>this.processGradient());
+
+        this.canvas = null;
+        $(window).resize(()=>this.resize());
     }
 
     reset(){
@@ -50,16 +53,25 @@ class GradientDemo extends React.Component {
         });
     }
 
+    resize(){
+        if(innerWidth > 1000){
+            this.canvas.style.width = (innerWidth / 4)+'px';
+        }
+        else{
+            this.canvas.style.width = (innerWidth - 30)+'px';
+        }
+    }
+
     processGradient(){
 
-        const canvas = document.getElementById('gradient-canvas');
-        const context = canvas.getContext('2d');
+        this.canvas = document.getElementById('gradient-canvas');
+        const context = this.canvas.getContext('2d');
 
-        let unit = Math.floor(canvas.width / this.source.height);
+        let unit = Math.floor(this.canvas.width / this.source.height);
         let halfUnit = Math.floor(unit / 2);
         let quarterUnit = Math.floor(halfUnit / 2);
 
-        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         // Apply Sobel operator horizontally
         let sobelXData = new Array2D([...this.source.data], this.source.width, this.source.height, 4);
@@ -109,6 +121,8 @@ class GradientDemo extends React.Component {
                 context.closePath();
             }
         }
+
+        this.resize();
     }
 
     /**
@@ -146,22 +160,21 @@ class GradientDemo extends React.Component {
     render(){
         
         return e('div', null, [
-            e('div', {className: 'row'},
+            e('div', {key: 'control-row', className: 'row'},
                 e('div', {key: 'cell-1-1', className: 'btn btn-danger', onClick: ()=>this.reset()},
                     e('i', {className: 'fas fa-undo'}, null)
                 )
             ),
-            e('br', null, null),
-            e('div', {className: 'row'}, [
-                e('div', {className: 'col-md-6'},
+            e('br', {key: 'space-1'}, null),
+            e('div', {key: 'display-row', className: 'row'}, [
+                e('div', {key: 'col-1', className: 'col-md-6'},
                     e(GridInput, {
-                        key: 'source-input',
                         idBase: 'gradient-cell',
                         grid: this.source,
                         updateGridHandler: (v, i, j)=>this.updateData(this.source, v, i, j)
                     }, null)
                 ),
-                e('div', {className: 'col-md-6'},
+                e('div', {key: 'col-2', className: 'col-md-6'},
                     e('canvas', {
                         id: 'gradient-canvas',
                         width: 400,

@@ -56,8 +56,8 @@ class GridInput extends React.Component {
         return e('div', {
             className:'square-grid-base',
             style: {
-                gridTemplateColumns: `repeat(${this.props.grid.width}, 3vw)`,
-                gridTemplateRows: `repeat(${this.props.grid.height}, 3vw)`,
+                gridTemplateColumns: `repeat(${this.props.grid.width}, 3em)`,
+                gridTemplateRows: `repeat(${this.props.grid.height}, 3em)`,
             },
         },
             this.renderCells()
@@ -82,8 +82,12 @@ class ImageUploader extends React.Component {
                     accept: 'image/x-png,image/gif,image/jpeg',
                     style: {display: 'none'},
                     onChange: ()=>{
+                        document.body.style.opacity = '0.3';
                         readURL(`${this.props.imageId}-img`, document.getElementById(`${this.props.imageId}-input`))
-                            .then((result) => this.props.processHandler());
+                            .then((result) => this.props.processHandler())
+                            .then((result)=>{
+                                document.body.style.opacity = '';
+                            });
                     },
                 }, null),
                 e('img', {
@@ -93,7 +97,7 @@ class ImageUploader extends React.Component {
                     hidden: true,
                     onLoad: ()=>this.props.processHandler(),
                 }, null),
-                'Upload Image',
+                'Upload Image'
             ])
         );
     }

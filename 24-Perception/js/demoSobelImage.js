@@ -8,6 +8,18 @@ class SobelImageDemo extends React.Component {
     constructor(props){
         super(props);
         this.imageId = 'sobel-image';
+
+        this.canvas = null;
+        $(window).resize(()=>this.resize());
+    }
+
+    resize(){
+        if(innerWidth > 1000){
+            this.canvas.style.width = (innerWidth / 2)+'px';
+        }
+        else{
+            this.canvas.style.width = (innerWidth - 30)+'px';
+        }
     }
 
     /**
@@ -15,12 +27,12 @@ class SobelImageDemo extends React.Component {
      */
     process(){
 
-        const canvas = document.getElementById(`${this.imageId}-canvas`);
-        const context = canvas.getContext('2d');
+        this.canvas = document.getElementById(`${this.imageId}-canvas`);
+        const context = this.canvas.getContext('2d');
         const img = document.getElementById(`${this.imageId}-img`);
 
         // Clear canvas
-        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         context.drawImage(img, 0, 0, 200, 200);
         let imgData = context.getImageData(0, 0, 200, 200);
@@ -64,12 +76,14 @@ class SobelImageDemo extends React.Component {
 
         fillArray(imgData.data, source.data, imgData.data.length);
         context.putImageData(imgData, 600, 0);
+
+        this.resize();
     }
 
     render(){
         return e('div', null, [
             e('div', {key: 'control-row', className: 'row'},
-                e('div', {key: 'col-1', className: 'col-md-9'},
+                e('div', {key: 'col-1', className: 'col-md-12'},
                     e(ImageUploader, {
                         imageId: this.imageId,
                         defaultImage: 'images/test.png',

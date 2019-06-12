@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8"> 
+	<meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 	<title>24 Perception</title>
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
   <link rel="stylesheet" href="../styles.css">
@@ -11,13 +12,12 @@
 </head>
 <body>
 
+	<div class="container-fluid">
   <div class="row">
     <div class="col-sm-6 col-md-offset-3" id="content">
-      <h1>Perception</h1>
+      <h1>Perception: Edge Detection</h1>
 
-			<h2>Edge Detection</h2>
-
-      <h3>Introduction</h3>
+      <h2>Introduction</h2>
 			<p>
 				For many of us, it is easy to find both the objects in a picture and their boundaries.
 				Humans are very good at identifying what something is and where it is given a clear line of vision,
@@ -34,7 +34,7 @@
 			<img src="../third-party/photo-edge-detection.png" class="center" height=400>
 			<br><br>
 			
-			<h3>A Naive Approach</h3>
+			<h2>A Naive Approach</h2>
 			<p>
 				So how do we approach detecting edges? One way is to simply run through all the pixels and, for each pixel, determine
 				whether we see a large jump in intensity compared to its neighbors. While this approach goes in the right direction,
@@ -42,7 +42,7 @@
 				in a sea of dark pixels as an edge which is undesirable.
 			</p>
 			
-			<h3>Gaussian Smoothing</h3>
+			<h2>Gaussian Smoothing</h2>
 			<p>
 				To reduce the noise in an image, we can choose to apply <strong>Gaussian smoothing</strong>. In this process, a <strong>Gaussian function</strong>, also known as
 				normal distribution, is applied to an array of image intensities in a method known as a <strong>convolution</strong>.
@@ -70,7 +70,7 @@
       <div id="convolution-root"></div>
 			<br>
 			
-			<h3>Edge Detection Operators</h3>
+			<h2>Edge Detection Operators</h2>
 			<p>
 					Now that we have a much smoother image, we need a way of finding where the edges are. A common way
 					to do this is by using differential edge detectors, such as the <strong>Sobel operator</strong>. The Sobel operator
@@ -103,24 +103,25 @@
 			<div id="topology-root"></div>
 			<br>
 			
-			<h3>Non-Maximum Suppression</h3>
+			<h2>Non-Maximum Suppression</h2>
 			TODO
 			<br>
 
-			<h3>Double Threshold</h3>
+			<h2>Double Threshold</h2>
 			TODO
 			<br>
 
-			<h3>Edge Tracking by Hysteresis</h3>
+			<h2>Edge Tracking by Hysteresis</h2>
 			TODO
 			<br>
 
-			<h3>Canny Edge Detection</h3>
+			<h2>Canny Edge Detection</h2>
 			TODO
 			<br>
 			<br>
 			
-    </div>
+		</div>
+		</div>
   </div>
 
 
@@ -137,5 +138,12 @@
 	<script type="text/javascript" src="./js/demoGradient.js"></script>
 	<script type="text/javascript" src="./js/demoSobelImage.js"></script>
 	<script type="text/javascript" src="./js/demoTopology.js"></script>
+
+	<script type="text/javascript">
+		document.ontouchmove = function(event){
+			event.preventDefault();
+		}
+	</script>
+
 </body>
 </html>
