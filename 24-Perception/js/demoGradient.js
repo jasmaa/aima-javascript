@@ -25,19 +25,21 @@ class GradientDemo extends React.Component {
 
         this.source = new Array2D(src, size, size, 4);
 
-        $(document).ready(()=>this.processGradient());
+        $(document).ready(()=>this.process());
 
         this.canvas = null;
         $(window).resize(()=>this.resize());
     }
 
-    reset(){
+    /**
+     * Sets gradient demo with a vertical line
+     */
+    setVerticalLine(){
 
-        // Reset values
         for(let i=0; i < this.source.height; i++){
             for(let j=0; j < this.source.width; j++){
 
-                let value = Math.floor(Math.abs(Math.floor(this.source.width/2) - i) / Math.floor(this.source.width/2) * 206);
+                let value = Math.floor(Math.abs(this.source.centerRow - j) / this.source.centerRow * 206);
 
                 this.source.data[4*(this.source.width*i + j) + 0] = value;
                 this.source.data[4*(this.source.width*i + j) + 1] = value;
@@ -46,23 +48,120 @@ class GradientDemo extends React.Component {
             }
         }
 
-        this.processGradient();
+        this.process();
 
         this.setState({
             grid: this.source,
         });
     }
 
-    resize(){
-        if(innerWidth > 1000){
-            this.canvas.style.width = (innerWidth / 4)+'px';
+    /**
+     * Sets gradient demo with a horizontal line
+     */
+    setHorizontalLine(){
+
+        for(let i=0; i < this.source.height; i++){
+            for(let j=0; j < this.source.width; j++){
+
+                let value = Math.floor(Math.abs(Math.floor(this.source.height/2) - i) / Math.floor(this.source.height/2) * 206);
+
+                this.source.data[4*(this.source.width*i + j) + 0] = value;
+                this.source.data[4*(this.source.width*i + j) + 1] = value;
+                this.source.data[4*(this.source.width*i + j) + 2] = value;
+
+            }
         }
-        else{
-            this.canvas.style.width = (innerWidth - 30)+'px';
-        }
+
+        this.process();
+
+        this.setState({
+            grid: this.source,
+        });
     }
 
-    processGradient(){
+    /**
+     * Sets gradient demo with a horizontal line
+     */
+    setDiagonalLine(){
+
+        for(let i=0; i < this.source.height; i++){
+            for(let j=0; j < this.source.width; j++){
+
+                let value = Math.min(Math.abs(i - j) * 100, 255);
+
+                this.source.data[4*(this.source.width*i + j) + 0] = value;
+                this.source.data[4*(this.source.width*i + j) + 1] = value;
+                this.source.data[4*(this.source.width*i + j) + 2] = value;
+
+            }
+        }
+
+        this.process();
+
+        this.setState({
+            grid: this.source,
+        });
+    }
+
+    /**
+     * Set gradient demo with horizontal line gradient
+     */
+    setHorizontalGrad(){
+
+        for(let i=0; i < this.source.height; i++){
+            for(let j=0; j < this.source.width; j++){
+
+                let value = j * 40;
+
+                this.source.data[4*(this.source.width*i + j) + 0] = value;
+                this.source.data[4*(this.source.width*i + j) + 1] = value;
+                this.source.data[4*(this.source.width*i + j) + 2] = value;
+
+            }
+        }
+
+        this.process();
+
+        this.setState({
+            grid: this.source,
+        });
+    }
+
+    /**
+     * Set gradient demo with radial gradient
+     */
+    setRadialGrad(){
+
+        for(let i=0; i < this.source.height; i++){
+            for(let j=0; j < this.source.width; j++){
+
+                let value = Math.floor(Math.sqrt(Math.pow(i-this.source.centerRow, 2) + Math.pow(j-this.source.centerCol, 2)) * 50);
+
+                this.source.data[4*(this.source.width*i + j) + 0] = value;
+                this.source.data[4*(this.source.width*i + j) + 1] = value;
+                this.source.data[4*(this.source.width*i + j) + 2] = value;
+
+            }
+        }
+
+        this.process();
+
+        this.setState({
+            grid: this.source,
+        });
+    }
+
+    /**
+     * Canvas resize handler
+     */
+    resize(){
+        this.canvas.style.width = (innerWidth / 4)+'px';
+    }
+
+    /**
+     * Computes gradient and draws vector field
+     */
+    process(){
 
         this.canvas = document.getElementById('gradient-canvas');
         const context = this.canvas.getContext('2d');
@@ -115,7 +214,7 @@ class GradientDemo extends React.Component {
                     unit*j + halfUnit,
                     unit*i + halfUnit,
                     unit*j + halfUnit + quarterUnit*(sobelXData.data[4*(this.source.width*i + j) + 0] / mag),
-                    unit*i + halfUnit + quarterUnit*(sobelYData.data[4*(this.source.width*i + j) + 0] / mag),
+                    unit*i + halfUnit - quarterUnit*(sobelYData.data[4*(this.source.width*i + j) + 0] / mag),
                 );
                 context.stroke();
                 context.closePath();
@@ -150,7 +249,7 @@ class GradientDemo extends React.Component {
         }
 
         grid.data[grid.channels*(grid.width*row + col) + 0] = clampedValue;
-        this.processGradient();
+        this.process();
 
         this.setState({
             grid: this.source,
@@ -160,21 +259,25 @@ class GradientDemo extends React.Component {
     render(){
         
         return e('div', null, [
-            e('div', {key: 'control-row', className: 'row'},
-                e('div', {key: 'cell-1-1', className: 'btn btn-danger', onClick: ()=>this.reset()},
-                    e('i', {className: 'fas fa-undo'}, null)
-                )
-            ),
-            e('br', {key: 'space-1'}, null),
+            
             e('div', {key: 'display-row', className: 'row'}, [
-                e('div', {key: 'col-1', className: 'col-md-6'},
+                e('div', {key: 'col-1', className: 'col-md-6 col-xs-6'}, [
+                    e('div', {key: 'control-row', className: 'row'}, [
+                        e('div', {key: 'hori-btn', className: 'btn btn-danger', onClick: ()=>this.setHorizontalLine()}, '1'),
+                        e('div', {key: 'vert-btn', className: 'btn btn-danger', onClick: ()=>this.setVerticalLine()}, '2'),
+                        e('div', {key: 'diag-btn', className: 'btn btn-danger', onClick: ()=>this.setDiagonalLine()}, '3'),
+                        e('div', {key: 'diag-btn', className: 'btn btn-danger', onClick: ()=>this.setHorizontalGrad()}, '4'),
+                        e('div', {key: 'diag-btn', className: 'btn btn-danger', onClick: ()=>this.setRadialGrad()}, '5'),
+                    ]),
+                    e('br', {key: 'space-1'}, null),
                     e(GridInput, {
                         idBase: 'gradient-cell',
                         grid: this.source,
                         updateGridHandler: (v, i, j)=>this.updateData(this.source, v, i, j)
-                    }, null)
-                ),
-                e('div', {key: 'col-2', className: 'col-md-6'},
+                    }, null),
+                    
+                ]),
+                e('div', {key: 'col-2', className: 'col-md-6 col-xs-6'},
                     e('canvas', {
                         id: 'gradient-canvas',
                         width: 400,

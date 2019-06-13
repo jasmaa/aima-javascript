@@ -16,14 +16,14 @@ class Array2D {
      * Gets center row index
      */
 	get centerRow(){
-		return parseInt(this.height / 2);
+		return Math.floor(this.height / 2);
     }
     
     /**
      * Gets center column index
      */
 	get centerCol(){
-		return parseInt(this.width / 2);
+		return Math.floor(this.width / 2);
 	}
 }
 

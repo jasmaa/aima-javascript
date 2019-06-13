@@ -178,7 +178,7 @@ class ConvolutionMathDisplay extends React.Component {
     render(){
         return e('p', {
             style: {
-                margin: '5em 0em 5em 0em',
+                margin: '3vmax 0vmax 3vmax 0vmax',
             },
             align: 'center',
         }, this.renderNumList());
@@ -294,7 +294,7 @@ class ConvolutionDemo extends React.Component {
         return e('div', null, [
             e('br', {key: 'space'}, null),
             e('div', {key: 'top-row', className: 'row'}, [
-                e('div', {key: 'col-0', className: 'col-md-4'}, [
+                e('div', {key: 'col-0', className: 'col-md-4 col-xs-4'}, [
                     e('h4', {key: 'filter-header', align: 'center'}, "Filter"),
                     e(GridInput, {
                         key: 'filter-input',
@@ -304,13 +304,13 @@ class ConvolutionDemo extends React.Component {
                         updateGridHandler: (v, i, j)=>this.updateData(this.filter, v, i, j)
                     }, null)
                 ]),
-                e('div', {key: 'col-1', className: 'col-md-4'}, 
+                e('div', {key: 'col-1', className: 'col-md-4 col-xs-4'}, 
                     e(ConvolutionControl, {
                         moveHandler: (r, c)=>this.move(r, c),
                         resetHandler: ()=>this.reset(),
                     }, null)
                 ),
-                e('div', {key: 'col-2', className: 'col-md-4'}, [
+                e('div', {key: 'col-2', className: 'col-md-4 col-xs-4'}, [
                     e('h4', {key: 'source-header', align: 'center'}, "Source"),
                     e(GridInput, {
                         key: 'source-input',
@@ -321,7 +321,7 @@ class ConvolutionDemo extends React.Component {
                 ]),
             ]),
             e('div', {key: 'bottom-row', className: 'row'}, [
-                e('div', {key: 'col-0', className: 'col-md-4'}, [
+                e('div', {key: 'col-0', className: 'col-md-4 col-xs-4'}, [
                     e('h4', {key: 'applied-header', align: 'center'}, "Applied"),
                     e(ConvolutionGrid, {
                         key: 'applied-output',
@@ -331,7 +331,7 @@ class ConvolutionDemo extends React.Component {
                         source: this.source,
                     }, null)
                 ]),
-                e('div', {key: 'col-1', className: 'col-md-4'}, 
+                e('div', {key: 'col-1', className: 'col-md-4 col-xs-4'}, 
                     e(ConvolutionMathDisplay, {
                         key: 'math-display',
                         filter: this.filter,
@@ -340,7 +340,7 @@ class ConvolutionDemo extends React.Component {
                         source: this.source,
                     }, null)
                 ),
-                e('div', {key: 'col-2', className: 'col-md-4'}, [
+                e('div', {key: 'col-2', className: 'col-md-4 col-xs-4'}, [
                     e('h4', {key: 'res-header', align: 'center'}, "Result"),
                     e(ConvolutionResult, {
                         key: 'res-output',

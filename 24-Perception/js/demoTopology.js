@@ -13,7 +13,7 @@ class TopologyDemo extends React.Component {
     }
 
     resize(){
-        if(innerWidth > 1000){
+        if(innerWidth > 700){
             this.canvas.style.width = (innerWidth / 4)+'px';
             this.graphContainer.childNodes[0].style.width = (innerWidth / 4)+'px';
             this.graphContainer.childNodes[0].style.height = (innerWidth / 4)+'px';
@@ -94,7 +94,7 @@ class TopologyDemo extends React.Component {
             e('br', {key: 'space-1'}, null),
             e('br', {key: 'space-2'}, null),
             e('div', {key: 'display-row', className: 'row'}, [
-                e('div', {key: 'col-1', className: 'col-md-6 col-sm-7 col-xs-6'},
+                e('div', {key: 'col-1', className: 'col-md-6 col-xs-6'},
                     e('canvas', {
                         key: `${this.imageId}-canvas`,
                         id: `${this.imageId}-canvas`,
@@ -102,7 +102,7 @@ class TopologyDemo extends React.Component {
                         height: this.size,
                     }, null)
                 ),
-                e('div', {key: 'col-2', className: 'col-md-6 col-sm-7 col-xs-6'},
+                e('div', {key: 'col-2', className: 'col-md-6 col-xs-6'},
                     e('div', {
                         id: `${this.imageId}-topology`,
                     }, null)

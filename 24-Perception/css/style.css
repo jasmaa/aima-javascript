@@ -20,8 +20,8 @@
     display: grid;
     justify-content: center;
     align-content: center;
-    grid-template-columns: repeat(5, 3em);
-    grid-template-rows: repeat(5, 3em);
+    grid-template-columns: repeat(5, 3vmax);
+    grid-template-rows: repeat(5, 3vmax);
 }
 
 .square-grid-3 {

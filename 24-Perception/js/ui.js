@@ -36,7 +36,7 @@ class DisplayNumber extends React.Component {
         return e('span', {
             style: {
                 color: this.props.highlightColor,
-                fontSize: '1.7em',
+                fontSize: '1.7vmax',
             }
         }, this.props.value);
     }
@@ -77,8 +77,8 @@ class GridInput extends React.Component {
         return e('div', {
             className:'square-grid-base',
             style: {
-                gridTemplateColumns: `repeat(${this.props.grid.width}, 3em)`,
-                gridTemplateRows: `repeat(${this.props.grid.height}, 3em)`,
+                gridTemplateColumns: `repeat(${this.props.grid.width}, 3vmax)`,
+                gridTemplateRows: `repeat(${this.props.grid.height}, 3vmax)`,
             },
         },
             this.renderCells()
@@ -95,6 +95,7 @@ class GridInput extends React.Component {
 class ImageUploader extends React.Component {
 
     render(){
+        
         return e('div', null,
             e('label', {className: 'btn btn-success'}, [
                 e('input', {
