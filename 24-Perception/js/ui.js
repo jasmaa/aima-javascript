@@ -9,7 +9,9 @@ const e = React.createElement;
 class Cell extends React.Component {
 
     render(){
-        let bgColor = this.props.isHighlighted ? "red" : "white";
+        const highlightColor = this.props.highlightColor ? this.props.highlightColor : "red";
+
+        let bgColor = this.props.isHighlighted ? highlightColor : "white";
         let textColor = this.props.isHighlighted ? "white" : "black";
 
         return e('div', {
@@ -26,11 +28,27 @@ class Cell extends React.Component {
 }
 
 /**
+ * Displays colored number
+ */
+class DisplayNumber extends React.Component {
+
+    render(){
+        return e('span', {
+            style: {
+                color: this.props.highlightColor,
+                fontSize: '1.7em',
+            }
+        }, this.props.value);
+    }
+}
+
+/**
  * Grid input grid
  */
 class GridInput extends React.Component {
 
     renderCells(){
+
         let cells = [];
 
         for(let i=0; i < this.props.grid.height; i++){
@@ -40,6 +58,9 @@ class GridInput extends React.Component {
                     key: `cell-${i}-${j}`,
                     className: 'square',
                     id: `${this.props.idBase}-${i}-${j}`,
+                    style: {
+                        backgroundColor: this.props.gridColor ? this.props.gridColor.data[this.props.gridColor.channels*(this.props.gridColor.width*i + j) + 0] : "white",
+                    },
                     value: this.props.grid.data[this.props.grid.channels*(this.props.grid.width*i + j) + 0],
                     onInput: ()=>this.props.updateGridHandler(
                         document.getElementById(`${this.props.idBase}-${i}-${j}`).value, i, j
@@ -67,7 +88,9 @@ class GridInput extends React.Component {
 
 /**
  * Upload image button
- * Image added to DOM and processed
+ * 
+ * Provides button for uploading image to document
+ * and processing it
  */
 class ImageUploader extends React.Component {
 
@@ -85,7 +108,7 @@ class ImageUploader extends React.Component {
                         document.body.style.opacity = '0.3';
                         readURL(`${this.props.imageId}-img`, document.getElementById(`${this.props.imageId}-input`))
                             .then((result) => this.props.processHandler())
-                            .then((result)=>{
+                            .finally(()=>{
                                 document.body.style.opacity = '';
                             });
                     },

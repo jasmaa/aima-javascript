@@ -123,8 +123,12 @@ function convolve(source, filter, defaultValue=255){
  */
 function stretchColor(source){
 
-    let max = Math.max(...source.data);
-    let min = Math.min(...source.data);
+    let max = source.data.reduce(function(a, b) {
+        return Math.max(a, b);
+    });
+    let min = source.data.reduce(function(a, b) {
+        return Math.min(a, b);
+    });
 
     for(let i=0; i < source.height; i++){
         for(let j=0; j < source.width; j++){

@@ -58,9 +58,9 @@ class ConvolutionGrid extends React.Component {
                                         j <= this.props.filterLocation.col + this.props.filter.centerCol;
 
                 let value = this.props.source.data[4*(this.props.source.width*i + j) + 0];
+                let filterRow = this.props.filter.height - (i - this.props.filterLocation.row + this.props.filter.centerRow) - 1;
+                let filterCol = this.props.filter.width - (j - this.props.filterLocation.col + this.props.filter.centerCol) - 1;
                 if(isWithinFilter){
-                    let filterRow = this.props.filter.height - (i - this.props.filterLocation.row + this.props.filter.centerRow) - 1;
-                    let filterCol = this.props.filter.width - (j - this.props.filterLocation.col + this.props.filter.centerCol) - 1;
                     value *= this.props.filter.data[this.props.filter.width*filterRow + filterCol];
                 }
 
@@ -68,6 +68,7 @@ class ConvolutionGrid extends React.Component {
                     key: `cell-${i}-${j}`,
                     value: value,
                     isHighlighted: isWithinFilter,
+                    highlightColor: this.props.filterColor.data[this.props.filterColor.width*filterRow + filterCol],
                 }, null));
             }
         }
@@ -117,6 +118,74 @@ class ConvolutionControl extends React.Component {
 }
 
 /**
+ * Displays weighted sum operation
+ */
+class ConvolutionMathDisplay extends React.Component {
+
+    renderNumList(){
+        let nums = []
+
+        let res = 0;
+        for(let i=0; i < this.props.source.height; i++){
+            for(let j=0; j < this.props.source.width; j++){
+
+                // Highlight cells
+                let isWithinFilter =    i >= this.props.filterLocation.row - this.props.filter.centerRow &&
+                                        i <= this.props.filterLocation.row + this.props.filter.centerRow &&
+                                        j >= this.props.filterLocation.col - this.props.filter.centerCol &&
+                                        j <= this.props.filterLocation.col + this.props.filter.centerCol;
+
+                let value = this.props.source.data[4*(this.props.source.width*i + j) + 0];
+                if(isWithinFilter){
+                    let filterRow = this.props.filter.height - (i - this.props.filterLocation.row + this.props.filter.centerRow) - 1;
+                    let filterCol = this.props.filter.width - (j - this.props.filterLocation.col + this.props.filter.centerCol) - 1;
+                    let weight = this.props.filter.data[this.props.filter.width*filterRow + filterCol];
+                    res += value * weight;
+
+                    nums.push(e(DisplayNumber, {
+                        value: weight,
+                        highlightColor: this.props.filterColor.data[this.props.filterColor.width*filterRow + filterCol],
+                    }, null));
+                    nums.push(e(DisplayNumber, {
+                        value: '×',
+                        highlightColor: 'black',
+                    }, null));
+                    nums.push(e(DisplayNumber, {
+                        value: value,
+                        highlightColor: 'black',
+                    }, null));
+                    nums.push(e(DisplayNumber, {
+                        value: ' + ',
+                        highlightColor: 'black',
+                    }, null));
+                    
+                }
+            }
+        }
+
+        nums.pop();
+        nums.push(e(DisplayNumber, {
+            value: ' = ',
+            highlightColor: 'black',
+        }, null));
+        nums.push(e(DisplayNumber, {
+            value: res,
+            highlightColor: 'red',
+        }, null));
+        return nums;
+    }
+
+    render(){
+        return e('p', {
+            style: {
+                margin: '5em 0em 5em 0em',
+            },
+            align: 'center',
+        }, this.renderNumList());
+    }
+}
+
+/**
  * Top-level convolution demo
  */
 class ConvolutionDemo extends React.Component {
@@ -159,6 +228,12 @@ class ConvolutionDemo extends React.Component {
             1, 2, 1
         ], 3, 3);
         this.filterLocation = {row: 0, col: 0};
+
+        this.filterColor = new Array2D([
+            'orange', 'darkGrey', 'darkGrey',
+            'darkGrey', 'darkGrey', 'darkGrey',
+            'darkGrey', 'darkGrey', 'lightBlue',
+        ], 3, 3);
 
         // Generate 5x5 array2d of random values
         let src = Array.from({length: 4*5*5}, ()=>0);
@@ -225,6 +300,7 @@ class ConvolutionDemo extends React.Component {
                         key: 'filter-input',
                         idBase: 'convolution-filter-cell',
                         grid: this.filter,
+                        gridColor: this.filterColor,
                         updateGridHandler: (v, i, j)=>this.updateData(this.filter, v, i, j)
                     }, null)
                 ]),
@@ -245,16 +321,26 @@ class ConvolutionDemo extends React.Component {
                 ]),
             ]),
             e('div', {key: 'bottom-row', className: 'row'}, [
-                e('div', {key: 'col-0', className: 'col-md-6'}, [
+                e('div', {key: 'col-0', className: 'col-md-4'}, [
                     e('h4', {key: 'applied-header', align: 'center'}, "Applied"),
                     e(ConvolutionGrid, {
                         key: 'applied-output',
                         filter: this.filter,
+                        filterColor: this.filterColor,
                         filterLocation: this.filterLocation,
                         source: this.source,
                     }, null)
                 ]),
-                e('div', {key: 'col-1', className: 'col-md-6'}, [
+                e('div', {key: 'col-1', className: 'col-md-4'}, 
+                    e(ConvolutionMathDisplay, {
+                        key: 'math-display',
+                        filter: this.filter,
+                        filterColor: this.filterColor,
+                        filterLocation: this.filterLocation,
+                        source: this.source,
+                    }, null)
+                ),
+                e('div', {key: 'col-2', className: 'col-md-4'}, [
                     e('h4', {key: 'res-header', align: 'center'}, "Result"),
                     e(ConvolutionResult, {
                         key: 'res-output',
