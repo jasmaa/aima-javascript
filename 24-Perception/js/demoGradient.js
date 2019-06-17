@@ -9,7 +9,7 @@ class GradientDemo extends React.Component {
         super(props);
 
         // Generate source array2d
-        let size = 7;
+        const size = 7;
         let src = Array.from({length: 4*size*size}, ()=>0);
 
         for(let i=0; i < size; i++){
@@ -166,9 +166,9 @@ class GradientDemo extends React.Component {
         this.canvas = document.getElementById('gradient-canvas');
         const context = this.canvas.getContext('2d');
 
-        let unit = Math.floor(this.canvas.width / this.source.height);
-        let halfUnit = Math.floor(unit / 2);
-        let quarterUnit = Math.floor(halfUnit / 2);
+        const unit = Math.floor(this.canvas.width / this.source.height);
+        const halfUnit = Math.floor(unit / 2);
+        const quarterUnit = Math.floor(halfUnit / 2);
 
         context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
@@ -258,26 +258,38 @@ class GradientDemo extends React.Component {
 
     render(){
         
-        return e('div', null, [
-            
+        return e('div', null,
             e('div', {key: 'display-row', className: 'row'}, [
-                e('div', {key: 'col-1', className: 'col-md-6 col-xs-6'}, [
-                    e('div', {key: 'control-row', className: 'row'}, [
-                        e('div', {key: 'hori-btn', className: 'btn btn-danger', onClick: ()=>this.setHorizontalLine()}, '1'),
-                        e('div', {key: 'vert-btn', className: 'btn btn-danger', onClick: ()=>this.setVerticalLine()}, '2'),
-                        e('div', {key: 'diag-btn', className: 'btn btn-danger', onClick: ()=>this.setDiagonalLine()}, '3'),
-                        e('div', {key: 'diag-btn', className: 'btn btn-danger', onClick: ()=>this.setHorizontalGrad()}, '4'),
-                        e('div', {key: 'diag-btn', className: 'btn btn-danger', onClick: ()=>this.setRadialGrad()}, '5'),
+                e('div', {key: 'col-1', className: 'col-xs-6'}, [
+                    e('div', {key: 'control-row', className: 'row', style: {textAlign: 'center'}},  [
+                        e('div', {key: 'col-0', className: 'col-xs-1'}, null),
+                        e('div', {key: 'col-1', className: 'col-xs-2'},
+                            e('div', {className: 'btn btn-danger', onClick: ()=>this.setHorizontalLine()}, '1'),
+                        ),
+                        e('div', {key: 'col-2', className: 'col-xs-2'},
+                            e('div', {className: 'btn btn-danger', onClick: ()=>this.setVerticalLine()}, '2'),
+                        ),
+                        e('div', {key: 'col-3', className: 'col-xs-2'},
+                            e('div', {className: 'btn btn-danger', onClick: ()=>this.setDiagonalLine()}, '3'),
+                        ),
+                        e('div', {key: 'col-4', className: 'col-xs-2'},
+                            e('div', {className: 'btn btn-danger', onClick: ()=>this.setHorizontalGrad()}, '4'),
+                        ),
+                        e('div', {key: 'col-5', className: 'col-xs-2'},
+                            e('div', {className: 'btn btn-danger', onClick: ()=>this.setRadialGrad()}, '5'),
+                        ),
+                        e('div', {key: 'col-6', className: 'col-xs-1'}, null),
                     ]),
-                    e('br', {key: 'space-1'}, null),
+                    e('br', {key: 'space'}, null),
                     e(GridInput, {
+                        key: 'gradient-input',
                         idBase: 'gradient-cell',
                         grid: this.source,
                         updateGridHandler: (v, i, j)=>this.updateData(this.source, v, i, j)
                     }, null),
                     
                 ]),
-                e('div', {key: 'col-2', className: 'col-md-6 col-xs-6'},
+                e('div', {key: 'col-2', className: 'col-xs-6'},
                     e('canvas', {
                         id: 'gradient-canvas',
                         width: 400,
@@ -285,7 +297,7 @@ class GradientDemo extends React.Component {
                     }, null)
                 ),
             ])
-        ]);
+        );
     }
 
 }

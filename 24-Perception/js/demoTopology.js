@@ -91,8 +91,8 @@ class TopologyDemo extends React.Component {
                     }, null)
                 )
             ),
+            e('br', {key: 'space-0'}, null),
             e('br', {key: 'space-1'}, null),
-            e('br', {key: 'space-2'}, null),
             e('div', {key: 'display-row', className: 'row'}, [
                 e('div', {key: 'col-1', className: 'col-md-6 col-xs-6'},
                     e('canvas', {

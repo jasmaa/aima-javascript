@@ -143,32 +143,37 @@ class ConvolutionMathDisplay extends React.Component {
                     res += value * weight;
 
                     nums.push(e(DisplayNumber, {
+                        key: `num-${i}-${j}-weight`,
                         value: weight,
                         highlightColor: this.props.filterColor.data[this.props.filterColor.width*filterRow + filterCol],
                     }, null));
                     nums.push(e(DisplayNumber, {
+                        key: `num-${i}-${j}-mult`,
                         value: '×',
                         highlightColor: 'black',
                     }, null));
                     nums.push(e(DisplayNumber, {
+                        key: `num-${i}-${j}-value`,
                         value: value,
                         highlightColor: 'black',
                     }, null));
                     nums.push(e(DisplayNumber, {
+                        key: `num-${i}-${j}-plus`,
                         value: ' + ',
                         highlightColor: 'black',
                     }, null));
-                    
                 }
             }
         }
 
         nums.pop();
         nums.push(e(DisplayNumber, {
+            key: 'equals',
             value: ' = ',
             highlightColor: 'black',
         }, null));
         nums.push(e(DisplayNumber, {
+            key: 'res',
             value: res,
             highlightColor: 'red',
         }, null));
@@ -294,7 +299,7 @@ class ConvolutionDemo extends React.Component {
         return e('div', null, [
             e('br', {key: 'space'}, null),
             e('div', {key: 'top-row', className: 'row'}, [
-                e('div', {key: 'col-0', className: 'col-md-4 col-xs-4'}, [
+                e('div', {key: 'col-0', className: 'col-xs-4'}, [
                     e('h4', {key: 'filter-header', align: 'center'}, "Filter"),
                     e(GridInput, {
                         key: 'filter-input',
@@ -304,13 +309,13 @@ class ConvolutionDemo extends React.Component {
                         updateGridHandler: (v, i, j)=>this.updateData(this.filter, v, i, j)
                     }, null)
                 ]),
-                e('div', {key: 'col-1', className: 'col-md-4 col-xs-4'}, 
+                e('div', {key: 'col-1', className: 'col-xs-4'}, 
                     e(ConvolutionControl, {
                         moveHandler: (r, c)=>this.move(r, c),
                         resetHandler: ()=>this.reset(),
                     }, null)
                 ),
-                e('div', {key: 'col-2', className: 'col-md-4 col-xs-4'}, [
+                e('div', {key: 'col-2', className: 'col-xs-4'}, [
                     e('h4', {key: 'source-header', align: 'center'}, "Source"),
                     e(GridInput, {
                         key: 'source-input',
@@ -321,7 +326,7 @@ class ConvolutionDemo extends React.Component {
                 ]),
             ]),
             e('div', {key: 'bottom-row', className: 'row'}, [
-                e('div', {key: 'col-0', className: 'col-md-4 col-xs-4'}, [
+                e('div', {key: 'col-0', className: 'col-xs-4'}, [
                     e('h4', {key: 'applied-header', align: 'center'}, "Applied"),
                     e(ConvolutionGrid, {
                         key: 'applied-output',
@@ -331,7 +336,7 @@ class ConvolutionDemo extends React.Component {
                         source: this.source,
                     }, null)
                 ]),
-                e('div', {key: 'col-1', className: 'col-md-4 col-xs-4'}, 
+                e('div', {key: 'col-1', className: 'col-xs-4'}, 
                     e(ConvolutionMathDisplay, {
                         key: 'math-display',
                         filter: this.filter,
@@ -340,7 +345,7 @@ class ConvolutionDemo extends React.Component {
                         source: this.source,
                     }, null)
                 ),
-                e('div', {key: 'col-2', className: 'col-md-4 col-xs-4'}, [
+                e('div', {key: 'col-2', className: 'col-xs-4'}, [
                     e('h4', {key: 'res-header', align: 'center'}, "Result"),
                     e(ConvolutionResult, {
                         key: 'res-output',

@@ -91,8 +91,8 @@ class SobelImageDemo extends React.Component {
                     }, null)
                 )
             ),
+            e('br', {key: 'space-0'}, null),
             e('br', {key: 'space-1'}, null),
-            e('br', {key: 'space-2'}, null),
             e('canvas', {
                 key: `${this.imageId}-canvas`,
                 id: `${this.imageId}-canvas`,

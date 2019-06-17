@@ -58,6 +58,7 @@ class GridInput extends React.Component {
                     key: `cell-${i}-${j}`,
                     className: 'square',
                     id: `${this.props.idBase}-${i}-${j}`,
+                    type: 'text',
                     style: {
                         backgroundColor: this.props.gridColor ? this.props.gridColor.data[this.props.gridColor.channels*(this.props.gridColor.width*i + j) + 0] : "white",
                     },
