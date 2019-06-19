@@ -52,3 +52,16 @@
 .demo-card {
     padding: 2% 2% 2% 2%;
 }
+
+.scene-3d {
+    width: 30vmax;
+    height: 30vmax;
+    perspective: 30vmax;
+    perspective-origin: 50% 50%;
+    transform-style: preserve-3d;
+}
+
+.panel-3d {
+	position: absolute;
+    opacity: 0.6;
+}

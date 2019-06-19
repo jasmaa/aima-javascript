@@ -63,7 +63,7 @@ function grayscale(source){
     for(let i=0; i < source.height; i++){
         for(let j=0; j < source.width; j++){
             let index = 4*(source.width*i + j);
-            let avg = (source.data[index + 0] + source.data[index + 1] + source.data[index + 2]) / 3;
+            let avg = Math.floor((source.data[index + 0] + source.data[index + 1] + source.data[index + 2]) / 3);
             source.data[index + 0] = avg;
             source.data[index + 1] = avg;
             source.data[index + 2] = avg;

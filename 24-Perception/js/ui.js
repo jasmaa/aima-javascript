@@ -10,9 +10,10 @@ class Cell extends React.Component {
 
     render(){
         const highlightColor = this.props.highlightColor ? this.props.highlightColor : "red";
+        const highlightTextColor = this.props.highlightTextColor ? this.props.highlightTextColor : "white";
 
-        let bgColor = this.props.isHighlighted ? highlightColor : "white";
-        let textColor = this.props.isHighlighted ? "white" : "black";
+        let bgColor = this.props.isHighlighted ? highlightColor : this.props.bgColor;
+        let textColor = this.props.isHighlighted ? highlightTextColor : "black";
 
         return e('div', {
                 className:'square',

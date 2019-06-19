@@ -23,6 +23,7 @@ class ConvolutionResult extends React.Component {
                     key: `cell-${i}-${j}`,
                     value: value,
                     isHighlighted: isTarget,
+                    bgColor: 'white',
                 }, null));
             }
         }
@@ -69,6 +70,7 @@ class ConvolutionGrid extends React.Component {
                     value: value,
                     isHighlighted: isWithinFilter,
                     highlightColor: this.props.filterColor.data[this.props.filterColor.width*filterRow + filterCol],
+                    bgColor: 'white',
                 }, null));
             }
         }
