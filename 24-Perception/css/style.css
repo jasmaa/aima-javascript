@@ -56,7 +56,6 @@
 .scene-3d {
     height: 36vmax;
     transform-style: preserve-3d;
-
     //perspective: 30vmax;
 }
 

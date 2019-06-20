@@ -128,3 +128,35 @@ class ImageUploader extends React.Component {
         );
     }
 }
+
+/**
+ * Control panel for moving position
+ */
+class PositionControl extends React.Component {
+
+    render(){
+        return e('div', {
+            className:'square-grid-3'
+        },[
+            e('div', {key: 'cell-0-0'}, null),
+            e('div', {key: 'cell-0-1', className: 'btn btn-primary', onClick: ()=>this.props.moveHandler(-1, 0)},
+                e('i', {className: 'fas fa-arrow-up'}, null)
+            ),
+            e('div', {key: 'cell-0-2'}, null),
+            e('div', {key: 'cell-1-0', className: 'btn btn-primary', onClick: ()=>this.props.moveHandler(0, -1)},
+                e('i', {className: 'fas fa-arrow-left'}, null)
+            ),
+            e('div', {key: 'cell-1-1', className: 'btn btn-danger', onClick: ()=>this.props.resetHandler()},
+                e('i', {className: 'fas fa-undo'}, null)
+            ),
+            e('div', {key: 'cell-1-2', className: 'btn btn-primary', onClick: ()=>this.props.moveHandler(0, 1)},
+                e('i', {className: 'fas fa-arrow-right'}, null)
+            ),
+            e('div', {key: 'cell-2-0'}, null),
+            e('div', {key: 'cell-2-1', className: 'btn btn-primary', onClick: ()=>this.props.moveHandler(1, 0)},
+                e('i', {className: 'fas fa-arrow-down'}, null)
+            ),
+            e('div', {key: 'cell-2-2'}, null),
+        ]);
+    }
+}
