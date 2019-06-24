@@ -259,44 +259,43 @@ class GradientDemo extends React.Component {
     render(){
         
         return e('div', null,
-            e('div', {key: 'display-row', className: 'row'}, [
-                e('div', {key: 'col-1', className: 'col-xs-6'}, [
-                    e('div', {key: 'control-row', className: 'row', style: {textAlign: 'center'}},  [
-                        e('div', {key: 'col-0', className: 'col-xs-1'}, null),
-                        e('div', {key: 'col-1', className: 'col-xs-2'},
+            e('div', {className: 'row'},
+                e('div', {className: 'col-xs-6'},
+                    e('div', {className: 'row', style: {textAlign: 'center'}},
+                        e('div', {className: 'col-xs-1'}, null),
+                        e('div', {className: 'col-xs-2'},
                             e('div', {className: 'btn btn-danger', onClick: ()=>this.setHorizontalLine()}, '1'),
                         ),
-                        e('div', {key: 'col-2', className: 'col-xs-2'},
+                        e('div', {className: 'col-xs-2'},
                             e('div', {className: 'btn btn-danger', onClick: ()=>this.setVerticalLine()}, '2'),
                         ),
-                        e('div', {key: 'col-3', className: 'col-xs-2'},
+                        e('div', {className: 'col-xs-2'},
                             e('div', {className: 'btn btn-danger', onClick: ()=>this.setDiagonalLine()}, '3'),
                         ),
-                        e('div', {key: 'col-4', className: 'col-xs-2'},
+                        e('div', {className: 'col-xs-2'},
                             e('div', {className: 'btn btn-danger', onClick: ()=>this.setHorizontalGrad()}, '4'),
                         ),
-                        e('div', {key: 'col-5', className: 'col-xs-2'},
+                        e('div', {className: 'col-xs-2'},
                             e('div', {className: 'btn btn-danger', onClick: ()=>this.setRadialGrad()}, '5'),
                         ),
-                        e('div', {key: 'col-6', className: 'col-xs-1'}, null),
-                    ]),
-                    e('br', {key: 'space'}, null),
+                        e('div', {className: 'col-xs-1'}, null),
+                    ),
+                    e('br', null, null),
                     e(GridInput, {
-                        key: 'gradient-input',
                         idBase: 'gradient-cell',
                         grid: this.source,
                         updateGridHandler: (v, i, j)=>this.updateData(this.source, v, i, j)
                     }, null),
                     
-                ]),
-                e('div', {key: 'col-2', className: 'col-xs-6'},
+                ),
+                e('div', {className: 'col-xs-6'},
                     e('canvas', {
                         id: 'gradient-canvas',
                         width: 400,
                         height: 400,
                     }, null)
                 ),
-            ])
+            )
         );
     }
 

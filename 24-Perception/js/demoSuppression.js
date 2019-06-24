@@ -1,3 +1,4 @@
+// Non-maximum suppression demo UI
 
 /**
  * Top level non-maximum suppression demo
@@ -149,27 +150,25 @@ class SuppressionDemo extends React.Component {
 
     render(){
         return e('div', null, 
-            e('div', {key: 'display-row', className: 'row'}, [
-                e('div', {key: 'col-1', className: 'col-xs-6'},
+            e('div', {className: 'row'},
+                e('div', {className: 'col-xs-6'},
                     e(GridInput, {
-                        key: 'suppression-input',
                         idBase: 'suppression-cell',
                         grid: this.source,
                         updateGridHandler: (v, i, j)=>this.updateData(this.source, v, i, j)
                     }, null)
                 ),
-                e('div', {key: 'col-2', className: 'col-xs-6'},
+                e('div', {className: 'col-xs-6'},
                     e('canvas', {
                         id: 'suppression-canvas',
                         width: 400,
                         height: 400,
                     }, null)
                 ),
-            ])
+            )
         );
     }
 }
-
 
 // Render elements
 ReactDOM.render(

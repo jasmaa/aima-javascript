@@ -1,7 +1,7 @@
-// 3D demonstration of edge detection pipeline
+// Edge detection 3D pipeline UI
 
 /**
- * Indicator prism for pipeline demo
+ * Pipeline demo indicator prism
  */
 class PipelineIndicator extends React.Component {
 
@@ -90,7 +90,7 @@ class PipelineIndicator extends React.Component {
 }
 
 /**
- * 3D grid for pipeline demo
+ * Pipeline demo grid
  */
 class PipelineGrid extends React.Component {
 
@@ -128,7 +128,8 @@ class PipelineGrid extends React.Component {
                     isHighlighted: i == this.props.position.row && j == this.props.position.col,
                     highlightTextColor: 'coral',
                     highlightColor: 'magenta',
-                    bgColor: `rgb(${r}, ${g}, ${b})`
+                    bgColor: `rgb(${r}, ${g}, ${b})`,
+                    handleMouseOver: this.props.handleMouseOver ? ()=>this.props.handleMouseOver(i, j) : null,
                 }, null));
             }
         }
@@ -192,12 +193,45 @@ class PipelineGrid extends React.Component {
             gridBase = this.renderFilter(this.props.grid, this.props.filter);
         }
 
+        return gridBase;
+    }
+}
+
+/**
+ * Pipline demo 3D grid
+ */
+class PipelineGrid3D extends React.Component {
+    render(){
         return e('div', {
             className: 'panel-3d',
             style: {
                 transform: `${this.props.rotStr} translateZ(${this.props.xOffset}vmax) translateY(${this.props.yOffset}vmax)`,
             }
-        }, gridBase);
+        },
+            e(PipelineGrid, {renderType: this.props.renderType, grid: this.props.grid, filter: this.props.filter,
+                channel: this.props.channel, gridUnit: this.props.gridUnit, position: this.props.position}, null),
+        );
+    }
+}
+
+/**
+ * Pipeline demo 3D label
+ */
+class PipelineLabel extends React.Component {
+    render(){
+
+        const panel = e('div', {style: {
+            width: `${this.props.size * this.props.gridUnit}vmax`,
+            height: `${this.props.size * this.props.gridUnit}vmax`,
+        }}, this.props.content);
+
+        return e('div', {
+            className: 'panel-3d',
+            style: {
+                transform: `${this.props.rotStr} translateZ(${this.props.xOffset}vmax)
+                            translateY(${this.props.yOffset}vmax) translateX(${this.props.size * this.props.gridUnit + 1}vmax)`,
+            }
+        }, panel);
     }
 }
 
@@ -314,164 +348,133 @@ class PipelineGrid extends React.Component {
         });
     }
 
+    /**
+     * Updates position when cell is moused over
+     * @param {integer} row 
+     * @param {integer} col 
+     */
+    handleMouseOver(row, col){
+        this.position.row = row;
+        this.position.col = col;
+
+        //Re-render
+        this.setState({
+            colorSource: this.colorSource,
+            position: this.position,
+        });
+    }
+
     render(){
 
         const rotStr = `rotateX(-45deg) rotateY(45deg)`;    // Rotation to display grids isometrically
         const xDistUnit = this.gridUnit * this.size;        // Frontal unit distance of grids
         const center = 18 - (this.size*this.gridUnit) / 2;  // Distance to center of container
+        const xStart = -5;                                  // Starting x offset
 
-        return e('div', null, [
+        const scene = e('div', {className: 'scene-3d'},
+            // === Indicator prisms ===
+            e(PipelineIndicator, {gridUnit: this.gridUnit, size: this.size, rotStr: rotStr,
+                xOffset: xStart+0*xDistUnit, yOffset: center, position: this.position}, null),
+            e(PipelineIndicator, {gridUnit: this.gridUnit, size: this.size, rotStr: rotStr,
+                xOffset: xStart+1*xDistUnit, yOffset: center, position: this.position}, null),
+            e(PipelineIndicator, {gridUnit: this.gridUnit, size: this.size, rotStr: rotStr,
+                xOffset: xStart+2*xDistUnit, yOffset: center, position: this.position}, null),
+            e(PipelineIndicator, {gridUnit: this.gridUnit, size: this.size, rotStr: rotStr,
+                xOffset: xStart+3*xDistUnit, yOffset: center, position: this.position}, null),
 
-            e(ImageUploader, {
-                imageId: this.imageId,
-                defaultImage: 'images/test-16.png',
-                processHandler: () => this.process(),
+            // === Grids ===
+            // Color
+            e(PipelineGrid3D, {renderType: 0, grid: this.colorSource, channel: -1, gridUnit: this.gridUnit,
+                rotStr: rotStr, xOffset: xStart, yOffset: center, position: this.position}, null),
+            // RGB
+            e(PipelineGrid3D, {renderType: 0, grid: this.colorSource, channel: 0, gridUnit: this.gridUnit,
+                rotStr: rotStr, xOffset: xStart+1*xDistUnit + 0, yOffset: center, position: this.position}, null),
+            e(PipelineGrid3D, {renderType: 0, grid: this.colorSource, channel: 1, gridUnit: this.gridUnit,
+                rotStr: rotStr, xOffset: xStart+1*xDistUnit + 1, yOffset: center, position: this.position,
             }, null),
+            e(PipelineGrid3D, {renderType: 0, grid: this.colorSource, channel: 2, gridUnit: this.gridUnit,
+                rotStr: rotStr, xOffset: xStart+1*xDistUnit + 2, yOffset: center, position: this.position}, null),
+            // Filter applied
+            e(PipelineGrid3D, {renderType: 0, grid: this.source, channel: -1, gridUnit: this.gridUnit,
+                rotStr: rotStr, xOffset: xStart+2*xDistUnit, yOffset: center, position: this.position}, null),
+            e(PipelineGrid3D, {renderType: 1, grid: this.source, filter: this.filter, gridUnit: this.gridUnit,
+                rotStr: rotStr, xOffset: xStart+2*xDistUnit, yOffset: center, position: this.position}, null),
+            // Sobel
+            e(PipelineGrid3D, {renderType: 0, grid: this.sobelXData, channel: -1, gridUnit: this.gridUnit,
+                rotStr: rotStr, xOffset: xStart+3*xDistUnit, yOffset: center, position: this.position}, null),
+            e(PipelineGrid3D, {renderType: 0, grid: this.sobelYData, channel: -1, gridUnit: this.gridUnit,
+                rotStr: rotStr, xOffset: xStart+3*xDistUnit + 1, yOffset: center, position: this.position}, null),
+            // Gradient
+            e(PipelineGrid3D, {renderType: 0, grid: this.grads, channel: -1, gridUnit: this.gridUnit,
+                rotStr: rotStr, xOffset: xStart+4*xDistUnit, yOffset: center, position: this.position}, null),
 
-            e(PositionControl, {
-                moveHandler: (r, c)=>this.moveIndicator(r, c),
-                resetHandler: ()=>this.resetIndicator(),
+            // === Labels ===
+            e(PipelineLabel, {gridUnit: this.gridUnit, size: this.size, rotStr: rotStr,
+                xOffset: xStart+0*xDistUnit, yOffset: center,
+                content: e('strong', null, 'Color'),
             }, null),
+            e(PipelineLabel, {gridUnit: this.gridUnit, size: this.size, rotStr: rotStr,
+                xOffset: xStart+1*xDistUnit, yOffset: center,
+                content: e('strong', null, 'RGB'),
+            }, null),
+            e(PipelineLabel, {gridUnit: this.gridUnit, size: this.size, rotStr: rotStr,
+                xOffset: xStart+2*xDistUnit, yOffset: center,
+
+                content: e('strong', null, 'Filter Application on Grayscale'),
+            }, null),
+            e(PipelineLabel, {gridUnit: this.gridUnit, size: this.size, rotStr: rotStr,
+                xOffset: xStart+3*xDistUnit, yOffset: center,
+                content: e('strong', null, 'Sobel X and Y'),
+            }, null),
+            e(PipelineLabel, {gridUnit: this.gridUnit, size: this.size, rotStr: rotStr,
+                xOffset: xStart+4*xDistUnit, yOffset: center,
+                content: e('strong', null, 'Gradients'),
+            }, null),
+        );
+
+        return e('div', null,
 
             e('canvas', {
-                key: `${this.imageId}-canvas`,
                 id: `${this.imageId}-canvas`,
                 width: this.size,
                 height: this.size,
                 hidden: true,
             }, null),
 
-            e('div', {className: 'scene-3d'}, [
-                e(PipelineIndicator, {
-                    gridUnit: this.gridUnit,
-                    size: this.size,
-                    rotStr: rotStr,
-                    xOffset: 0*xDistUnit,
-                    yOffset: center,
-                    position: this.position
-                }, null),
-                e(PipelineIndicator, {
-                    gridUnit: this.gridUnit,
-                    size: this.size,
-                    rotStr: rotStr,
-                    xOffset: 1*xDistUnit,
-                    yOffset: center,
-                    position: this.position
-                }, null),
-                e(PipelineIndicator, {
-                    gridUnit: this.gridUnit,
-                    size: this.size,
-                    rotStr: rotStr,
-                    xOffset: 2*xDistUnit,
-                    yOffset: center,
-                    position: this.position
-                }, null),
-                e(PipelineIndicator, {
-                    gridUnit: this.gridUnit,
-                    size: this.size,
-                    rotStr: rotStr,
-                    xOffset: 3*xDistUnit,
-                    yOffset: center,
-                    position: this.position
-                }, null),
+            e('div', {className: 'row'},
+                e('div', {className: 'col-xs-12'},
+                    e(ImageUploader, {
+                        imageId: this.imageId,
+                        defaultImage: 'images/test-16.png',
+                        processHandler: () => this.process(),
+                    }, null)
+                )
+            ),
+            
+            e('br', null, null),
+            e('div', {className: 'row'},
 
-                e(PipelineGrid, {
-                    renderType: 0,
-                    grid: this.colorSource,
-                    channel: -1,
-                    gridUnit: this.gridUnit,
-                    rotStr: rotStr,
-                    xOffset: 0,
-                    yOffset: center,
-                    position: this.position,
-                }, null),
+                e('div', {className: 'col-xs-9'},
+                    e('div', {className: 'jumbotron col-xs-12'},
+                        scene
+                    )
+                ),
 
-
-                e(PipelineGrid, {
-                    renderType: 0,
-                    grid: this.colorSource,
-                    channel: 0,
-                    gridUnit: this.gridUnit,
-                    rotStr: rotStr,
-                    xOffset: 1*xDistUnit + 0,
-                    yOffset: center,
-                    position: this.position,
-                }, null),
-                e(PipelineGrid, {
-                    renderType: 0,
-                    grid: this.colorSource,
-                    channel: 1,
-                    gridUnit: this.gridUnit,
-                    rotStr: rotStr,
-                    xOffset: 1*xDistUnit + 1,
-                    yOffset: center,
-                    position: this.position,
-                }, null),
-                e(PipelineGrid, {
-                    renderType: 0,
-                    grid: this.colorSource,
-                    channel: 2,
-                    gridUnit: this.gridUnit,
-                    rotStr: rotStr,
-                    xOffset: 1*xDistUnit + 2,
-                    yOffset: center,
-                    position: this.position,
-                }, null),
-                
-                e(PipelineGrid, {
-                    renderType: 0,
-                    grid: this.source,
-                    channel: -1,
-                    gridUnit: this.gridUnit,
-                    rotStr: rotStr,
-                    xOffset: 2*xDistUnit,
-                    yOffset: center,
-                    position: this.position,
-                }, null),
-                e(PipelineGrid, {
-                    renderType: 1,
-                    grid: this.source,
-                    filter: this.filter,
-                    gridUnit: this.gridUnit,
-                    rotStr: rotStr,
-                    xOffset: 2*xDistUnit,
-                    yOffset: center,
-                    position: this.position,
-                }, null),
-
-                e(PipelineGrid, {
-                    renderType: 0,
-                    grid: this.sobelXData,
-                    channel: -1,
-                    gridUnit: this.gridUnit,
-                    rotStr: rotStr,
-                    xOffset: 3*xDistUnit,
-                    yOffset: center,
-                    position: this.position,
-                }, null),
-                e(PipelineGrid, {
-                    renderType: 0,
-                    grid: this.sobelYData,
-                    channel: -1,
-                    gridUnit: this.gridUnit,
-                    rotStr: rotStr,
-                    xOffset: 3*xDistUnit + 1,
-                    yOffset: center,
-                    position: this.position,
-                }, null),
-
-                e(PipelineGrid, {
-                    renderType: 0,
-                    grid: this.grads,
-                    channel: -1,
-                    gridUnit: this.gridUnit,
-                    rotStr: rotStr,
-                    xOffset: 4*xDistUnit,
-                    yOffset: center,
-                    position: this.position,
-                }, null),
-            ])
-        ]);
+                e('div', {className: 'col-xs-3'},
+                    e('div', {className: 'jumbotron col-xs-12'},
+                        e(PositionControl, {
+                            moveHandler: (r, c)=>this.moveIndicator(r, c),
+                            resetHandler: ()=>this.resetIndicator(),
+                        }, null),
+                        e('br', null, null),
+                        e(PipelineGrid, {renderType: 0, grid: this.colorSource, channel: -1,
+                            gridUnit: this.gridUnit, position: this.position,
+                            handleMouseOver: (r, c)=>this.handleMouseOver(r, c),
+                        }, null),
+                    )
+                ),
+            ),
+        );
     }
  }
 

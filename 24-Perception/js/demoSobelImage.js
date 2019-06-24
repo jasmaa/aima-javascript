@@ -81,9 +81,9 @@ class SobelImageDemo extends React.Component {
     }
 
     render(){
-        return e('div', null, [
-            e('div', {key: 'control-row', className: 'row'},
-                e('div', {key: 'col-1', className: 'col-md-12'},
+        return e('div', null,
+            e('div', {className: 'row'},
+                e('div', {className: 'col-md-12'},
                     e(ImageUploader, {
                         imageId: this.imageId,
                         defaultImage: 'images/test.png',
@@ -91,15 +91,14 @@ class SobelImageDemo extends React.Component {
                     }, null)
                 )
             ),
-            e('br', {key: 'space-0'}, null),
-            e('br', {key: 'space-1'}, null),
+            e('br', null, null),
+            e('br', null, null),
             e('canvas', {
-                key: `${this.imageId}-canvas`,
                 id: `${this.imageId}-canvas`,
                 width: '800',
                 height: '200'
             }, null),
-        ]);
+        );
     }
 }
 

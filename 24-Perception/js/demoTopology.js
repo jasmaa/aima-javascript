@@ -6,9 +6,9 @@ class TopologyDemo extends React.Component {
         super(props);
         this.imageId = 'topology-image';
         this.size = 400;
-
         this.canvas = null;
         this.graphContainer = null;
+
         $(window).resize(()=>this.resize());
     }
 
@@ -25,6 +25,9 @@ class TopologyDemo extends React.Component {
         }
     }
 
+    /**
+     * Process image and build topology
+     */
     process(){
 
         this.canvas = document.getElementById(`${this.imageId}-canvas`);
@@ -81,9 +84,9 @@ class TopologyDemo extends React.Component {
 
     render(){
 
-        return e('div', null, [
-            e('div', {key: 'control-row', className: 'row'},
-                e('div', {key: 'col-1', className: 'col-md-12'},
+        return e('div', null,
+            e('div', {className: 'row'},
+                e('div', {className: 'col-md-12'},
                     e(ImageUploader, {
                         imageId: this.imageId,
                         defaultImage: 'images/test.png',
@@ -91,24 +94,23 @@ class TopologyDemo extends React.Component {
                     }, null)
                 )
             ),
-            e('br', {key: 'space-0'}, null),
-            e('br', {key: 'space-1'}, null),
-            e('div', {key: 'display-row', className: 'row'}, [
-                e('div', {key: 'col-1', className: 'col-md-6 col-xs-6'},
+            e('br', null, null),
+            e('br', null, null),
+            e('div', {className: 'row'},
+                e('div', {className: 'col-md-6 col-xs-6'},
                     e('canvas', {
-                        key: `${this.imageId}-canvas`,
                         id: `${this.imageId}-canvas`,
                         width: this.size,
                         height: this.size,
                     }, null)
                 ),
-                e('div', {key: 'col-2', className: 'col-md-6 col-xs-6'},
+                e('div', {className: 'col-md-6 col-xs-6'},
                     e('div', {
                         id: `${this.imageId}-topology`,
                     }, null)
                 ),
-            ]),
-        ]);
+            ),
+        );
     }
 }
 

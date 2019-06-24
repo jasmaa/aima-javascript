@@ -24,6 +24,7 @@ class ConvolutionResult extends React.Component {
                     value: value,
                     isHighlighted: isTarget,
                     bgColor: 'white',
+                    handleMouseOver: ()=>this.props.handleMouseOver(i, j),
                 }, null));
             }
         }
@@ -71,6 +72,7 @@ class ConvolutionGrid extends React.Component {
                     isHighlighted: isWithinFilter,
                     highlightColor: this.props.filterColor.data[this.props.filterColor.width*filterRow + filterCol],
                     bgColor: 'white',
+                    handleMouseOver: ()=>this.props.handleMouseOver(i, j),
                 }, null));
             }
         }
@@ -264,69 +266,82 @@ class ConvolutionDemo extends React.Component {
         });
     }
 
+    /**
+     * Updates position when cell is moused over
+     * @param {integer} row 
+     * @param {integer} col 
+     */
+    handleMouseOver(row, col){
+        this.filterLocation.row = row;
+        this.filterLocation.col = col;
+
+        //Re-render
+        this.setState({
+            filter: this.filter,
+            filterLocation: this.filterLocation,
+            source: this.source,
+        });
+    }
+
     render(){
         
-        return e('div', null, [
-            e('br', {key: 'space'}, null),
-            e('div', {key: 'top-row', className: 'row'}, [
-                e('div', {key: 'col-0', className: 'col-xs-4'}, [
-                    e('h4', {key: 'filter-header', align: 'center'}, "Filter"),
+        return e('div', {className: 'jumbotron'}, 
+            e('br', null, null),
+            e('div', {className: 'row'}, 
+                e('div', {className: 'col-xs-4'},
+                    e('h4', {align: 'center'}, "Filter"),
                     e(GridInput, {
-                        key: 'filter-input',
                         idBase: 'convolution-filter-cell',
                         grid: this.filter,
                         gridColor: this.filterColor,
                         updateGridHandler: (v, i, j)=>this.updateData(this.filter, v, i, j)
                     }, null)
-                ]),
-                e('div', {key: 'col-1', className: 'col-xs-4'}, 
+                ),
+                e('div', {className: 'col-xs-4'}, 
                     e(PositionControl, {
                         moveHandler: (r, c)=>this.move(r, c),
                         resetHandler: ()=>this.reset(),
                     }, null)
                 ),
-                e('div', {key: 'col-2', className: 'col-xs-4'}, [
-                    e('h4', {key: 'source-header', align: 'center'}, "Source"),
+                e('div', {className: 'col-xs-4'},
+                    e('h4', {align: 'center'}, "Source"),
                     e(GridInput, {
-                        key: 'source-input',
                         idBase: 'convolution-source-cell',
                         grid: this.source,
                         updateGridHandler: (v, i, j)=>this.updateData(this.source, v, i, j)
                     }, null)
-                ]),
-            ]),
-            e('div', {key: 'bottom-row', className: 'row'}, [
-                e('div', {key: 'col-0', className: 'col-xs-4'}, [
-                    e('h4', {key: 'applied-header', align: 'center'}, "Applied"),
+                ),
+            ),
+            e('div', {className: 'row'},
+                e('div', {className: 'col-xs-4'},
+                    e('h4', {align: 'center'}, "Applied"),
                     e(ConvolutionGrid, {
-                        key: 'applied-output',
                         filter: this.filter,
                         filterColor: this.filterColor,
                         filterLocation: this.filterLocation,
                         source: this.source,
+                        handleMouseOver: (r, c)=>this.handleMouseOver(r, c),
                     }, null)
-                ]),
-                e('div', {key: 'col-1', className: 'col-xs-4'}, 
+                ),
+                e('div', {className: 'col-xs-4'}, 
                     e(ConvolutionMathDisplay, {
-                        key: 'math-display',
                         filter: this.filter,
                         filterColor: this.filterColor,
                         filterLocation: this.filterLocation,
                         source: this.source,
                     }, null)
                 ),
-                e('div', {key: 'col-2', className: 'col-xs-4'}, [
-                    e('h4', {key: 'res-header', align: 'center'}, "Result"),
+                e('div', {className: 'col-xs-4'},
+                    e('h4', {align: 'center'}, "Result"),
                     e(ConvolutionResult, {
-                        key: 'res-output',
                         filter: this.filter,
                         filterLocation: this.filterLocation,
                         source: this.source,
+                        handleMouseOver: (r, c)=>this.handleMouseOver(r, c),
                     }, null)
-                ]),
-            ])
-        ]);
-
+                ),
+            )
+        );
     }
 }
 
