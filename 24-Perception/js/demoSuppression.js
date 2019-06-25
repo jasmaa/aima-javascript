@@ -125,22 +125,7 @@ class SuppressionDemo extends React.Component {
      */
     updateData(grid, value, row, col){
 
-        // Prevent non-numerical input
-        if(isNaN(value)){
-            return;
-        }
-
-        // Clamp input
-        let clampedValue = +value;
-
-        if(clampedValue > 255){
-            return;
-        }
-        else if(clampedValue < 0){
-            return;
-        }
-
-        grid.data[grid.channels*(grid.width*row + col) + 0] = clampedValue;
+        grid.data[grid.channels*(grid.width*row + col) + 0] = value;
         this.process();
 
         this.setState({

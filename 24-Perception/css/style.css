@@ -1,3 +1,17 @@
+input[type=number] { 
+    -moz-appearance: textfield;
+    appearance: textfield;
+    margin: 0;
+    width: 3vmax;
+}
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+      margin: 0;
+      width: 3vmax;
+}
+
+
 .btn {
     margin: 0.1em 0.1em 0.1em 0.1em;
 }
@@ -54,7 +68,7 @@
 }
 
 .scene-3d {
-    height: 36vmax;
+    height: 24vmax;
     transform-style: preserve-3d;
     //perspective: 30vmax;
 }

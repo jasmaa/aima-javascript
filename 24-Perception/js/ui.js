@@ -46,7 +46,7 @@ class DisplayNumber extends React.Component {
 }
 
 /**
- * Grid input grid
+ * Numerical input grid
  */
 class GridInput extends React.Component {
 
@@ -61,12 +61,13 @@ class GridInput extends React.Component {
                     key: `cell-${i}-${j}`,
                     className: 'square',
                     id: `${this.props.idBase}-${i}-${j}`,
-                    type: 'text',
+                    type: 'number',
                     style: {
                         backgroundColor: this.props.gridColor ? this.props.gridColor.data[this.props.gridColor.channels*(this.props.gridColor.width*i + j) + 0] : "white",
                     },
-                    value: this.props.grid.data[this.props.grid.channels*(this.props.grid.width*i + j) + 0],
-                    onInput: ()=>this.props.updateGridHandler(
+                    defaultValue: this.props.grid.data[this.props.grid.channels*(this.props.grid.width*i + j) + 0],
+
+                    onBlur: ()=>this.props.updateGridHandler(
                         document.getElementById(`${this.props.idBase}-${i}-${j}`).value, i, j
                     ),
                 }, null));

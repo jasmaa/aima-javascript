@@ -188,9 +188,7 @@ class ConvolutionDemo extends React.Component {
         this.filterLocation.row += r;
 
         this.setState({
-            filter: this.filter,
             filterLocation: this.filterLocation,
-            source: this.source,
         });
     }
 
@@ -200,9 +198,9 @@ class ConvolutionDemo extends React.Component {
     reset(){
 
         this.filter = new Array2D([
-            1, 2, 1,
-            2, 4, 2,
-            1, 2, 1
+            -1, 0, 1,
+            -2, 0, 2,
+            -1, 0, 1
         ], 3, 3);
         this.filterLocation = {row: 0, col: 0};
 
@@ -228,7 +226,6 @@ class ConvolutionDemo extends React.Component {
 
         this.setState({
             filter: this.filter,
-            filterLocation: this.filterLocation,
             source: this.source,
         });
     }
@@ -242,26 +239,10 @@ class ConvolutionDemo extends React.Component {
      */
     updateData(grid, value, row, col){
 
-        // Prevent non-numerical input
-        if(isNaN(value)){
-            return;
-        }
-
-        // Clamp input
-        let clampedValue = +value;
-
-        if(clampedValue >= 10){
-            return;
-        }
-        else if(clampedValue < 0){
-            return;
-        }
-
-        grid.data[grid.channels*(grid.width*row + col) + 0] = clampedValue;
+        grid.data[grid.channels*(grid.width*row + col) + 0] = value;
 
         this.setState({
             filter: this.filter,
-            filterLocation: this.filterLocation,
             source: this.source,
         });
     }
@@ -277,9 +258,7 @@ class ConvolutionDemo extends React.Component {
 
         //Re-render
         this.setState({
-            filter: this.filter,
             filterLocation: this.filterLocation,
-            source: this.source,
         });
     }
 

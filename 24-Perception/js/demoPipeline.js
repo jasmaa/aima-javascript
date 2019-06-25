@@ -110,6 +110,7 @@ class PipelineGrid extends React.Component {
                 let g = grid.data[grid.channels*(grid.width*i + j) + 1];
                 let b = grid.data[grid.channels*(grid.width*i + j) + 2];
 
+                // Zero out rgb depending on channel desired
                 if(channel == 0){
                     g = 0;
                     b = 0;
@@ -243,7 +244,7 @@ class PipelineLabel extends React.Component {
     constructor(props){
         super(props);
 
-        this.size = 16;                     // Image resolution
+        this.size = 12;                      // Image resolution
         this.gridUnit = 0.5;                // Grid width and height
         this.position = {row: 4, col: 4};   // Indicator position
         this.imageId = 'pipeline';          // Image upload id
@@ -276,7 +277,6 @@ class PipelineLabel extends React.Component {
 
         //Re-render
         this.setState({
-            colorSource: this.colorSource,
             position: this.position,
         });
     }
@@ -291,7 +291,6 @@ class PipelineLabel extends React.Component {
 
         //Re-render
         this.setState({
-            colorSource: this.colorSource,
             position: this.position,
         });
     }
@@ -344,7 +343,6 @@ class PipelineLabel extends React.Component {
         //Re-render
         this.setState({
             colorSource: this.colorSource,
-            position: this.position,
         });
     }
 
@@ -359,7 +357,6 @@ class PipelineLabel extends React.Component {
 
         //Re-render
         this.setState({
-            colorSource: this.colorSource,
             position: this.position,
         });
     }
@@ -368,25 +365,23 @@ class PipelineLabel extends React.Component {
 
         const rotStr = `rotateX(-45deg) rotateY(45deg)`;    // Rotation to display grids isometrically
         const xDistUnit = this.gridUnit * this.size;        // Frontal unit distance of grids
-        const center = 18 - (this.size*this.gridUnit) / 2;  // Distance to center of container
-        const xStart = -5;                                  // Starting x offset
+        const center = 10 - (this.size*this.gridUnit) / 2;  // Distance to center of container
+        const xStart = 0;                                   // Starting x offset
 
-        const scene = e('div', {className: 'scene-3d'},
-            // === Indicator prisms ===
-            e(PipelineIndicator, {gridUnit: this.gridUnit, size: this.size, rotStr: rotStr,
-                xOffset: xStart+0*xDistUnit, yOffset: center, position: this.position}, null),
-            e(PipelineIndicator, {gridUnit: this.gridUnit, size: this.size, rotStr: rotStr,
-                xOffset: xStart+1*xDistUnit, yOffset: center, position: this.position}, null),
-            e(PipelineIndicator, {gridUnit: this.gridUnit, size: this.size, rotStr: rotStr,
-                xOffset: xStart+2*xDistUnit, yOffset: center, position: this.position}, null),
-            e(PipelineIndicator, {gridUnit: this.gridUnit, size: this.size, rotStr: rotStr,
-                xOffset: xStart+3*xDistUnit, yOffset: center, position: this.position}, null),
-
-            // === Grids ===
-            // Color
+        const colorWidgets = [
             e(PipelineGrid3D, {renderType: 0, grid: this.colorSource, channel: -1, gridUnit: this.gridUnit,
                 rotStr: rotStr, xOffset: xStart, yOffset: center, position: this.position}, null),
-            // RGB
+
+            e(PipelineLabel, {gridUnit: this.gridUnit, size: this.size, rotStr: rotStr,
+                xOffset: xStart+0*xDistUnit, yOffset: center,
+                content: e('strong', null, 'Color'),
+            }, null),
+        ];
+
+        const rgbWidgets = [
+            e(PipelineIndicator, {gridUnit: this.gridUnit, size: this.size, rotStr: rotStr,
+                xOffset: xStart+0*xDistUnit, yOffset: center, position: this.position}, null),
+
             e(PipelineGrid3D, {renderType: 0, grid: this.colorSource, channel: 0, gridUnit: this.gridUnit,
                 rotStr: rotStr, xOffset: xStart+1*xDistUnit + 0, yOffset: center, position: this.position}, null),
             e(PipelineGrid3D, {renderType: 0, grid: this.colorSource, channel: 1, gridUnit: this.gridUnit,
@@ -394,42 +389,64 @@ class PipelineLabel extends React.Component {
             }, null),
             e(PipelineGrid3D, {renderType: 0, grid: this.colorSource, channel: 2, gridUnit: this.gridUnit,
                 rotStr: rotStr, xOffset: xStart+1*xDistUnit + 2, yOffset: center, position: this.position}, null),
-            // Filter applied
-            e(PipelineGrid3D, {renderType: 0, grid: this.source, channel: -1, gridUnit: this.gridUnit,
-                rotStr: rotStr, xOffset: xStart+2*xDistUnit, yOffset: center, position: this.position}, null),
-            e(PipelineGrid3D, {renderType: 1, grid: this.source, filter: this.filter, gridUnit: this.gridUnit,
-                rotStr: rotStr, xOffset: xStart+2*xDistUnit, yOffset: center, position: this.position}, null),
-            // Sobel
-            e(PipelineGrid3D, {renderType: 0, grid: this.sobelXData, channel: -1, gridUnit: this.gridUnit,
-                rotStr: rotStr, xOffset: xStart+3*xDistUnit, yOffset: center, position: this.position}, null),
-            e(PipelineGrid3D, {renderType: 0, grid: this.sobelYData, channel: -1, gridUnit: this.gridUnit,
-                rotStr: rotStr, xOffset: xStart+3*xDistUnit + 1, yOffset: center, position: this.position}, null),
-            // Gradient
-            e(PipelineGrid3D, {renderType: 0, grid: this.grads, channel: -1, gridUnit: this.gridUnit,
-                rotStr: rotStr, xOffset: xStart+4*xDistUnit, yOffset: center, position: this.position}, null),
-
-            // === Labels ===
-            e(PipelineLabel, {gridUnit: this.gridUnit, size: this.size, rotStr: rotStr,
-                xOffset: xStart+0*xDistUnit, yOffset: center,
-                content: e('strong', null, 'Color'),
-            }, null),
+            
             e(PipelineLabel, {gridUnit: this.gridUnit, size: this.size, rotStr: rotStr,
                 xOffset: xStart+1*xDistUnit, yOffset: center,
                 content: e('strong', null, 'RGB'),
             }, null),
+        ];
+
+        const grayscaleWidgets = [
+            e(PipelineIndicator, {gridUnit: this.gridUnit, size: this.size, rotStr: rotStr,
+                xOffset: xStart+1*xDistUnit, yOffset: center, position: this.position}, null),
+
+            e(PipelineGrid3D, {renderType: 0, grid: this.source, channel: -1, gridUnit: this.gridUnit,
+                rotStr: rotStr, xOffset: xStart+2*xDistUnit, yOffset: center, position: this.position}, null),
+            e(PipelineGrid3D, {renderType: 1, grid: this.source, filter: this.filter, gridUnit: this.gridUnit,
+                rotStr: rotStr, xOffset: xStart+2*xDistUnit, yOffset: center, position: this.position}, null),
+
             e(PipelineLabel, {gridUnit: this.gridUnit, size: this.size, rotStr: rotStr,
                 xOffset: xStart+2*xDistUnit, yOffset: center,
-
-                content: e('strong', null, 'Filter Application on Grayscale'),
+                content: e('strong', null, 'Grayscale'),
             }, null),
+        ];
+
+        const sobelWidgets = [
+            e(PipelineIndicator, {gridUnit: this.gridUnit, size: this.size, rotStr: rotStr,
+                xOffset: xStart+2*xDistUnit, yOffset: center, position: this.position}, null),
+
+            e(PipelineGrid3D, {renderType: 0, grid: this.sobelXData, channel: -1, gridUnit: this.gridUnit,
+                rotStr: rotStr, xOffset: xStart+3*xDistUnit, yOffset: center, position: this.position}, null),
+            e(PipelineGrid3D, {renderType: 0, grid: this.sobelYData, channel: -1, gridUnit: this.gridUnit,
+                rotStr: rotStr, xOffset: xStart+3*xDistUnit + 1, yOffset: center, position: this.position}, null),
+            
             e(PipelineLabel, {gridUnit: this.gridUnit, size: this.size, rotStr: rotStr,
                 xOffset: xStart+3*xDistUnit, yOffset: center,
                 content: e('strong', null, 'Sobel X and Y'),
             }, null),
+        ];
+
+        const gradWidgets = [
+            e(PipelineIndicator, {gridUnit: this.gridUnit, size: this.size, rotStr: rotStr,
+                xOffset: xStart+3*xDistUnit, yOffset: center, position: this.position}, null),
+
+            e(PipelineGrid3D, {renderType: 0, grid: this.grads, channel: -1, gridUnit: this.gridUnit,
+                rotStr: rotStr, xOffset: xStart+4*xDistUnit, yOffset: center, position: this.position}, null),
+            
+            
             e(PipelineLabel, {gridUnit: this.gridUnit, size: this.size, rotStr: rotStr,
                 xOffset: xStart+4*xDistUnit, yOffset: center,
                 content: e('strong', null, 'Gradients'),
             }, null),
+        ];
+
+        // include widgets
+        const scene = e('div', {className: 'scene-3d'},
+            this.props.step > 0 ? colorWidgets : '',
+            this.props.step > 1 ? rgbWidgets : '',
+            this.props.step > 2 ? grayscaleWidgets : '',
+            this.props.step > 3 ? sobelWidgets : '',
+            this.props.step > 4 ? gradWidgets : '',
         );
 
         return e('div', null,
@@ -480,6 +497,10 @@ class PipelineLabel extends React.Component {
 
  // Render elements
 ReactDOM.render(
-    e(PipelineDemo, null, null),
-    document.getElementById('pipeline-root')
+    e(PipelineDemo, {step: 3}, null),
+    document.getElementById('pipeline-grayscale-root')
+);
+ReactDOM.render(
+    e(PipelineDemo, {step: 5}, null),
+    document.getElementById('pipeline-grad-root')
 );
