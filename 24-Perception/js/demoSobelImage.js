@@ -59,23 +59,26 @@ class SobelImageDemo extends React.Component {
         convolve(sobelYData, sobelY);
         
         // Calculate magnitude of gradients
-        for(let i=0; i < source.height; i++){
-            for(let j=0; j < source.width; j++){
-                let value = Math.sqrt(
-                                Math.pow(sobelXData.data[4*(source.width*i + j) + 0], 2) +
-                                Math.pow(sobelYData.data[4*(source.width*i + j) + 0], 2));
-                
-                source.data[4*(source.width*i + j) + 0] = value;
-                source.data[4*(source.width*i + j) + 1] = value;
-                source.data[4*(source.width*i + j) + 2] = value;
-            }
-        }
+        const [magGrid, angleGrid] = computeGradients(sobelXData, sobelYData);
+        stretchColor(magGrid);
 
-        // Stretch color for display
-        stretchColor(source);
-
-        fillArray(imgData.data, source.data, imgData.data.length);
+        fillArray(imgData.data, magGrid.data, imgData.data.length);
         context.putImageData(imgData, 600, 0);
+
+        // Do non maximum suppression
+        let suppressed = nonMaxSuppress(magGrid, angleGrid);
+        fillArray(imgData.data, suppressed.data, imgData.data.length);
+        context.putImageData(imgData, 200, 200);
+
+        // Do double threshold
+        doubleThreshold(suppressed, 100, 50);
+        fillArray(imgData.data, suppressed.data, imgData.data.length);
+        context.putImageData(imgData, 400, 200);
+
+        // Do edge tracking
+        edgeConnect(suppressed);
+        fillArray(imgData.data, suppressed.data, imgData.data.length);
+        context.putImageData(imgData, 600, 200);
 
         this.resize();
     }
@@ -97,7 +100,7 @@ class SobelImageDemo extends React.Component {
                     e('canvas', {
                         id: `${this.imageId}-canvas`,
                         width: '800',
-                        height: '200'
+                        height: '400'
                     }, null),
                 ),
             ),

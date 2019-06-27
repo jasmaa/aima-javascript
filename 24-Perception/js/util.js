@@ -2,6 +2,7 @@
 
 /**
  * Loads input file as img
+ * 
  * @param {*} imgId 
  * @param {*} input
  */
@@ -26,6 +27,7 @@ function readURL(imgId, input) {
 
 /**
  * Calculates value on 2D Gaussian function
+ * 
  * @param {*} x 
  * @param {*} y 
  * @param {*} sigma 
@@ -38,6 +40,7 @@ function gaussian(x, y, sigma){
 
 /**
  * Converts grayscale value to rgb string
+ * 
  * @param {integer} value - Grayscale value to convert
  */
 function gray2RGB(value){
@@ -45,8 +48,19 @@ function gray2RGB(value){
 }
 
 /**
+ * Gets magnitude of 2d vector from components
+ * 
+ * @param {Number} x 
+ * @param {Number} y 
+ */
+function mag2d(x, y){
+    return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+}
+
+/**
  * Draws arrow on canvas
  * https://stackoverflow.com/questions/808826/draw-arrow-on-canvas-tag
+ * 
  * @param {*} context 
  * @param {*} fromx 
  * @param {*} fromy 
@@ -64,24 +78,9 @@ function canvas_arrow(context, fromx, fromy, tox, toy){
 }
 
 /**
- * Draws cell indicator for suppression demo
- * 
- * @param {context} context 
- * @param {integer} row 
- * @param {integer} col 
- * @param {Number} unit 
- */
-function drawCellIndicator(context, row, col, unit){
-    context.beginPath();
-    context.arc(unit*col + unit/2, unit*row + unit/2, unit/8, 0, 2*Math.PI);
-    context.fill();
-    context.closePath();
-    context.strokeRect(unit*col, unit*row, unit, unit);
-}
-
-/**
  * takes wavelength in nm and returns an rgba value
  * Taken from Science Primer: http://scienceprimer.com/javascript-code-convert-light-wavelength-color
+ * 
  * @param {*} wavelength 
  */
 function wavelengthToColor(wavelength) {

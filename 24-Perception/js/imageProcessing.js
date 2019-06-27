@@ -57,6 +57,7 @@ class GaussianFilter extends Array2D {
 
 /**
  * Converts image to greyscale
+ * 
  * @param {Array2D} source - RGBA source
  */
 function grayscale(source){
@@ -73,6 +74,7 @@ function grayscale(source){
 
 /**
  * Convolves filter on RGBA source
+ * 
  * @param {Array2D} source - RGBA source
  * @param {Array2D} filter - Convolving filter 
  * @param {integer} defaultValue - Default out of bounds value 
@@ -118,7 +120,167 @@ function convolve(source, filter, defaultValue=255){
 }
 
 /**
+ * Computes magnitude and angles of gradients from X and Y components
+ * 
+ * @param {Array2D} sourceX 
+ * @param {Array2D} sourceY 
+ */
+function computeGradients(sourceX, sourceY){
+    let mags = new Array2D(
+        Array.from({length: 4*sourceX.width*sourceX.width}, ()=>255),
+        sourceX.width, sourceX.height, 4
+    );
+    let angles = new Array2D(
+        Array.from({length: 4*sourceX.width*sourceX.width}, ()=>255),
+        sourceX.width, sourceX.height, 4
+    );
+
+    for(let i=0; i < sourceX.height; i++){
+        for(let j=0; j < sourceX.width; j++){
+            const xVal = sourceX.data[sourceX.channels*(sourceX.width*i + j) + 0];
+            const yVal = sourceY.data[sourceY.channels*(sourceY.width*i + j) + 0];
+            const mag = mag2d(xVal, yVal);
+            let angle = Math.atan2(yVal, xVal);
+
+            // Fix angle between 0 and PI
+            if(angle < 0){
+                angle += 2*Math.PI
+            }
+            if(angle > Math.PI){
+                angle -= Math.PI;
+            }
+
+            // Update grids
+            mags.data[mags.channels*(mags.width*i + j) + 0] = mag;
+            mags.data[mags.channels*(mags.width*i + j) + 1] = mag;
+            mags.data[mags.channels*(mags.width*i + j) + 2] = mag;
+            angles.data[angles.channels*(angles.width*i + j) + 0] = angle;
+            angles.data[angles.channels*(angles.width*i + j) + 1] = angle;
+            angles.data[angles.channels*(angles.width*i + j) + 2] = angle;
+        }
+    }
+
+    return [mags, angles];
+}
+
+/**
+ * Performs non-maximum suppression and returns suppressed Array2D
+ * 
+ * @param {Array2D} magGrid - Grid of magnitudes
+ * @param {Array2D} angleGrid - Grid of angles
+ */
+function nonMaxSuppress(magGrid, angleGrid){
+
+    let res = new Array2D(
+        [...magGrid.data],
+        magGrid.width, magGrid.height, 4
+    );
+
+    for(let i=1; i < magGrid.height-1; i++){
+        for(let j=1; j < magGrid.width-1; j++){
+
+            const currMag = magGrid.data[magGrid.channels*(magGrid.width*i + j) + 0];
+            const angle = angleGrid.data[angleGrid.channels*(angleGrid.width*i + j) + 0];
+
+            // Get relevant neighbors
+            let mags = [currMag];
+            if(angle >= 0 && angle < Math.PI/8){
+                mags.push(magGrid.data[magGrid.channels*(magGrid.width*i + (j-1))]);
+                mags.push(magGrid.data[magGrid.channels*(magGrid.width*i + (j+1))]);
+            }
+            else if(angle >= Math.PI/8 && angle < 3*Math.PI/8){
+                mags.push(magGrid.data[magGrid.channels*(magGrid.width*(i+1) + (j-1))]);
+                mags.push(magGrid.data[magGrid.channels*(magGrid.width*(i+1) + (j-1))]);
+            }
+            else if(angle >= 3*Math.PI/8 && angle < 5*Math.PI/8){
+                mags.push(magGrid.data[magGrid.channels*(magGrid.width*(i-1) + j)]);
+                mags.push(magGrid.data[magGrid.channels*(magGrid.width*(i+1) + j)]);
+            }
+            else if(angle >= 5*Math.PI/8 && angle < 7*Math.PI/8){
+                mags.push(magGrid.data[magGrid.channels*(magGrid.width*(i-1) + (j-1))]);
+                mags.push(magGrid.data[magGrid.channels*(magGrid.width*(i+1) + (j+1))]);
+            }
+            else{
+                mags.push(magGrid.data[magGrid.channels*(magGrid.width*i + (j-1))]);
+                mags.push(magGrid.data[magGrid.channels*(magGrid.width*i + (j+1))]);
+            }
+
+            // Choose to suppress
+            const value = Math.max(...mags) > currMag ? 0 : currMag;
+            res.data[res.channels*(res.width*i + j) + 0] = value;
+            res.data[res.channels*(res.width*i + j) + 1] = value;
+            res.data[res.channels*(res.width*i + j) + 2] = value;
+        }
+    }
+
+    return res;
+}
+
+/**
+ * Performs double threshold
+ * 127 is a weak edge and 255 is a strong edge for display
+ * 
+ * @param {Array2D} source - Grid of magnitudes
+ * @param {Number} hi - High threshold
+ * @param {Number} lo - Low threshold
+ */
+function doubleThreshold(source, hi, lo){
+    for(let i=0; i < source.height; i++){
+        for(let j=0; j < source.width; j++){
+
+            const value = source.data[source.channels*(source.width*i + j)];
+            let res = 0;
+
+            if(value > hi){
+                res = 255;
+            }
+            else if(value > lo){
+                res = 127;
+            }
+
+            source.data[source.channels*(source.width*i + j) + 0] = res;
+            source.data[source.channels*(source.width*i + j) + 1] = res;
+            source.data[source.channels*(source.width*i + j) + 2] = res;
+        }
+    }
+}
+
+/**
+ * Performs edge tracking by hysteresis on a grid that has
+ * had its edge strength determined
+ * 
+ * @param {Array2D} source - Grid with edge strength detected
+ */
+function edgeConnect(source){
+    for(let i=1; i < source.height-1; i++){
+        for(let j=1; j < source.width-1; j++){
+
+            const value = source.data[source.channels*(source.width*i + j)];
+            let strongDetected = false;
+
+            // If weak edge, check neighborhood
+            if(value == 127){
+                for(let rowOffset= -1; rowOffset <= 1; rowOffset++){
+                    for(let colOffset= -1; colOffset <= 1; colOffset++){
+                        // Detect strong edge
+                        if(source.data[source.channels*(source.width*(i+rowOffset)) + (j+colOffset)] == 255){
+                            strongDetected = true;
+                        }
+                    }
+                }
+
+                let res = strongDetected ? 255 : 0;
+                source.data[source.channels*(source.width*i + j) + 0] = res;
+                source.data[source.channels*(source.width*i + j) + 1] = res;
+                source.data[source.channels*(source.width*i + j) + 2] = res;
+            }
+        }
+    }
+}
+
+/**
  * Stretches color of source to between 0-255
+ * 
  * @param {Array2D} source - RGBA source
  */
 function stretchColor(source){
@@ -144,6 +306,7 @@ function stretchColor(source){
 
 /**
  * Copies length values from source to target
+ * 
  * @param {Array} targetData - RGBA target pixel data
  * @param {Array} sourceData - RGBA source pixel data
  * @param {integer} length - Amount of data to copy
