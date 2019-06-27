@@ -14,9 +14,9 @@ class TopologyDemo extends React.Component {
 
     resize(){
         if(innerWidth > 700){
-            this.canvas.style.width = (innerWidth / 4)+'px';
-            this.graphContainer.childNodes[0].style.width = (innerWidth / 4)+'px';
-            this.graphContainer.childNodes[0].style.height = (innerWidth / 4)+'px';
+            this.canvas.style.width = (innerWidth / 4 - 80)+'px';
+            this.graphContainer.childNodes[0].style.width = (innerWidth / 4 - 80)+'px';
+            this.graphContainer.childNodes[0].style.height = (innerWidth / 4 - 80)+'px';
         }
         else{
             this.canvas.style.width = (innerWidth / 2 - 30)+'px';
@@ -72,12 +72,13 @@ class TopologyDemo extends React.Component {
             showZAxis: false,
             showShadow: false,
             keepAspectRatio: true,
-            verticalRatio: 0.5
+            verticalRatio: 0.5,
+            backgroundColor: 'white',
         };
 
         this.graphContainer = document.getElementById(`${this.imageId}-topology`);
         let graph = new vis.Graph3d(this.graphContainer, topoData, options);
-        graph.setCameraPosition({horizontal: 0, vertical: Math.PI / 2, distance: 1.2});
+        graph.setCameraPosition({horizontal: 0, vertical: Math.PI / 2, distance: 1.3});
 
         this.resize();
     }
@@ -95,8 +96,7 @@ class TopologyDemo extends React.Component {
                 )
             ),
             e('br', null, null),
-            e('br', null, null),
-            e('div', {className: 'row'},
+            e('div', {className: 'jumbotron row'},
                 e('div', {className: 'col-md-6 col-xs-6'},
                     e('canvas', {
                         id: `${this.imageId}-canvas`,

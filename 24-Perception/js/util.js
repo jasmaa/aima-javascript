@@ -64,6 +64,22 @@ function canvas_arrow(context, fromx, fromy, tox, toy){
 }
 
 /**
+ * Draws cell indicator for suppression demo
+ * 
+ * @param {context} context 
+ * @param {integer} row 
+ * @param {integer} col 
+ * @param {Number} unit 
+ */
+function drawCellIndicator(context, row, col, unit){
+    context.beginPath();
+    context.arc(unit*col + unit/2, unit*row + unit/2, unit/8, 0, 2*Math.PI);
+    context.fill();
+    context.closePath();
+    context.strokeRect(unit*col, unit*row, unit, unit);
+}
+
+/**
  * takes wavelength in nm and returns an rgba value
  * Taken from Science Primer: http://scienceprimer.com/javascript-code-convert-light-wavelength-color
  * @param {*} wavelength 

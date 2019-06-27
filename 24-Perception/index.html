@@ -39,7 +39,7 @@
 				</p>
 
 				<br>
-				<img src="../third-party/photo-edge-detection.png" class="center">
+				<img src="../third-party/photo-edge-detection.png" class="center display-image">
 				<br><br>
 
 				<h2>What is an Image?</h2>
@@ -65,8 +65,9 @@
 					the pixels in our image.
 				</p>
 				<p>
-					For problems like these, it helps to add an extra dimension for visualization. Let us instead
-					represent our intensity pixel array as a 3D topological map.	
+					For problems like these, it helps to add an extra dimension for visualization. Let us instead represent our
+					pixel array as a 3D topological map. Below is an example of how this topological map will look. Drag the map
+					around and observe how pixel intensities are translated into 3D elevation.	
 				</p>
 
 				<br>
@@ -83,7 +84,7 @@
 				</p>
 
 				<br>
-				<img src="./images/elevationPlaceholder.png" class="center">
+				<img src="./images/elevation.png" class="center display-image">
 				<br><br>
 
 				<p>
@@ -94,7 +95,7 @@
 				</p>
 
 				<br>
-				<img src="./images/filters.png" class="center">
+				<img src="./images/filters.png" class="center display-image">
 				<br><br>
 
 				<p>
@@ -139,8 +140,7 @@
 				<p>
 					One can see how calculating gradients for intensity in our photograph using Sobel is a start to finding edges.
 					Locations where the gradient magnitudes are small mean little intensity changes and no edges while locations
-					where the gradient magnitudes are large mean big intensity changes and potential edges. To recap, below is a
-					demo of this edge detection pipeline so far. Change the selected pixel with your mouse or the control panel.
+					where the gradient magnitudes are large mean big intensity changes and potential edges.
 				</p>
 
 				<br>
@@ -148,7 +148,35 @@
 				<br>
 
 				<h2>Gaussian Smoothing</h2>
-				TODO
+				<p>
+					The Sobel operator is a good start at edge detection, but it comes with its own share of faults.
+					One problem with solely using Sobel is that it is very susceptible to <strong>noise</strong>. Our current approach
+					would count a single bright pixel in a sea of dark pixels as an edge which is undesirable.
+				</p>
+
+				<br>
+				<img src="../third-party/shannon-01.png" class="center display-image">
+				<br><br>
+
+				<p>
+					To reduce noise in an image, we can choose to do <strong>Gaussian smoothing</strong> before attempting to apply
+					the Sobel operator. How Gaussian smoothing is done is very similar to Sobel; using a filter and
+					convolution to change the source image. The filter this time, however, is an approximation of the
+					Gaussian function or normal distribution in 2D.
+				</p>
+
+				<br>
+				<img src="../third-party/gaussian-2d.png" class="center display-image">
+				<br><br>
+
+				<p>
+					Applying this filter has the effect of smoothing out the intensities in an image which then
+					allows an edge detector, like Sobel, to produce better results.
+				</p>
+
+				<br>
+				<img src="../third-party/shannon-02.png" class="center display-image">
+				<br><br>
 
 				<h2>Non-Maximum Suppression</h2>
 				TODO
@@ -186,7 +214,6 @@
 	<script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
 	<script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
 
 	<script type="text/javascript" src="./js/util.js"></script>
 	<script type="text/javascript" src="./js/ui.js"></script>

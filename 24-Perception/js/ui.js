@@ -65,9 +65,9 @@ class GridInput extends React.Component {
                     style: {
                         backgroundColor: this.props.gridColor ? this.props.gridColor.data[this.props.gridColor.channels*(this.props.gridColor.width*i + j) + 0] : "white",
                     },
-                    defaultValue: this.props.grid.data[this.props.grid.channels*(this.props.grid.width*i + j) + 0],
+                    value: this.props.grid.data[this.props.grid.channels*(this.props.grid.width*i + j) + 0],
 
-                    onBlur: ()=>this.props.updateGridHandler(
+                    onChange: ()=>this.props.updateGridHandler(
                         document.getElementById(`${this.props.idBase}-${i}-${j}`).value, i, j
                     ),
                 }, null));

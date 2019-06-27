@@ -14,8 +14,8 @@ class SobelImageDemo extends React.Component {
     }
 
     resize(){
-        if(innerWidth > 1000){
-            this.canvas.style.width = (innerWidth / 2)+'px';
+        if(innerWidth > 700){
+            this.canvas.style.width = (innerWidth / 2 - 100)+'px';
         }
         else{
             this.canvas.style.width = (innerWidth - 30)+'px';
@@ -92,12 +92,15 @@ class SobelImageDemo extends React.Component {
                 )
             ),
             e('br', null, null),
-            e('br', null, null),
-            e('canvas', {
-                id: `${this.imageId}-canvas`,
-                width: '800',
-                height: '200'
-            }, null),
+            e('div', {className: 'row'},
+                e('div', {className: 'jumbotron col-md-12'},
+                    e('canvas', {
+                        id: `${this.imageId}-canvas`,
+                        width: '800',
+                        height: '200'
+                    }, null),
+                ),
+            ),
         );
     }
 }

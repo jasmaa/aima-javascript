@@ -28,6 +28,7 @@ class GradientDemo extends React.Component {
         $(document).ready(()=>this.process());
 
         this.canvas = null;
+        $(window).ready(()=>this.resize());
         $(window).resize(()=>this.resize());
     }
 
@@ -155,7 +156,14 @@ class GradientDemo extends React.Component {
      * Canvas resize handler
      */
     resize(){
-        this.canvas.style.width = (innerWidth / 4)+'px';
+        const minValue = Math.min(innerHeight, innerWidth);
+
+        if (minValue < 600){
+            this.canvas.style.width = (minValue - 50)+'px';
+        }
+        else{
+            this.canvas.style.width = (minValue / 2 - 50)+'px';
+        }
     }
 
     /**
@@ -220,8 +228,6 @@ class GradientDemo extends React.Component {
                 context.closePath();
             }
         }
-
-        this.resize();
     }
 
     /**
@@ -244,6 +250,7 @@ class GradientDemo extends React.Component {
     render(){
         
         return e('div', null,
+
             e('div', {className: 'row'},
                 e('div', {className: 'col-xs-6'},
                     e('div', {className: 'row', style: {textAlign: 'center'}},
@@ -265,20 +272,30 @@ class GradientDemo extends React.Component {
                         ),
                         e('div', {className: 'col-xs-1'}, null),
                     ),
-                    e('br', null, null),
-                    e(GridInput, {
-                        idBase: 'gradient-cell',
-                        grid: this.source,
-                        updateGridHandler: (v, i, j)=>this.updateData(this.source, v, i, j)
-                    }, null),
-                    
                 ),
-                e('div', {className: 'col-xs-6'},
-                    e('canvas', {
-                        id: 'gradient-canvas',
-                        width: 400,
-                        height: 400,
-                    }, null)
+            ),
+
+            e('br', null, null),
+
+            e('div', {className: 'jumbotron row'},
+                e('div', {className: 'col-md-6'},
+                    e('div', {className: 'col-xs-12'},
+                        e(GridInput, {
+                            idBase: 'gradient-cell',
+                            grid: this.source,
+                            updateGridHandler: (v, i, j)=>this.updateData(this.source, v, i, j)
+                        }, null),
+                    ),
+                ),
+                e('div', {className: 'col-md-6'},
+                    e('div', {className: 'col-xs-12'},
+                        e('canvas', {
+                            id: 'gradient-canvas',
+                            className: 'center',
+                            width: 400,
+                            height: 400,
+                        }, null)
+                    ),
                 ),
             )
         );
