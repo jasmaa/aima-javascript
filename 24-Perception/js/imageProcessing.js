@@ -24,7 +24,28 @@ class Array2D {
      */
 	get centerCol(){
 		return Math.floor(this.width / 2);
-	}
+    }
+    
+    /**
+     * Gets value at (row, col, chan)
+     * @param {integer} row 
+     * @param {integer} col 
+     * @param {integer} chan 
+     */
+    getValue(row, col, chan=0){
+        return this.data[this.channels*(this.width*row + col) + chan];
+    }
+
+    /**
+     * Sets value  at (row, col, chan)
+     * @param {*} value 
+     * @param {integer} row 
+     * @param {integer} col 
+     * @param {integer} chan 
+     */
+    setValue(value, row, col, chan=0){
+        this.data[this.channels*(this.width*row + col) + chan] = value;
+    }
 }
 
 /**
@@ -79,7 +100,7 @@ function grayscale(source){
  * @param {Array2D} filter - Convolving filter 
  * @param {integer} defaultValue - Default out of bounds value 
  */
-function convolve(source, filter, defaultValue=255){
+function convolve(source, filter, defaultValue=0){
 
     // Copy data to buffer for output
     buffer = [...source.data];
@@ -92,7 +113,9 @@ function convolve(source, filter, defaultValue=255){
 
                 let value = 0;
                 
+                loop1:
                 for(let filterRow=0; filterRow < filter.height; filterRow++){
+                    loop2:
                     for(let filterCol=0; filterCol < filter.width; filterCol++){
                         let srcRow = i + filterRow - filter.centerRow;
                         let srcCol = j + filterCol - filter.centerCol;
@@ -104,7 +127,8 @@ function convolve(source, filter, defaultValue=255){
                         }
                         // Use default value if out of bounds
                         else{
-                            value += defaultValue * filterValue;
+                            value = defaultValue;
+                            break loop1;
                         }
                     }
                 }
@@ -314,6 +338,79 @@ function stretchColor(source){
 function fillArray(targetData, sourceData, length){
     for(let i=0; i < length; i++){
         targetData[i] = sourceData[i];
+    }
+}
+
+
+// === GRID PATTERNS ===
+
+function createVerticalLine(source){
+
+    for(let i=0; i < source.height; i++){
+        for(let j=0; j < source.width; j++){
+
+            let value = Math.floor(Math.abs(source.centerCol - j) / source.centerCol * 206);
+
+            source.data[4*(source.width*i + j) + 0] = value;
+            source.data[4*(source.width*i + j) + 1] = value;
+            source.data[4*(source.width*i + j) + 2] = value;
+        }
+    }
+}
+
+function createHorizontalLine(source){
+    for(let i=0; i < source.height; i++){
+        for(let j=0; j < source.width; j++){
+
+            let value = Math.floor(Math.abs(source.centerRow - i) / source.centerRow * 206);
+
+            source.data[4*(source.width*i + j) + 0] = value;
+            source.data[4*(source.width*i + j) + 1] = value;
+            source.data[4*(source.width*i + j) + 2] = value;
+
+        }
+    }
+}
+
+function createDiagonalLine(source){
+    for(let i=0; i < source.height; i++){
+        for(let j=0; j < source.width; j++){
+
+            let value = Math.abs(i - j) * 100;
+            value = Math.min(value, 255);
+
+            source.data[4*(source.width*i + j) + 0] = value;
+            source.data[4*(source.width*i + j) + 1] = value;
+            source.data[4*(source.width*i + j) + 2] = value;
+        }
+    }
+}
+
+function createLineGradient(source){
+    for(let i=0; i < source.height; i++){
+        for(let j=0; j < source.width; j++){
+
+            let value = j * 40;
+            value = Math.min(value, 255);
+
+            source.data[4*(source.width*i + j) + 0] = value;
+            source.data[4*(source.width*i + j) + 1] = value;
+            source.data[4*(source.width*i + j) + 2] = value;
+        }
+    }
+}
+
+function createRadialGradient(source){
+    for(let i=0; i < source.height; i++){
+        for(let j=0; j < source.width; j++){
+
+            let value = Math.floor(Math.sqrt(Math.pow(i-source.centerRow, 2) + Math.pow(j-source.centerCol, 2)) * 50);
+            value = Math.min(value, 255);
+
+            source.data[4*(source.width*i + j) + 0] = value;
+            source.data[4*(source.width*i + j) + 1] = value;
+            source.data[4*(source.width*i + j) + 2] = value;
+        }
     }
 }
 

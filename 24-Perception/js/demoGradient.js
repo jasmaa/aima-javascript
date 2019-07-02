@@ -37,18 +37,7 @@ class GradientDemo extends React.Component {
      */
     setVerticalLine(){
 
-        for(let i=0; i < this.source.height; i++){
-            for(let j=0; j < this.source.width; j++){
-
-                let value = Math.floor(Math.abs(this.source.centerRow - j) / this.source.centerRow * 206);
-
-                this.source.data[4*(this.source.width*i + j) + 0] = value;
-                this.source.data[4*(this.source.width*i + j) + 1] = value;
-                this.source.data[4*(this.source.width*i + j) + 2] = value;
-
-            }
-        }
-
+        createVerticalLine(this.source);
         this.process();
 
         this.setState({
@@ -61,18 +50,7 @@ class GradientDemo extends React.Component {
      */
     setHorizontalLine(){
 
-        for(let i=0; i < this.source.height; i++){
-            for(let j=0; j < this.source.width; j++){
-
-                let value = Math.floor(Math.abs(Math.floor(this.source.height/2) - i) / Math.floor(this.source.height/2) * 206);
-
-                this.source.data[4*(this.source.width*i + j) + 0] = value;
-                this.source.data[4*(this.source.width*i + j) + 1] = value;
-                this.source.data[4*(this.source.width*i + j) + 2] = value;
-
-            }
-        }
-
+        createHorizontalLine(this.source);
         this.process();
 
         this.setState({
@@ -85,18 +63,7 @@ class GradientDemo extends React.Component {
      */
     setDiagonalLine(){
 
-        for(let i=0; i < this.source.height; i++){
-            for(let j=0; j < this.source.width; j++){
-
-                let value = Math.min(Math.abs(i - j) * 100, 255);
-
-                this.source.data[4*(this.source.width*i + j) + 0] = value;
-                this.source.data[4*(this.source.width*i + j) + 1] = value;
-                this.source.data[4*(this.source.width*i + j) + 2] = value;
-
-            }
-        }
-
+        createDiagonalLine(this.source);
         this.process();
 
         this.setState({
@@ -109,18 +76,7 @@ class GradientDemo extends React.Component {
      */
     setHorizontalGrad(){
 
-        for(let i=0; i < this.source.height; i++){
-            for(let j=0; j < this.source.width; j++){
-
-                let value = j * 40;
-
-                this.source.data[4*(this.source.width*i + j) + 0] = value;
-                this.source.data[4*(this.source.width*i + j) + 1] = value;
-                this.source.data[4*(this.source.width*i + j) + 2] = value;
-
-            }
-        }
-
+        createLineGradient(this.source);
         this.process();
 
         this.setState({
@@ -133,18 +89,7 @@ class GradientDemo extends React.Component {
      */
     setRadialGrad(){
 
-        for(let i=0; i < this.source.height; i++){
-            for(let j=0; j < this.source.width; j++){
-
-                let value = Math.floor(Math.sqrt(Math.pow(i-this.source.centerRow, 2) + Math.pow(j-this.source.centerCol, 2)) * 50);
-
-                this.source.data[4*(this.source.width*i + j) + 0] = value;
-                this.source.data[4*(this.source.width*i + j) + 1] = value;
-                this.source.data[4*(this.source.width*i + j) + 2] = value;
-
-            }
-        }
-
+        createRadialGradient(this.source);
         this.process();
 
         this.setState({
