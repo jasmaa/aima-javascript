@@ -1,6 +1,99 @@
 // Gradient detection demo
 
 /**
+ * Cell with gradient arrow
+ */
+class GradientCell extends React.Component {
+
+    componentDidMount(){
+        this.canvas = document.getElementById(`${this.props.idBase}-canvas`);
+        this.updateCanvas();
+    }
+
+    /**
+     * Updates canvas with magnitude arrow
+     */
+    updateCanvas(){
+        if(this.canvas){
+            const context = this.canvas.getContext('2d');
+            context.clearRect(0, 0, 40, 40);
+            
+            context.strokeStyle = this.props.color;
+            context.beginPath();
+            canvas_arrow(context, 20, 20, 10*this.props.dx + 20, -10*this.props.dy + 20);
+            context.stroke();
+        }
+    }
+
+    render(){        
+
+        this.updateCanvas();
+
+        return e('div', {
+            className: 'square',
+            style: {
+                backgroundColor: gray2RGB(this.props.value),
+                border: 'none',
+            },
+            onMouseOver: ()=>{
+                if(!isMouseDown){
+                    return;
+                }
+                this.props.drawHandler()
+            },
+            onClick: ()=>this.props.drawHandler(),
+        },
+            e('canvas', {
+                id: `${this.props.idBase}-canvas`,
+                width: '40px',
+                height: '40px',
+            }, null),
+        );
+    }
+}
+
+/**
+ * Gradient grid container
+ */
+class GradientGrid extends React.Component {
+
+    renderCells(){
+
+        let minMag = Math.min(...this.props.magGrid.data);
+        let maxMag = Math.max(...this.props.magGrid.data);
+
+        let cells = [];
+        for(let i=0; i < this.props.magGrid.height; i++){
+            for(let j=0; j < this.props.magGrid.width; j++){
+
+                cells.push(e(GradientCell, {
+                    key: `gradient-cell-${i}-${j}`,
+                    idBase: `gradient-cell-${i}-${j}`,
+                    value: this.props.source.getValue(i, j),
+                    color: wavelengthToColor((this.props.magGrid.getValue(i, j) - minMag) / (maxMag - minMag) * 250 + 450)[0],
+                    dx: this.props.sobelX.getValue(i, j) / this.props.magGrid.getValue(i, j),
+                    dy: this.props.sobelY.getValue(i, j) / this.props.magGrid.getValue(i, j),
+                    drawHandler: ()=>this.props.drawHandler(i, j),
+                }, null));
+            }
+        }
+        return cells;
+    }
+
+    render(){
+        return e('div', {
+            className: 'square-grid-base',
+            style: {
+                gridTemplateColumns: `repeat(${this.props.magGrid.width}, ${this.props.gridUnit}vmax)`,
+                gridTemplateRows: `repeat(${this.props.magGrid.height}, ${this.props.gridUnit}vmax)`,
+            }
+        },
+            this.renderCells(),
+        )
+    }
+}
+
+/**
  * Top level gradient demo
  */
 class GradientDemo extends React.Component {
@@ -9,106 +102,9 @@ class GradientDemo extends React.Component {
         super(props);
 
         // Generate source array2d
-        const size = 7;
-        let src = Array.from({length: 4*size*size}, ()=>0);
-
-        for(let i=0; i < size; i++){
-            for(let j=0; j < size; j++){
-
-                let value = Math.floor(Math.abs(Math.floor(size/2) - i) / Math.floor(size/2) * 206);
-
-                src[4*(size*i + j) + 0] = value;
-                src[4*(size*i + j) + 1] = value;
-                src[4*(size*i + j) + 2] = value;
-            }
-        }
-
-        this.source = new Array2D(src, size, size, 4);
-
-        $(document).ready(()=>this.process());
-
-        this.canvas = null;
-        $(window).ready(()=>this.resize());
-        $(window).resize(()=>this.resize());
-    }
-
-    /**
-     * Sets gradient demo with a vertical line
-     */
-    setVerticalLine(){
-
-        createVerticalLine(this.source);
+        const size = 20;
+        this.source = new Array2D(Array.from({length: 4*size*size}, ()=>255), size, size, 4);
         this.process();
-
-        this.setState({
-            grid: this.source,
-        });
-    }
-
-    /**
-     * Sets gradient demo with a horizontal line
-     */
-    setHorizontalLine(){
-
-        createHorizontalLine(this.source);
-        this.process();
-
-        this.setState({
-            grid: this.source,
-        });
-    }
-
-    /**
-     * Sets gradient demo with a horizontal line
-     */
-    setDiagonalLine(){
-
-        createDiagonalLine(this.source);
-        this.process();
-
-        this.setState({
-            grid: this.source,
-        });
-    }
-
-    /**
-     * Set gradient demo with horizontal line gradient
-     */
-    setHorizontalGrad(){
-
-        createLineGradient(this.source);
-        this.process();
-
-        this.setState({
-            grid: this.source,
-        });
-    }
-
-    /**
-     * Set gradient demo with radial gradient
-     */
-    setRadialGrad(){
-
-        createRadialGradient(this.source);
-        this.process();
-
-        this.setState({
-            grid: this.source,
-        });
-    }
-
-    /**
-     * Canvas resize handler
-     */
-    resize(){
-        const minValue = Math.min(innerHeight, innerWidth);
-
-        if (minValue < 600){
-            this.canvas.style.width = (minValue - 50)+'px';
-        }
-        else{
-            this.canvas.style.width = (minValue / 2 - 50)+'px';
-        }
     }
 
     /**
@@ -116,76 +112,35 @@ class GradientDemo extends React.Component {
      */
     process(){
 
-        this.canvas = document.getElementById('gradient-canvas');
-        const context = this.canvas.getContext('2d');
-
-        const unit = Math.floor(this.canvas.width / this.source.height);
-        const halfUnit = Math.floor(unit / 2);
-        const quarterUnit = Math.floor(halfUnit / 2);
-
-        context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
         // Apply Sobel operator horizontally
-        let sobelXData = new Array2D([...this.source.data], this.source.width, this.source.height, 4);
-        convolve(sobelXData, sobelX);
+        this.sobelXData = new Array2D([...this.source.data], this.source.width, this.source.height, 4);
+        convolve(this.sobelXData, sobelX);
         
         // Apply Sobel operator vertically
-        let sobelYData = new Array2D([...this.source.data], this.source.width, this.source.height, 4);
-        convolve(sobelYData, sobelY);
+        this.sobelYData = new Array2D([...this.source.data], this.source.width, this.source.height, 4);
+        convolve(this.sobelYData, sobelY);
 
-        // Find and scale magnitudes
-        let mags = [];
-        for(let i=0; i < this.source.height; i++){
-            for(let j=0; j < this.source.width; j++){
-                let mag = Math.sqrt(
-                    Math.pow(sobelXData.getValue(i, j), 2) +
-                    Math.pow(sobelYData.getValue(i, j), 2)
-                );
-                mags.push(mag);
-            }
-        }
-
-        let minMag = Math.min(...mags);
-        let maxMag = Math.max(...mags);
-
-        for(let i=0; i < this.source.height; i++){
-            for(let j=0; j < this.source.width; j++){
-
-                // Convert magnitude to light spectrum wavelength
-                let mag = mags[this.source.width*i + j];
-                let wavelength = (mag - minMag) / (maxMag - minMag) * 250 + 450;
-
-                // Color cell
-                context.fillStyle = gray2RGB(this.source.getValue(i, j));
-                context.fillRect(unit*j, unit*i, unit, unit);
-
-                // Draw vector
-                context.beginPath();
-                context.strokeStyle = wavelengthToColor(wavelength)[0];
-                canvas_arrow(
-                    context,
-                    unit*j + halfUnit,
-                    unit*i + halfUnit,
-                    unit*j + halfUnit + quarterUnit*(sobelXData.getValue(i, j) / mag),
-                    unit*i + halfUnit - quarterUnit*(sobelYData.getValue(i, j) / mag),
-                );
-                context.stroke();
-                context.closePath();
-            }
-        }
+        // Compute mag and angle
+        let [magGrid, angleGrid] = computeGradients(this.sobelXData, this.sobelYData);
+        this.magGrid = magGrid;
+        this.angleGrid = angleGrid;
     }
 
     /**
-     * Updates Array2D grid with value at (row, col)
-     * @param {Array2D} grid 
-     * @param {integer} value 
+     * Updates source when drawing with mouse
+     * 
      * @param {integer} row 
      * @param {integer} col 
      */
-    updateData(grid, value, row, col){
-        
-        grid.data[grid.channels*(grid.width*row + col) + 0] = value;
-        this.process();
+    drawHandler(row, col){
+        for(let i=-1; i <= 1; i++){
+            for(let j=-1; j <= 1; j++){
+                if(row+i >= 0 && row+i < this.source.height && col+j >= 0 && col+j < this.source.width){
+                    let value = Math.min(100*mag2d(i, j), this.source.getValue(row+i, col+j));
+                    this.source.setValue(value, row+i, col+j);
+                }
+            }
+        }
 
         this.setState({
             grid: this.source,
@@ -193,53 +148,21 @@ class GradientDemo extends React.Component {
     }
 
     render(){
-        
+        this.process();
+
         return e('div', null,
-
-            e('div', {className: 'row'},
-                e('div', {className: 'col-xs-6'},
-                    e('div', {className: 'row', style: {textAlign: 'center'}},
-                        e('div', {className: 'col-xs-1'}, null),
-                        e('div', {className: 'col-xs-2'},
-                            e('div', {className: 'btn btn-danger', onClick: ()=>this.setHorizontalLine()}, '1'),
-                        ),
-                        e('div', {className: 'col-xs-2'},
-                            e('div', {className: 'btn btn-danger', onClick: ()=>this.setVerticalLine()}, '2'),
-                        ),
-                        e('div', {className: 'col-xs-2'},
-                            e('div', {className: 'btn btn-danger', onClick: ()=>this.setDiagonalLine()}, '3'),
-                        ),
-                        e('div', {className: 'col-xs-2'},
-                            e('div', {className: 'btn btn-danger', onClick: ()=>this.setHorizontalGrad()}, '4'),
-                        ),
-                        e('div', {className: 'col-xs-2'},
-                            e('div', {className: 'btn btn-danger', onClick: ()=>this.setRadialGrad()}, '5'),
-                        ),
-                        e('div', {className: 'col-xs-1'}, null),
-                    ),
-                ),
-            ),
-
             e('br', null, null),
-
             e('div', {className: 'jumbotron row'},
-                e('div', {className: 'col-md-6'},
+                e('div', {className: 'col-md-12'},
                     e('div', {className: 'col-xs-12'},
-                        e(GridInput, {
-                            idBase: 'gradient-cell',
-                            grid: this.source,
-                            updateGridHandler: (v, i, j)=>this.updateData(this.source, v, i, j)
+                        e(GradientGrid, {
+                            gridUnit: 1.8,
+                            source: this.source,
+                            magGrid: this.magGrid,
+                            sobelX: this.sobelXData,
+                            sobelY: this.sobelYData,
+                            drawHandler: (i, j)=>this.drawHandler(i, j),
                         }, null),
-                    ),
-                ),
-                e('div', {className: 'col-md-6'},
-                    e('div', {className: 'col-xs-12'},
-                        e('canvas', {
-                            id: 'gradient-canvas',
-                            className: 'center',
-                            width: 400,
-                            height: 400,
-                        }, null)
                     ),
                 ),
             )

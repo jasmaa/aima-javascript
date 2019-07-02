@@ -1,8 +1,5 @@
 // Common UI elements
 
-// Create element shortcut
-const e = React.createElement;
-
 /**
  * Grid cell
  */
