@@ -97,10 +97,10 @@ function grayscale(source){
  * Convolves filter on RGBA source
  * 
  * @param {Array2D} source - RGBA source
- * @param {Array2D} filter - Convolving filter 
+ * @param {Array2D} filter - Convolving 1 channel filter 
  * @param {integer} defaultValue - Default out of bounds value 
  */
-function convolve(source, filter, defaultValue=0){
+function convolve(source, filter, defaultValue=255){
 
     // Copy data to buffer for output
     buffer = [...source.data];
@@ -123,19 +123,18 @@ function convolve(source, filter, defaultValue=0){
 
                         // Calculate if within source
                         if(srcRow >= 0 && srcRow < source.height && srcCol >= 0 && srcCol < source.width){
-                            value += source.data[source.channels*(source.width*srcRow + srcCol) + chan] * filterValue;
+                            value += source.getValue(srcRow, srcCol, chan) * filterValue;
                         }
                         // Use default value if out of bounds
                         else{
-                            value = defaultValue;
-                            break loop1;
+                            value += defaultValue * filterValue;
+                            //break loop1;
                         }
                     }
                 }
                 
                 buffer[source.channels*(source.width*i + j) + chan] = value;
-            }
-            
+            }   
         }
     }
 
@@ -161,8 +160,8 @@ function computeGradients(sourceX, sourceY){
 
     for(let i=0; i < sourceX.height; i++){
         for(let j=0; j < sourceX.width; j++){
-            const xVal = sourceX.data[sourceX.channels*(sourceX.width*i + j) + 0];
-            const yVal = sourceY.data[sourceY.channels*(sourceY.width*i + j) + 0];
+            const xVal = sourceX.getValue(i, j);
+            const yVal = sourceY.getValue(i, j);
             const mag = mag2d(xVal, yVal);
             let angle = Math.atan2(yVal, xVal);
 
@@ -175,12 +174,13 @@ function computeGradients(sourceX, sourceY){
             }
 
             // Update grids
-            mags.data[mags.channels*(mags.width*i + j) + 0] = mag;
-            mags.data[mags.channels*(mags.width*i + j) + 1] = mag;
-            mags.data[mags.channels*(mags.width*i + j) + 2] = mag;
-            angles.data[angles.channels*(angles.width*i + j) + 0] = angle;
-            angles.data[angles.channels*(angles.width*i + j) + 1] = angle;
-            angles.data[angles.channels*(angles.width*i + j) + 2] = angle;
+            mags.setValue(mag, i, j, 0);
+            mags.setValue(mag, i, j, 1);
+            mags.setValue(mag, i, j, 2);
+
+            angles.setValue(angle, i, j, 0);
+            angles.setValue(angle, i, j, 1);
+            angles.setValue(angle, i, j, 2);
         }
     }
 
@@ -203,37 +203,37 @@ function nonMaxSuppress(magGrid, angleGrid){
     for(let i=1; i < magGrid.height-1; i++){
         for(let j=1; j < magGrid.width-1; j++){
 
-            const currMag = magGrid.data[magGrid.channels*(magGrid.width*i + j) + 0];
-            const angle = angleGrid.data[angleGrid.channels*(angleGrid.width*i + j) + 0];
+            const currMag = magGrid.getValue(i, j);
+            const angle = angleGrid.getValue(i, j);
 
             // Get relevant neighbors
             let mags = [currMag];
             if(angle >= 0 && angle < Math.PI/8){
-                mags.push(magGrid.data[magGrid.channels*(magGrid.width*i + (j-1))]);
-                mags.push(magGrid.data[magGrid.channels*(magGrid.width*i + (j+1))]);
+                mags.push(magGrid.getValue(i, j-1));
+                mags.push(magGrid.getValue(i, j+1));
             }
             else if(angle >= Math.PI/8 && angle < 3*Math.PI/8){
-                mags.push(magGrid.data[magGrid.channels*(magGrid.width*(i+1) + (j-1))]);
-                mags.push(magGrid.data[magGrid.channels*(magGrid.width*(i+1) + (j-1))]);
+                mags.push(magGrid.getValue(i-1, j+1));
+                mags.push(magGrid.getValue(i+1, j-1));
             }
             else if(angle >= 3*Math.PI/8 && angle < 5*Math.PI/8){
-                mags.push(magGrid.data[magGrid.channels*(magGrid.width*(i-1) + j)]);
-                mags.push(magGrid.data[magGrid.channels*(magGrid.width*(i+1) + j)]);
+                mags.push(magGrid.getValue(i-1, j));
+                mags.push(magGrid.getValue(i+1, j));
             }
             else if(angle >= 5*Math.PI/8 && angle < 7*Math.PI/8){
-                mags.push(magGrid.data[magGrid.channels*(magGrid.width*(i-1) + (j-1))]);
-                mags.push(magGrid.data[magGrid.channels*(magGrid.width*(i+1) + (j+1))]);
+                mags.push(magGrid.getValue(i-1, j-1));
+                mags.push(magGrid.getValue(i+1, j+1));
             }
             else{
-                mags.push(magGrid.data[magGrid.channels*(magGrid.width*i + (j-1))]);
-                mags.push(magGrid.data[magGrid.channels*(magGrid.width*i + (j+1))]);
+                mags.push(magGrid.getValue(i, j-1));
+                mags.push(magGrid.getValue(i, j+1));
             }
 
             // Choose to suppress
             const value = Math.max(...mags) > currMag ? 0 : currMag;
-            res.data[res.channels*(res.width*i + j) + 0] = value;
-            res.data[res.channels*(res.width*i + j) + 1] = value;
-            res.data[res.channels*(res.width*i + j) + 2] = value;
+            res.setValue(value, i, j, 0);
+            res.setValue(value, i, j, 1);
+            res.setValue(value, i, j, 2);
         }
     }
 
@@ -252,7 +252,7 @@ function doubleThreshold(source, hi, lo){
     for(let i=0; i < source.height; i++){
         for(let j=0; j < source.width; j++){
 
-            const value = source.data[source.channels*(source.width*i + j)];
+            const value = source.getValue(i, j);
             let res = 0;
 
             if(value > hi){
@@ -262,9 +262,9 @@ function doubleThreshold(source, hi, lo){
                 res = 127;
             }
 
-            source.data[source.channels*(source.width*i + j) + 0] = res;
-            source.data[source.channels*(source.width*i + j) + 1] = res;
-            source.data[source.channels*(source.width*i + j) + 2] = res;
+            source.setValue(res, i, j, 0);
+            source.setValue(res, i, j, 1);
+            source.setValue(res, i, j, 2);
         }
     }
 }
@@ -279,7 +279,7 @@ function edgeConnect(source){
     for(let i=1; i < source.height-1; i++){
         for(let j=1; j < source.width-1; j++){
 
-            const value = source.data[source.channels*(source.width*i + j)];
+            const value = source.getValue(i, j)
             let strongDetected = false;
 
             // If weak edge, check neighborhood
@@ -287,16 +287,16 @@ function edgeConnect(source){
                 for(let rowOffset= -1; rowOffset <= 1; rowOffset++){
                     for(let colOffset= -1; colOffset <= 1; colOffset++){
                         // Detect strong edge
-                        if(source.data[source.channels*(source.width*(i+rowOffset)) + (j+colOffset)] == 255){
+                        if(source.getValue(i+rowOffset, j+colOffset) == 255){
                             strongDetected = true;
                         }
                     }
                 }
 
                 let res = strongDetected ? 255 : 0;
-                source.data[source.channels*(source.width*i + j) + 0] = res;
-                source.data[source.channels*(source.width*i + j) + 1] = res;
-                source.data[source.channels*(source.width*i + j) + 2] = res;
+                source.setValue(res, i, j, 0);
+                source.setValue(res, i, j, 1);
+                source.setValue(res, i, j, 2);
             }
         }
     }
@@ -319,10 +319,10 @@ function stretchColor(source){
     for(let i=0; i < source.height; i++){
         for(let j=0; j < source.width; j++){
             for(let k=0; k < 3; k++){
-                value = source.data[4*(source.width*i + j) + k];
+                value = source.getValue(i, j, k);
                 value = (value-min) / (max-min) * 255;
                 
-                source.data[4*(source.width*i + j) + k] = value;
+                source.setValue(value, i, j, k);
             }
         }
     }
@@ -351,9 +351,9 @@ function createVerticalLine(source){
 
             let value = Math.floor(Math.abs(source.centerCol - j) / source.centerCol * 206);
 
-            source.data[4*(source.width*i + j) + 0] = value;
-            source.data[4*(source.width*i + j) + 1] = value;
-            source.data[4*(source.width*i + j) + 2] = value;
+            source.setValue(value, i, j, 0);
+            source.setValue(value, i, j, 1);
+            source.setValue(value, i, j, 2);
         }
     }
 }
@@ -364,10 +364,9 @@ function createHorizontalLine(source){
 
             let value = Math.floor(Math.abs(source.centerRow - i) / source.centerRow * 206);
 
-            source.data[4*(source.width*i + j) + 0] = value;
-            source.data[4*(source.width*i + j) + 1] = value;
-            source.data[4*(source.width*i + j) + 2] = value;
-
+            source.setValue(value, i, j, 0);
+            source.setValue(value, i, j, 1);
+            source.setValue(value, i, j, 2);
         }
     }
 }
@@ -379,9 +378,9 @@ function createDiagonalLine(source){
             let value = Math.abs(i - j) * 100;
             value = Math.min(value, 255);
 
-            source.data[4*(source.width*i + j) + 0] = value;
-            source.data[4*(source.width*i + j) + 1] = value;
-            source.data[4*(source.width*i + j) + 2] = value;
+            source.setValue(value, i, j, 0);
+            source.setValue(value, i, j, 1);
+            source.setValue(value, i, j, 2);
         }
     }
 }
@@ -393,9 +392,9 @@ function createLineGradient(source){
             let value = j * 40;
             value = Math.min(value, 255);
 
-            source.data[4*(source.width*i + j) + 0] = value;
-            source.data[4*(source.width*i + j) + 1] = value;
-            source.data[4*(source.width*i + j) + 2] = value;
+            source.setValue(value, i, j, 0);
+            source.setValue(value, i, j, 1);
+            source.setValue(value, i, j, 2);
         }
     }
 }
@@ -407,9 +406,9 @@ function createRadialGradient(source){
             let value = Math.floor(Math.sqrt(Math.pow(i-source.centerRow, 2) + Math.pow(j-source.centerCol, 2)) * 50);
             value = Math.min(value, 255);
 
-            source.data[4*(source.width*i + j) + 0] = value;
-            source.data[4*(source.width*i + j) + 1] = value;
-            source.data[4*(source.width*i + j) + 2] = value;
+            source.setValue(value, i, j, 0);
+            source.setValue(value, i, j, 1);
+            source.setValue(value, i, j, 2);
         }
     }
 }

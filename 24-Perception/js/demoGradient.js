@@ -138,8 +138,8 @@ class GradientDemo extends React.Component {
         for(let i=0; i < this.source.height; i++){
             for(let j=0; j < this.source.width; j++){
                 let mag = Math.sqrt(
-                    Math.pow(sobelXData.data[4*(this.source.width*i + j) + 0], 2) +
-                    Math.pow(sobelYData.data[4*(this.source.width*i + j) + 0], 2)
+                    Math.pow(sobelXData.getValue(i, j), 2) +
+                    Math.pow(sobelYData.getValue(i, j), 2)
                 );
                 mags.push(mag);
             }
@@ -156,7 +156,7 @@ class GradientDemo extends React.Component {
                 let wavelength = (mag - minMag) / (maxMag - minMag) * 250 + 450;
 
                 // Color cell
-                context.fillStyle = gray2RGB(this.source.data[4*(this.source.width*i + j) + 0]);
+                context.fillStyle = gray2RGB(this.source.getValue(i, j));
                 context.fillRect(unit*j, unit*i, unit, unit);
 
                 // Draw vector
@@ -166,8 +166,8 @@ class GradientDemo extends React.Component {
                     context,
                     unit*j + halfUnit,
                     unit*i + halfUnit,
-                    unit*j + halfUnit + quarterUnit*(sobelXData.data[4*(this.source.width*i + j) + 0] / mag),
-                    unit*i + halfUnit - quarterUnit*(sobelYData.data[4*(this.source.width*i + j) + 0] / mag),
+                    unit*j + halfUnit + quarterUnit*(sobelXData.getValue(i, j) / mag),
+                    unit*i + halfUnit - quarterUnit*(sobelYData.getValue(i, j) / mag),
                 );
                 context.stroke();
                 context.closePath();

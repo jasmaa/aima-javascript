@@ -51,7 +51,7 @@ class TopologyDemo extends React.Component {
         for(let i=0; i < source.height; i++){
             for(let j=0; j < source.width; j++){
                 if( i % 8 == 0 && j % 8 == 0){
-                    let value = source.data[4*(source.width*i + j) + 0];
+                    let value = source.getValue(i, j);
                     topoData.push({x: j, y: -i, z: value});
                 }
             }

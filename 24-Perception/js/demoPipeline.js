@@ -329,12 +329,12 @@ class PipelineLabel extends React.Component {
         for(let i=0; i < this.size; i++){
             for(let j=0; j < this.size; j++){
                 let value = Math.sqrt(
-                                Math.pow(this.sobelXData.data[4*(this.size*i + j) + 0], 2) +
-                                Math.pow(this.sobelYData.data[4*(this.size*i + j) + 0], 2));
+                                Math.pow(this.sobelXData.getValue(i, j), 2) +
+                                Math.pow(this.sobelYData.getValue(i, j), 2));
                 
-                this.grads.data[4*(this.size*i + j) + 0] = value;
-                this.grads.data[4*(this.size*i + j) + 1] = value;
-                this.grads.data[4*(this.size*i + j) + 2] = value;
+                this.grads.setValue(value, i, j, 0);
+                this.grads.setValue(value, i, j, 1);
+                this.grads.setValue(value, i, j, 2);
             }
         }
 

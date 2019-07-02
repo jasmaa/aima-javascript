@@ -71,7 +71,7 @@ class SobelImageDemo extends React.Component {
         context.putImageData(imgData, 200, 200);
 
         // Do double threshold
-        doubleThreshold(suppressed, 100, 50);
+        doubleThreshold(suppressed, 50, 25);
         fillArray(imgData.data, suppressed.data, imgData.data.length);
         context.putImageData(imgData, 400, 200);
 

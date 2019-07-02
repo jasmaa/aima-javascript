@@ -244,6 +244,7 @@ class ConvolutionTopologyDisplay extends React.Component {
 
     render(){
         if(this.graph){
+            this.graph.setCameraPosition({horizontal: 0, vertical: Math.PI / 4, distance: 2});
             this.graph.setData(this.getTopologicalData());
             this.graph.redraw();
         }
@@ -366,26 +367,7 @@ class ConvolutionDemo extends React.Component {
         }
         let localSource = new Array2D(localSourceData, this.filter.width, this.filter.height, this.source.channels);
 
-        /*
-        
-        */
-
         return e('div', {className: 'jumbotron'}, 
-            e('div', {className: 'row'},
-                e('div', {className: 'col-xs-4'},
-                        
-                ),
-                e('div', {className: 'col-xs-4'},
-                    e(PositionControl, {
-                        moveHandler: (r, c)=>this.move(r, c),
-                        resetHandler: ()=>this.reset(),
-                    }, null)
-                ),
-                e('div', {className: 'col-xs-4'},
-                        
-                ),
-            ),
-            e('br', null, null),
             e('div', {className: 'row'}, 
                 e('div', {className: 'col-xs-4'},
                     e('h4', {align: 'center'}, "Source"),
@@ -419,7 +401,11 @@ class ConvolutionDemo extends React.Component {
             ),
             e('div', {className: 'row'},
                 e('div', {className: 'col-xs-4'},
-                        
+                    e('br', null, null),
+                    e(PositionControl, {
+                        moveHandler: (r, c)=>this.move(r, c),
+                        resetHandler: ()=>this.reset(),
+                    }, null)
                 ),
                 e('div', {className: 'col-xs-4'},
                     e('br', null, null),
