@@ -144,3 +144,85 @@ function wavelengthToColor(wavelength) {
     return colorSpace;
    
 }
+
+
+// === GRID PATTERNS ===
+
+function createVerticalLine(source){
+
+    for(let i=0; i < source.height; i++){
+        for(let j=0; j < source.width; j++){
+
+            let value = Math.floor(Math.abs(source.centerCol - j) / source.centerCol * 206);
+
+            source.setValue(value, i, j, 0);
+            source.setValue(value, i, j, 1);
+            source.setValue(value, i, j, 2);
+        }
+    }
+}
+
+function createHorizontalLine(source){
+    for(let i=0; i < source.height; i++){
+        for(let j=0; j < source.width; j++){
+
+            let value = Math.floor(Math.abs(source.centerRow - i) / source.centerRow * 206);
+
+            source.setValue(value, i, j, 0);
+            source.setValue(value, i, j, 1);
+            source.setValue(value, i, j, 2);
+        }
+    }
+}
+
+function createDiagonalLine(source){
+    for(let i=0; i < source.height; i++){
+        for(let j=0; j < source.width; j++){
+
+            let value = Math.abs(i - j) * 100;
+            value = Math.min(value, 255);
+
+            source.setValue(value, i, j, 0);
+            source.setValue(value, i, j, 1);
+            source.setValue(value, i, j, 2);
+        }
+    }
+}
+
+function createLineGradient(source){
+    for(let i=0; i < source.height; i++){
+        for(let j=0; j < source.width; j++){
+
+            let value = Math.floor(255 * j / source.width);
+
+            source.setValue(value, i, j, 0);
+            source.setValue(value, i, j, 1);
+            source.setValue(value, i, j, 2);
+        }
+    }
+}
+
+function createRadialGradient(source){
+    for(let i=0; i < source.height; i++){
+        for(let j=0; j < source.width; j++){
+
+            let value = Math.floor(Math.sqrt(Math.pow(i-source.centerRow, 2) + Math.pow(j-source.centerCol, 2)) * 50);
+            value = Math.min(value, 255);
+
+            source.setValue(value, i, j, 0);
+            source.setValue(value, i, j, 1);
+            source.setValue(value, i, j, 2);
+        }
+    }
+}
+
+function createClear(source, color=255){
+    for(let i=0; i < source.height; i++){
+        for(let j=0; j < source.width; j++){
+
+            source.setValue(color, i, j, 0);
+            source.setValue(color, i, j, 1);
+            source.setValue(color, i, j, 2);
+        }
+    }
+}

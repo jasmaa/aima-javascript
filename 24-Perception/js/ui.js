@@ -137,21 +137,21 @@ class PositionControl extends React.Component {
             className:'square-grid-3'
         },
             e('div', null, null),
-            e('div', {className: 'btn btn-primary', onClick: ()=>this.props.moveHandler(-1, 0)},
+            e('div', {className: 'control-btn btn btn-primary', onClick: ()=>this.props.moveHandler(-1, 0)},
                 e('i', {className: 'fas fa-arrow-up'}, null)
             ),
             e('div', null, null),
-            e('div', {className: 'btn btn-primary', onClick: ()=>this.props.moveHandler(0, -1)},
+            e('div', {className: 'control-btn btn btn-primary', onClick: ()=>this.props.moveHandler(0, -1)},
                 e('i', {className: 'fas fa-arrow-left'}, null)
             ),
-            e('div', {className: 'btn btn-danger', onClick: ()=>this.props.resetHandler()},
+            e('div', {className: 'control-btn btn btn-danger', onClick: ()=>this.props.resetHandler()},
                 e('i', {className: 'fas fa-undo'}, null)
             ),
-            e('div', {className: 'btn btn-primary', onClick: ()=>this.props.moveHandler(0, 1)},
+            e('div', {className: 'control-btn btn btn-primary', onClick: ()=>this.props.moveHandler(0, 1)},
                 e('i', {className: 'fas fa-arrow-right'}, null)
             ),
             e('div', null, null),
-            e('div', {className: 'btn btn-primary', onClick: ()=>this.props.moveHandler(1, 0)},
+            e('div', {className: 'control-btn btn btn-primary', onClick: ()=>this.props.moveHandler(1, 0)},
                 e('i', {className: 'fas fa-arrow-down'}, null)
             ),
             e('div', null, null),
