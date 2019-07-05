@@ -11,3 +11,5 @@ photo-edge-detection.png from Jon McLoone, Wikimedia Commons under CC-BY-SA-3 ht
 gaussian-2d.png from Krishnavedala, Wikimedia Commons under CC0 1.0 https://commons.wikimedia.org/wiki/File:Gaussian_2d.svg
 
 shannon-01.png and shannon-02.png derived from Konrad Jacobs, Wikimedia Commons under CC BY-SA 2.0 DE https://en.wikipedia.org/wiki/File:ClaudeShannon_MFO3807.jpg
+
+OrbitControls.js from https://github.com/mrdoob/three.js/blob/master/examples/js/controls/OrbitControls.js, MIT License

@@ -245,7 +245,7 @@ class PipelineLabel extends React.Component {
     constructor(props){
         super(props);
 
-        this.size = 12;                      // Image resolution
+        this.size = 20;                      // Image resolution
         this.gridUnit = 0.5;                // Grid width and height
         this.position = {row: 4, col: 4};   // Indicator position
         this.imageId = 'pipeline';          // Image upload id
@@ -384,12 +384,12 @@ class PipelineLabel extends React.Component {
                 xOffset: xStart+0*xDistUnit, yOffset: center, position: this.position}, null),
 
             e(PipelineGrid3D, {key: 'grid-r', renderType: 0, grid: this.colorSource, channel: 0, gridUnit: this.gridUnit,
-                rotStr: rotStr, xOffset: xStart+1*xDistUnit + 0, yOffset: center, position: this.position}, null),
+                rotStr: rotStr, xOffset: xStart+1*xDistUnit + 0, yOffset: center - xDistUnit, position: this.position}, null),
             e(PipelineGrid3D, {key: 'grid-g', renderType: 0, grid: this.colorSource, channel: 1, gridUnit: this.gridUnit,
                 rotStr: rotStr, xOffset: xStart+1*xDistUnit + 1, yOffset: center, position: this.position,
             }, null),
             e(PipelineGrid3D, {key: 'grid-b', renderType: 0, grid: this.colorSource, channel: 2, gridUnit: this.gridUnit,
-                rotStr: rotStr, xOffset: xStart+1*xDistUnit + 2, yOffset: center, position: this.position}, null),
+                rotStr: rotStr, xOffset: xStart+1*xDistUnit + 2, yOffset: center + xDistUnit, position: this.position}, null),
             
             e(PipelineLabel, {key: 'label-rgb', gridUnit: this.gridUnit, size: this.size, rotStr: rotStr,
                 xOffset: xStart+1*xDistUnit, yOffset: center,
@@ -432,7 +432,7 @@ class PipelineLabel extends React.Component {
             e(PipelineGrid3D, {key: 'grid-sobel-x', renderType: 0, grid: this.sobelXData, channel: -1, gridUnit: this.gridUnit,
                 rotStr: rotStr, xOffset: xStart+3*xDistUnit, yOffset: center, position: this.position}, null),
             e(PipelineGrid3D, {key: 'grid-sobel-y', renderType: 0, grid: this.sobelYData, channel: -1, gridUnit: this.gridUnit,
-                rotStr: rotStr, xOffset: xStart+3*xDistUnit + 1, yOffset: center, position: this.position}, null),
+                rotStr: rotStr, xOffset: xStart+3*xDistUnit + 1, yOffset: center + xDistUnit, position: this.position}, null),
             
             e(PipelineLabel, {key: 'label-sobel', gridUnit: this.gridUnit, size: this.size, rotStr: rotStr,
                 xOffset: xStart+3*xDistUnit, yOffset: center,
@@ -509,6 +509,7 @@ class PipelineLabel extends React.Component {
     }
  }
 
+ /*
  // Render elements
 ReactDOM.render(
     e(PipelineDemo, {step: 3}, null),
@@ -518,3 +519,4 @@ ReactDOM.render(
     e(PipelineDemo, {step: 5}, null),
     document.getElementById('pipeline-grad-root')
 );
+*/

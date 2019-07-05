@@ -145,6 +145,32 @@ function wavelengthToColor(wavelength) {
    
 }
 
+/**
+ * Texture load as promise
+ * https://gist.github.com/zadvorsky/a79787a4703ecc74cab2fdbd05888e9b
+ * 
+ * @param {string} url - URL of image texture
+ */
+function loadTexture(url) {
+    return new Promise(resolve => {
+        new THREE.TextureLoader().load(url, resolve);
+    });
+}
+
+/**
+ * Replaces texture in threejs material
+ * 
+ * @param {*} mat - Material to texture swap
+ * @param {*} tex - Texture to swap in
+ */
+function swapTexture(mat, tex){
+    // Replace texture
+    if(mat.map){
+        mat.map.dispose();
+    }
+    tex.magFilter = THREE.NearestFilter;
+    mat.map = tex;
+}
 
 // === GRID PATTERNS ===
 
