@@ -65,8 +65,12 @@ class Pipeline3dDemo extends React.Component {
         container.rotation.x = Math.PI / 4;
         container.rotation.y = Math.PI / 4;
 
+        // BUGGY FIX ME!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         // Update for orbit controls
         let animate = ()=>{
+
+            //time *= 0.001;
+
             controls.update();
             indicatorPivot.position.x = this.position.col/this.size;
             indicatorPivot.position.y = 1 - 1/this.size*(this.position.row+1);
@@ -77,20 +81,21 @@ class Pipeline3dDemo extends React.Component {
         setInterval(animate, 10);
     }
 
-    componentWillUnmount(){
-        clearInterval(animate, 100);
-    }
-
     process(){
         const img = document.getElementById(`${this.imageId}-img`);
 
         // Resize
         const utilCanvas = document.getElementById(`${this.imageId}-util`);
         const context = utilCanvas.getContext('2d');
+        context.clearRect(0, 0, this.size, this.size);
         context.drawImage(img, 0, 0, this.size, this.size);
 
+        //Textures
         loadTexture(utilCanvas.toDataURL("image/png"))
-            .then((texture)=>{swapTexture(this.imgMatArr[0], texture)})
+            .then((texture)=>{
+                swapTexture(this.imgMatArr[0], texture);
+                this.imgMatArr[0].needsUpdate = true;
+            })
 
             .then(()=>{
                 let imgData = context.getImageData(0, 0, this.size, this.size);
@@ -103,7 +108,10 @@ class Pipeline3dDemo extends React.Component {
                 context.putImageData(imgData, 0, 0);
             })
             .then(()=>loadTexture(utilCanvas.toDataURL("image/png")))
-            .then((texture)=>{swapTexture(this.imgMatArr[1], texture)})
+            .then((texture)=>{
+                swapTexture(this.imgMatArr[1], texture);
+                this.imgMatArr[1].needsUpdate = true;
+            })
 
             .then(()=>{
                 let imgData = context.getImageData(0, 0, this.size, this.size);
@@ -116,13 +124,17 @@ class Pipeline3dDemo extends React.Component {
                 context.putImageData(imgData, 0, 0);
             })
             .then(()=>loadTexture(utilCanvas.toDataURL("image/png")))
-            .then((texture)=>{swapTexture(this.imgMatArr[2], texture)})
+            .then((texture)=>{
+                swapTexture(this.imgMatArr[2], texture);
+                this.imgMatArr[2].needsUpdate = true;
+            })
             
             .finally(()=>{
                  // Render scene
                  this.renderer.render(this.scene, this.camera);
                  console.log('done');
             });
+            
     }
 
     render(){

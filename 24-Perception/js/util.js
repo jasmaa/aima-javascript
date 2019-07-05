@@ -165,7 +165,7 @@ function loadTexture(url) {
  */
 function swapTexture(mat, tex){
     // Replace texture
-    if(mat.map){
+    if(mat.map != null){
         mat.map.dispose();
     }
     tex.magFilter = THREE.NearestFilter;
