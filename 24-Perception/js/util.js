@@ -164,7 +164,9 @@ function loadTexture(url) {
  * @param {*} tex - Texture to swap in
  */
 function swapTexture(mat, tex){
-    // Replace texture
+    if(mat == null){
+        return;
+    }
     if(mat.map != null){
         mat.map.dispose();
     }

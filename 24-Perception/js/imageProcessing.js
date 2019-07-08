@@ -93,6 +93,17 @@ function grayscale(source){
     }
 }
 
+function isolateColor(source, channel){
+    for(let i=0; i < source.height; i++){
+        for(let j=0; j < source.width; j++){
+            let value = source.getValue(i, j, channel);
+            source.setValue(channel == 0 ? value : 0, i, j, 0);
+            source.setValue(channel == 1 ? value : 0, i, j, 1);
+            source.setValue(channel == 2 ? value : 0, i, j, 2);
+        }
+    }
+}
+
 /**
  * Convolves filter on RGBA source
  * 

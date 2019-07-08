@@ -509,8 +509,8 @@ class PipelineLabel extends React.Component {
     }
  }
 
- /*
- // Render elements
+
+// Render elements
 ReactDOM.render(
     e(PipelineDemo, {step: 3}, null),
     document.getElementById('pipeline-grayscale-root')
@@ -519,4 +519,3 @@ ReactDOM.render(
     e(PipelineDemo, {step: 5}, null),
     document.getElementById('pipeline-grad-root')
 );
-*/
