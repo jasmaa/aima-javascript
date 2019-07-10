@@ -28,7 +28,7 @@
 					Humans are very good at identifying what something is and where it is given a clear line of
 					sight, but what if we need to find the boundaries of objects in an enormously large number photos?
 					While we could put a room full of toddlers with markers at work and tell them to outline the edges
-					in all the photos, we can do better in both performance and morals by making a computer do this task
+					in a stack of photos, we can do better in both performance and morals by making a computer do this task
 					for us! In fact, in computer vision, this is a general problem known as <strong>edge detection</strong>.
 				</p>
 				<p>
@@ -47,10 +47,10 @@
 					Before we dive into edge detection, we must talk about how an image is represented on a machine.
 					While our toddler workforce may work with physical photographs, computers work with images as 2D
 					grids known as <strong>pixel arrays</strong>. A color image, for instance, is commonly represented with 3 grids,
-					one for each of the red, green, and blue color channels. With edge detection, since we are generally
+					storing the red, green, and blue color values at each pixel. With edge detection, since we are generally
 					only interested in the intensity of a pixel, or how bright or dark it is, we will often first convert
-					our color images to <strong>grayscale</strong> intensities which are only made up of one grid that stores the intensity
-					of each pixel.
+					our color images to <strong>grayscale</strong> intensities which can be calculated from the
+					red, green, and blue color values.
 				</p>
 				<br>
 
@@ -65,8 +65,8 @@
 					the pixels in our image.
 				</p>
 				<p>
-					For problems like these, it helps to add an extra dimension for visualization. Let us re-imagine our pixel
-					array as a 3D topological map, representing the intensity of each pixel as some height. Below is an example
+					For problems like this, it helps to add an extra dimension for visualization. Let us re-imagine our pixel
+					array as a 3D topological map, correlating the intensity of each pixel with height on the map. Below is an example
 					of how one of these maps might look. Drag it around and observe how pixel intensities are translated into 3D
 					elevation.
 				</p>
@@ -76,11 +76,11 @@
 				<br>
 
 				<p>
-					Picking some arbitrary point on this map, we now want to figure out the change in elevation at this location.
-					Knowing the elevation at the chosen point alone is relatively unhelpful since, although it may tell us how high
-					up it is, we get no information about how the elevation changes around our point. What if, in addition, we also
-					considered the elevation of land a small distance to the west and east of our location? Ah-hah! Now by comparing
-					those elevations, we can evaluate a very crude metric of the change in elevation moving eastward around our point!
+						Picking an arbitrary point on this map, we now want to figure out the change in elevation at that point.
+						Knowing the point’s height alone is relatively unhelpful since, although it may tell us how high up it is,
+						we get no information about changes in elevation. What if, in addition, we also considered the height of
+						land a small distance to the west and east of our chosen point? Ah-hah! Now by comparing these nearby
+						heights, we can get some idea of the local elevation changes around the point!
 				</p>
 
 				<br>
@@ -88,11 +88,11 @@
 				<br><br>
 
 				<p>
-					This is the driving principle behind a well-known edge detector called the Sobel operator. The operator works
+					This is the driving principle behind a well-known edge detector called the <strong>Sobel operator</strong>. The operator works
 					by dragging two <strong>kernels</strong> or <strong>filters</strong> called Sobel X and Sobel Y across an
-					image to calculate horizontal and vertical change respectively. For each target pixel, the kernel covers and
-					operates on a neighborhood of surrounding pixels from which we use to calculate the change of intensity at the
-					target. To demonstrate this, below is an interactive example using the Sobel X filter. Brighter areas in the
+					image to calculate horizontal and vertical change respectively. For each target pixel in the image, the kernel covers and
+					operates on a neighborhood of surrounding pixels. We compare these neighboring pixels with each other and use them to
+					assess the change of intensity at the target pixel. To demonstrate this, below is an interactive example using the Sobel X filter. Brighter areas in the
 					result are indicative of large positive change while darker areas are indicative of large negative change.
 					Use your mouse to drag the filter around and see how different areas reflect different intensity changes.
 				</p>
@@ -102,9 +102,9 @@
 				<br>
 
 				<p>
-					Numerically, these filters are actually grids of values that are matched up to a neighborhood of
-					pixels and used in a weighted sum to calculate the change at each pixel. In general, this concept of
-					operating on a grid of values by dragging a smaller grid across it is a powerful mathematical idea that
+					Numerically, these filters are actually grids of values that are matched up to each neighborhood of
+					pixels and used in a weighted sum to calculate the change at each target pixel. In general, this concept of
+					operating on a grid of values by dragging a smaller grid of values across it is a powerful mathematical idea that
 					goes beyond edge detection known as <strong>convolution</strong>.
 				</p>
 
@@ -115,13 +115,13 @@
 				<p>
 					The end result of applying both the Sobel X and Sobel Y filters to our image is two grids containing
 					values that represent horizontal and vertical change respectively. These values can also be thought of
-					as the X and Y components for a 2D arrow or <strong>vector</strong>. The vector gotten using the Sobel
-					operator is known as a gradient whose magnitude represents how much change occurs at its location and
-					whose angle represents the direction of the greatest change.
+					as the X and Y components for a grid of 2D arrows or <strong>vectors</strong>. The vectors gotten using the Sobel
+					operator are known as a <strong>gradients</strong> For a given pixel, the magnitude of the gradient represents
+					how much intensity change occurs at the pixel and the angle represents the direction of the greatest change from the pixel.
 				</p>
 
 				<p>
-					Below is a visualization of an image’s gradient. Draw edges or select one of the preset images and
+					Below is a visualization of an image’s gradients. Draw edges or select one of the preset images and
 					observe how the direction and magnitude of the gradient vectors change in response. The magnitude of
 					the vectors is indicated by color with blue being small and red being large.
 				</p>
@@ -132,8 +132,9 @@
 
 				<p>
 					One can see why calculating gradients for intensity in our photograph using Sobel is a start to finding edges.
-					Locations where the gradient magnitudes are small mean little intensity changes and no edges while locations
-					where the gradient magnitudes are large mean big intensity changes and potential edges.
+					Locations where the gradient magnitudes are small reflect little intensity changes and no edges while locations
+					where the gradient magnitudes are large reflect great intensity changes and potential edges. To recap, below is an
+					outline of the steps we have taken to edge detection so far starting from a color photograph.
 				</p>
 
 				<br>

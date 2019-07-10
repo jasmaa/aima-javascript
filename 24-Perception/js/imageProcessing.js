@@ -93,6 +93,12 @@ function grayscale(source){
     }
 }
 
+/**
+ * Isolates color channel in RGB image
+ * 
+ * @param {Array2D} source - RGBA source
+ * @param {integer} channel - channel to isolate
+ */
 function isolateColor(source, channel){
     for(let i=0; i < source.height; i++){
         for(let j=0; j < source.width; j++){

@@ -1,10 +1,10 @@
 // Utility functions and classes
 
 /**
- * Loads input file as img
+ * Loads input to image using promise
  * 
- * @param {*} imgId 
- * @param {*} input
+ * @param {string} imgId - Id of destination image tag
+ * @param {input} input - File upload input
  */
 function readURL(imgId, input) {
 
@@ -28,9 +28,9 @@ function readURL(imgId, input) {
 /**
  * Calculates value on 2D Gaussian function
  * 
- * @param {*} x 
- * @param {*} y 
- * @param {*} sigma 
+ * @param {Number} x 
+ * @param {Number} y 
+ * @param {Number} sigma 
  */
 function gaussian(x, y, sigma){
     let mult = 1 / (2*Math.PI*Math.pow(sigma, 2));
@@ -61,11 +61,11 @@ function mag2d(x, y){
  * Draws arrow on canvas
  * https://stackoverflow.com/questions/808826/draw-arrow-on-canvas-tag
  * 
- * @param {*} context 
- * @param {*} fromx 
- * @param {*} fromy 
- * @param {*} tox 
- * @param {*} toy 
+ * @param {CanvasRenderingContext2D} context 
+ * @param {Number} fromx 
+ * @param {Number} fromy 
+ * @param {Number} tox 
+ * @param {Number} toy 
  */
 function canvas_arrow(context, fromx, fromy, tox, toy){
     var headlen = 5;   // length of head in pixels
@@ -81,7 +81,7 @@ function canvas_arrow(context, fromx, fromy, tox, toy){
  * takes wavelength in nm and returns an rgba value
  * Taken from Science Primer: http://scienceprimer.com/javascript-code-convert-light-wavelength-color
  * 
- * @param {*} wavelength 
+ * @param {Number} wavelength 
  */
 function wavelengthToColor(wavelength) {
     var r,
@@ -158,20 +158,23 @@ function loadTexture(url) {
 }
 
 /**
- * Replaces texture in threejs material
- * 
- * @param {*} mat - Material to texture swap
- * @param {*} tex - Texture to swap in
+ * Swap and load texture from canvas
+ * @param {Canvas} canvas 
+ * @param {THREE.Material} mat 
  */
-function swapTexture(mat, tex){
+async function swapCanvasTexture(canvas, mat){
     if(mat == null){
         return;
     }
+
+    let texture = await loadTexture(canvas.toDataURL("image/png"));
+
     if(mat.map != null){
         mat.map.dispose();
     }
-    tex.magFilter = THREE.NearestFilter;
-    mat.map = tex;
+    texture.magFilter = THREE.NearestFilter;
+    mat.map = texture;
+    mat.needsUpdate = true;
 }
 
 // === GRID PATTERNS ===
