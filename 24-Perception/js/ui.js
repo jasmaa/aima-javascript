@@ -158,3 +158,110 @@ class PositionControl extends React.Component {
         );
     }
 }
+
+
+/**
+ * Cell with gradient arrow
+ */
+class GradientCell extends React.Component {
+
+    componentDidMount(){
+        this.canvas = document.getElementById(`${this.props.idBase}-canvas`);
+        this.updateCanvas();
+    }
+
+    /**
+     * Updates canvas with magnitude arrow
+     */
+    updateCanvas(){
+        if(this.canvas){
+            const context = this.canvas.getContext('2d');
+            context.clearRect(0, 0, 80, 80);
+            
+            context.strokeStyle = this.props.color;
+            context.beginPath();
+            canvas_arrow(context, 40, 40, 20*this.props.dx + 40, -20*this.props.dy + 40);
+            context.stroke();
+        }
+    }
+
+    render(){        
+
+        if(this.props.isShowGrad){
+            this.updateCanvas();
+        }
+
+        return e('div', {
+            className: 'square',
+            style: {
+                backgroundColor: gray2RGB(this.props.value),
+                border: this.props.isHighlighted ? 'solid red 1em' : 'none',
+            },
+            onMouseOver: ()=>{
+                if(!isMouseDown){
+                    return;
+                }
+                this.props.drawHandler()
+            },
+            onClick: ()=>this.props.drawHandler(),
+        },
+            e('canvas', {
+                id: `${this.props.idBase}-canvas`,
+                width: '80px',
+                height: '80px',
+            }, null),
+        );
+    }
+}
+
+/**
+ * Gradient grid container
+ */
+class GradientGrid extends React.Component {
+
+    renderCells(){
+
+        let minMag = Math.min(...this.props.magGrid.data);
+        let maxMag = Math.max(...this.props.magGrid.data);
+
+        let cells = [];
+        for(let i=0; i < this.props.magGrid.height; i++){
+            for(let j=0; j < this.props.magGrid.width; j++){
+
+                // Hide gradient on border
+                const isShowGrad = i > 0 && j > 0 && i < this.props.source.height-1 && j < this.props.source.width-1;
+
+                // Highlight cell
+                let isHighlighted = false;
+                if(this.props.highlightMask){
+                    isHighlighted = this.props.highlightMask.getValue(i, j);
+                }
+
+                cells.push(e(GradientCell, {
+                    key: `${this.props.idBase}-gradient-cell-${i}-${j}`,
+                    idBase: `${this.props.idBase}-gradient-cell-${i}-${j}`,
+                    value: this.props.source.getValue(i, j),
+                    color: wavelengthToColor((this.props.magGrid.getValue(i, j) - minMag) / (maxMag - minMag) * 250 + 450)[0],
+                    dx: this.props.sobelX.getValue(i, j) / this.props.magGrid.getValue(i, j),
+                    dy: this.props.sobelY.getValue(i, j) / this.props.magGrid.getValue(i, j),
+                    isShowGrad: isShowGrad,
+                    isHighlighted: isHighlighted,
+                    drawHandler: ()=>this.props.drawHandler(i, j),
+                }, null));
+            }
+        }
+        return cells;
+    }
+
+    render(){
+        return e('div', {
+            className: 'square-grid-base',
+            style: {
+                gridTemplateColumns: `repeat(${this.props.magGrid.width}, ${this.props.gridUnit}vmax)`,
+                gridTemplateRows: `repeat(${this.props.magGrid.height}, ${this.props.gridUnit}vmax)`,
+            }
+        },
+            this.renderCells(),
+        )
+    }
+}
