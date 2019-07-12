@@ -83,7 +83,6 @@ class SuppressionDemo extends React.Component {
 
         // Determine if suppressed
         this.isSuppressed = Math.abs(Math.max(...mags) - currMag) > 0.0001;
-        console.log(mags, currMag);
     }
 
     /**
