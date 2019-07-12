@@ -62,7 +62,7 @@ class GradientDemo extends React.Component {
             for(let j=-2; j <= 2; j++){
                 // Stamp circle on drawing
                 if(row+i >= 0 && row+i < this.source.height && col+j >= 0 && col+j < this.source.width){
-                    let value = Math.min(255, 100*mag2d(i, j), this.source.getValue(row+i, col+j));
+                    let value = Math.max(0, Math.min(255, 100*mag2d(i, j), this.source.getValue(row+i, col+j)));
                     this.source.setValue(value, row+i, col+j);
                 }
             }

@@ -8,12 +8,14 @@ class SuppressionDemo extends React.Component {
     constructor(props){
         super(props);
 
-        const size = 3;
+        const size = 5;
         this.source = new Array2D(Array.from({length: 4*size*size}, ()=>255), size, size, 4);
         this.highlightMask = new Array2D(Array.from({length: size*size}, ()=>false), size, size, 1);
         this.magGrid = null;
         this.sobelXData = null;
         this.sobelYData = null;
+
+        this.isSuppressed = false;
     }
 
     /**
@@ -34,34 +36,54 @@ class SuppressionDemo extends React.Component {
         this.magGrid = magGrid;
         this.angleGrid = angleGrid;
 
-        // Highlight neighbor cells pointed at by gradient in center
-        if(this.magGrid.getValue(1, 1)){
-            const angle = this.angleGrid.getValue(1, 1);
-            this.highlightMask = new Array2D(
-                Array.from({length: this.source.width*this.source.height}, ()=>false),
-                this.source.width, this.source.height, 1);
+        // Highlight and collect mags for interested cells
+        this.highlightMask = new Array2D(
+            Array.from({length: this.source.width*this.source.height}, ()=>false),
+            this.source.width, this.source.height, 1);
+
+        this.highlightMask.setValue(true, this.source.centerRow, this.source.centerCol);
+
+        const currMag = this.magGrid.getValue(this.source.centerRow, this.source.centerCol);
+        let mags = [currMag];
+
+        if(this.magGrid.getValue(this.source.centerRow, this.source.centerCol)){
+            const angle = this.angleGrid.getValue(this.source.centerRow, this.source.centerCol);
 
             if(angle >= 0 && angle < Math.PI/8){
-                this.highlightMask.setValue(true, 1, 0);
-                this.highlightMask.setValue(true, 1, 2);
+                this.highlightMask.setValue(true, this.source.centerRow, this.source.centerCol-1);
+                this.highlightMask.setValue(true, this.source.centerRow, this.source.centerCol+1);
+                mags.push(magGrid.getValue(this.source.centerRow, this.source.centerCol-1));
+                mags.push(magGrid.getValue(this.source.centerRow, this.source.centerCol+1));
             }
             else if(angle >= Math.PI/8 && angle < 3*Math.PI/8){
-                this.highlightMask.setValue(true, 0, 2);
-                this.highlightMask.setValue(true, 2, 0);
+                this.highlightMask.setValue(true, this.source.centerRow-1, this.source.centerCol+1);
+                this.highlightMask.setValue(true, this.source.centerRow+1, this.source.centerCol-1);
+                mags.push(magGrid.getValue(this.source.centerRow-1, this.source.centerCol+1));
+                mags.push(magGrid.getValue(this.source.centerRow+1, this.source.centerCol-1));
             }
             else if(angle >= 3*Math.PI/8 && angle < 5*Math.PI/8){
-                this.highlightMask.setValue(true, 0, 1);
-                this.highlightMask.setValue(true, 2, 1);
+                this.highlightMask.setValue(true, this.source.centerRow-1, this.source.centerCol);
+                this.highlightMask.setValue(true, this.source.centerRow+1, this.source.centerCol);
+                mags.push(magGrid.getValue(this.source.centerRow-1, this.source.centerCol));
+                mags.push(magGrid.getValue(this.source.centerRow+1, this.source.centerCol));
             }
             else if(angle >= 5*Math.PI/8 && angle < 7*Math.PI/8){
-                this.highlightMask.setValue(true, 0, 0);
-                this.highlightMask.setValue(true, 2, 2);
+                this.highlightMask.setValue(true, this.source.centerRow-1, this.source.centerCol-1);
+                this.highlightMask.setValue(true, this.source.centerRow+1, this.source.centerCol+1);
+                mags.push(magGrid.getValue(this.source.centerRow-1, this.source.centerCol-1));
+                mags.push(magGrid.getValue(this.source.centerRow+1, this.source.centerCol+1));
             }
             else{
-                this.highlightMask.setValue(true, 1, 0);
-                this.highlightMask.setValue(true, 1, 2);
+                this.highlightMask.setValue(true, this.source.centerRow, this.source.centerCol-1);
+                this.highlightMask.setValue(true, this.source.centerRow, this.source.centerCol+1);
+                mags.push(magGrid.getValue(this.source.centerRow, this.source.centerCol-1));
+                mags.push(magGrid.getValue(this.source.centerRow, this.source.centerCol+1));
             }
         }
+
+        // Determine if suppressed
+        this.isSuppressed = Math.abs(Math.max(...mags) - currMag) > 0.0001;
+        console.log(mags, currMag);
     }
 
     /**
@@ -72,7 +94,7 @@ class SuppressionDemo extends React.Component {
      */
     drawHandler(row, col){
         let value = this.source.getValue(row, col) - 20;
-        value = Math.min(255, value);
+        value = Math.max(0, Math.min(255, value));
         this.source.setValue(value, row, col);
 
         this.setState({
@@ -105,12 +127,15 @@ class SuppressionDemo extends React.Component {
                             e('i', {className: 'fas fa-eraser'}, null)
                         ),
                     ),
+                    e('div', {className: 'col-xs-6 text-right'},
+                        e('h3', null, this.isSuppressed ? 'Suppressed' : 'Not Suppressed'),
+                    ),
                 ),
                 e('div', {className: 'row'},
                     e('div', {className: 'col-xs-12'},
                         e(GradientGrid, {
                             idBase: 'suppression',
-                            gridUnit: 8,
+                            gridUnit: 6,
                             source: this.source,
                             magGrid: this.magGrid,
                             sobelX: this.sobelXData,

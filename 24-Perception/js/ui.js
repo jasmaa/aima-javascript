@@ -195,7 +195,7 @@ class GradientCell extends React.Component {
             className: 'square',
             style: {
                 backgroundColor: gray2RGB(this.props.value),
-                border: this.props.isHighlighted ? 'solid red 1em' : 'none',
+                border: this.props.isHighlighted ? 'solid red 0.5em' : 'none',
             },
             onMouseOver: ()=>{
                 if(!isMouseDown){
@@ -237,11 +237,14 @@ class GradientGrid extends React.Component {
                     isHighlighted = this.props.highlightMask.getValue(i, j);
                 }
 
+                // Calculate arrow color from
+                const color = wavelengthToColor((this.props.magGrid.getValue(i, j) - minMag) / (maxMag - minMag) * 250 + 450)[0];
+
                 cells.push(e(GradientCell, {
                     key: `${this.props.idBase}-gradient-cell-${i}-${j}`,
                     idBase: `${this.props.idBase}-gradient-cell-${i}-${j}`,
                     value: this.props.source.getValue(i, j),
-                    color: wavelengthToColor((this.props.magGrid.getValue(i, j) - minMag) / (maxMag - minMag) * 250 + 450)[0],
+                    color: color,
                     dx: this.props.sobelX.getValue(i, j) / this.props.magGrid.getValue(i, j),
                     dy: this.props.sobelY.getValue(i, j) / this.props.magGrid.getValue(i, j),
                     isShowGrad: isShowGrad,
