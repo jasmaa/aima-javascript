@@ -310,7 +310,6 @@ class Pipeline3dDemo extends React.Component {
             .finally(()=>{
                  // Render scene
                  this.renderer.render(this.scene, this.camera);
-                 console.log('done');
             });
             
     }

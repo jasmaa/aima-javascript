@@ -27,6 +27,7 @@ class SobelImageDemo extends React.Component {
      */
     process(){
 
+        const size = 190;
         this.canvas = document.getElementById(`${this.imageId}-canvas`);
         const context = this.canvas.getContext('2d');
         const img = document.getElementById(`${this.imageId}-img`);
@@ -34,8 +35,8 @@ class SobelImageDemo extends React.Component {
         // Clear canvas
         context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        context.drawImage(img, 0, 0, 200, 200);
-        let imgData = context.getImageData(0, 0, 200, 200);
+        context.drawImage(img, 0, 0, size, size);
+        let imgData = context.getImageData(0, 0, size, size);
         let source = new Array2D([...imgData.data], imgData.width, imgData.height, 4);
         
         // Convert to grayscale
@@ -68,17 +69,27 @@ class SobelImageDemo extends React.Component {
         // Do non maximum suppression
         let suppressed = nonMaxSuppress(magGrid, angleGrid);
         fillArray(imgData.data, suppressed.data, imgData.data.length);
-        context.putImageData(imgData, 200, 200);
+        context.putImageData(imgData, 200, 230);
 
         // Do double threshold
         doubleThreshold(suppressed, 50, 25);
         fillArray(imgData.data, suppressed.data, imgData.data.length);
-        context.putImageData(imgData, 400, 200);
+        context.putImageData(imgData, 400, 230);
 
         // Do edge tracking
         edgeConnect(suppressed);
         fillArray(imgData.data, suppressed.data, imgData.data.length);
-        context.putImageData(imgData, 600, 200);
+        context.putImageData(imgData, 600, 230);
+
+        // Draw labels
+        context.strokeText("Color", 0, 200);
+        context.strokeText("Grayscale", 200, 200);
+        context.strokeText("Blurred", 400, 200);
+        context.strokeText("Gradients", 600, 200);
+        context.strokeText("Non-maximum Suppression", 200, 430);
+        context.strokeText("Double Thresholding", 400, 430);
+        context.strokeText("Edge Tracking by Hysteresis", 600, 430);
+
 
         this.resize();
     }
@@ -100,7 +111,7 @@ class SobelImageDemo extends React.Component {
                     e('canvas', {
                         id: `${this.imageId}-canvas`,
                         width: '800',
-                        height: '400'
+                        height: '440'
                     }, null),
                 ),
             ),

@@ -165,6 +165,9 @@ class ConvolutionMathDisplay extends React.Component {
     }
 }
 
+/**
+ * Label with magnitude of change at indicated location
+ */
 class ConvolutionChangeLabel extends React.Component {
     render(){
 
@@ -260,8 +263,24 @@ class ConvolutionDemo extends React.Component {
     constructor(props){
         super(props);
 
-        this.gridSize = 0.5;
-        this.reset();
+        const size = 20;
+        let source = new Array2D(
+            Array.from({length: 4*size*size}, ()=>0),
+            size, size, 4
+        );
+        createDiagonalLine(source);
+            
+        this.state = {
+            filter: new Array2D([...sobelX.data], sobelX.width, sobelX.height, sobelX.channels),
+            source: source,
+            filterLocation: {row: 0, col: 0},
+            filterColor: new Array2D([
+                '#0078ff', '#0078ff', '#0078ff',
+                '#0078ff', '#fd6600', '#0078ff',
+                '#0078ff', '#0078ff', '#0078ff',
+            ], 3, 3),
+            gridSize: 0.5,
+        };
     }
 
     /**
@@ -271,16 +290,16 @@ class ConvolutionDemo extends React.Component {
      */
     move(r, c){
         
-        if(this.filterLocation.col + c >= this.source.width || this.filterLocation.col + c < 0 ||
-            this.filterLocation.row + r >= this.source.height || this.filterLocation.row + r < 0){
+        if(this.state.filterLocation.col + c >= this.state.source.width || this.state.filterLocation.col + c < 0 ||
+            this.state.filterLocation.row + r >= this.state.source.height || this.state.filterLocation.row + r < 0){
                 return;
         }
 
-        this.filterLocation.col += c;
-        this.filterLocation.row += r;
-
         this.setState({
-            filterLocation: this.filterLocation,
+            filterLocation: {
+                row: this.state.filterLocation.row + r,
+                col: this.state.filterLocation.col + c
+            },
         });
     }
 
@@ -288,25 +307,8 @@ class ConvolutionDemo extends React.Component {
      * Reset convolution demo
      */
     reset(){
-
-        this.filter = new Array2D([...sobelX.data], sobelX.width, sobelX.height, sobelX.channels);
-        this.filterLocation = {row: 0, col: 0};
-
-        this.filterColor = new Array2D([
-            '#0078ff', '#0078ff', '#0078ff',
-            '#0078ff', '#fd6600', '#0078ff',
-            '#0078ff', '#0078ff', '#0078ff',
-        ], 3, 3);
-
-        // Generate array2d of random values
-        this.size = 20;
-        let src = Array.from({length: 4*this.size*this.size}, ()=>0);
-        this.source = new Array2D(src, this.size, this.size, 4);
-        createDiagonalLine(this.source);
-
         this.setState({
-            filter: this.filter,
-            source: this.source,
+            filterLocation: {row: 0, col: 0},
         });
     }
 
@@ -333,68 +335,70 @@ class ConvolutionDemo extends React.Component {
      * @param {integer} col 
      */
     handleMouseOver(row, col){
-        this.filterLocation.row = row;
-        this.filterLocation.col = col;
-
-        //Re-render
         this.setState({
-            filterLocation: this.filterLocation,
+            filterLocation: {
+                row: row,
+                col: col,
+            }
         });
     }
 
     render(){
 
         // Recalculate convolution
-        let convolveResult = new Array2D([...this.source.data], this.source.width, this.source.height, this.source.channels);
-        convolve(convolveResult, this.filter);
+        let convolveResult = new Array2D(
+            [...this.state.source.data],
+            this.state.source.width, this.state.source.height, this.state.source.channels
+        );
+        convolve(convolveResult, this.state.filter);
         stretchColor(convolveResult);
 
         // Get local source at filter
         let localSourceData = [];
         for(let i=-1; i <= 1; i++){
             for(let j=-1; j <= 1; j++){
-                for(let chan=0; chan < this.source.channels; chan++){
+                for(let chan=0; chan < this.state.source.channels; chan++){
 
                     let value = null;
-                    if(this.filterLocation.row + i >= 0 && this.filterLocation.row + i < this.source.height &&
-                        this.filterLocation.col + j >= 0 && this.filterLocation.col + i < this.source.width){
-                            value = this.source.getValue(this.filterLocation.row + i, this.filterLocation.col + j);
+                    if(this.state.filterLocation.row + i >= 0 && this.state.filterLocation.row + i < this.state.source.height &&
+                        this.state.filterLocation.col + j >= 0 && this.state.filterLocation.col + i < this.state.source.width){
+                            value = this.state.source.getValue(this.state.filterLocation.row + i, this.state.filterLocation.col + j);
                     }
 
                     localSourceData.push(value);
                 }
             }
         }
-        let localSource = new Array2D(localSourceData, this.filter.width, this.filter.height, this.source.channels);
+        let localSource = new Array2D(localSourceData, this.state.filter.width, this.state.filter.height, this.state.source.channels);
 
         return e('div', {className: 'jumbotron'}, 
             e('div', {className: 'row'}, 
                 e('div', {className: 'col-xs-4'},
                     e('h4', {align: 'center'}, "Source"),
                     e(ConvolutionGrid, {
-                        gridSize: this.gridSize,
-                        grid: this.source,
-                        filterLocation: this.filterLocation,
+                        gridSize: this.state.gridSize,
+                        grid: this.state.source,
+                        filterLocation: this.state.filterLocation,
                         handleMouseOver: (r, c)=>this.handleMouseOver(r, c),
                     }, null)
                 ),
                 e('div', {className: 'col-xs-4'},
                     e('h4', {align: 'center'}, "Filter Applied"),
                     e(ConvolutionFilterGrid, {
-                        gridSize: this.gridSize,
-                        filter: this.filter,
-                        filterColor: this.filterColor,
-                        filterLocation: this.filterLocation,
-                        source: this.source,
+                        gridSize: this.state.gridSize,
+                        filter: this.state.filter,
+                        filterColor: this.state.filterColor,
+                        filterLocation: this.state.filterLocation,
+                        source: this.state.source,
                         handleMouseOver: (r, c)=>this.handleMouseOver(r, c),
                     }, null)
                 ),
                 e('div', {className: 'col-xs-4'},
                     e('h4', {align: 'center'}, "Result"),
                     e(ConvolutionGrid, {
-                        gridSize: this.gridSize,
+                        gridSize: this.state.gridSize,
                         grid: convolveResult,
-                        filterLocation: this.filterLocation,
+                        filterLocation: this.state.filterLocation,
                         handleMouseOver: (r, c)=>this.handleMouseOver(r, c),
                     }, null)
                 ),
@@ -418,7 +422,7 @@ class ConvolutionDemo extends React.Component {
                     e('br', null, null),
                     e('br', null, null),
                     e(ConvolutionChangeLabel, {
-                        value: convolveResult.getValue(this.filterLocation.row,this.filterLocation.col)
+                        value: convolveResult.getValue(this.state.filterLocation.row, this.state.filterLocation.col)
                     }, null),
                 ),
             )

@@ -17,7 +17,6 @@
 </head>
 
 <body>
-
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-sm-6 col-md-offset-3" id="content">
@@ -31,27 +30,34 @@
 					Humans are very good at identifying what something is and where it is given a clear line of
 					sight, but what if we need to find the boundaries of objects in an enormously large number photos?
 					While we could put a room full of toddlers with markers at work and tell them to outline the edges
-					in a stack of photos, we can do better in both performance and morals by making a computer do this task
-					for us! In fact, in computer vision, this is a general problem known as <strong>edge detection</strong>.
+					in a stack of photos, we can do better in both performance and morals by making a computer do this
+					task
+					for us! In fact, in computer vision, this is a general problem known as <strong>edge
+						detection</strong>.
 				</p>
 				<p>
 					Formally, edge detection is the process of detecting the boundaries in an image that separate great
-					changes in brightness or <strong>intensity</strong>. One of the reasons to do edge detection is that it is
-					able to reduce a complex image down to a simpler one where only these edges are marked. Because of this,
+					changes in brightness or <strong>intensity</strong>. One of the reasons to do edge detection is that
+					it is
+					able to reduce a complex image down to a simpler one where only these edges are marked. Because of
+					this,
 					edge detection often acts as a preliminary step to other computer vision processes.
 				</p>
 
 				<br>
-				<img src="../third-party/photo-edge-detection.png" class="center display-image">
+				<img src="../third-party/photo-edge-detection.png" alt="Edge detection example on photo" class="center display-image">
 				<br><br>
 
 				<h2>What is an Image?</h2>
 				<p>
 					Before we dive into edge detection, we must talk about how an image is represented on a machine.
 					While our toddler workforce may work with physical photographs, computers work with images as 2D
-					grids known as <strong>pixel arrays</strong>. A color image, for instance, is commonly represented with 3 grids,
-					storing the red, green, and blue color values at each pixel. With edge detection, since we are generally
-					only interested in the intensity of a pixel, or how bright or dark it is, we will often first convert
+					grids known as <strong>pixel arrays</strong>. A color image, for instance, is commonly represented
+					with 3 grids,
+					storing the red, green, and blue color values at each pixel. With edge detection, since we are
+					generally
+					only interested in the intensity of a pixel, or how bright or dark it is, we will often first
+					convert
 					our color images to <strong>grayscale</strong> intensities which can be calculated from the
 					red, green, and blue color values.
 				</p>
@@ -63,14 +69,19 @@
 
 				<h2>Detecting Edges</h2>
 				<p>
-					How do we go about solving the problem of detecting edges? Since our goal is to find locations where image
-					intensity changes the most, we need some way of finding out how much the intensity changes as we move across
+					How do we go about solving the problem of detecting edges? Since our goal is to find locations where
+					image
+					intensity changes the most, we need some way of finding out how much the intensity changes as we
+					move across
 					the pixels in our image.
 				</p>
 				<p>
-					For problems like this, it helps to add an extra dimension for visualization. Let us re-imagine our pixel
-					array as a 3D topological map, correlating the intensity of each pixel with height on the map. Below is an example
-					of how one of these maps might look. Drag it around and observe how pixel intensities are translated into 3D
+					For problems like this, it helps to add an extra dimension for visualization. Let us re-imagine our
+					pixel
+					array as a 3D topological map, correlating the intensity of each pixel with height on the map. Below
+					is an example
+					of how one of these maps might look. Drag it around and observe how pixel intensities are translated
+					into 3D
 					elevation.
 				</p>
 
@@ -79,25 +90,36 @@
 				<br>
 
 				<p>
-						Picking an arbitrary point on this map, we now want to figure out the change in elevation at that point.
-						Knowing the point’s height alone is relatively unhelpful since, although it may tell us how high up it is,
-						we get no information about changes in elevation. What if, in addition, we also considered the height of
-						land a small distance to the west and east of our chosen point? Ah-hah! Now by comparing these nearby
-						heights, we can get some idea of the local elevation changes around the point!
+					Picking an arbitrary point on this map, we now want to figure out the change in elevation at that
+					point.
+					Knowing the point’s height alone is relatively unhelpful since, although it may tell us how high up
+					it is,
+					we get no information about changes in elevation. What if, in addition, we also considered the
+					height of
+					land a small distance to the west and east of our chosen point? Ah-hah! Now by comparing these
+					nearby
+					heights, we can get some idea of the local elevation changes around the point!
 				</p>
 
 				<br>
-				<img src="./images/elevation.png" class="center display-image">
+				<img src="./images/elevation.png" alt="Elevation comparison example" class="center display-image">
 				<br><br>
 
 				<p>
-					This is the driving principle behind a well-known edge detector called the <strong>Sobel operator</strong>. The operator works
-					by dragging two <strong>kernels</strong> or <strong>filters</strong> called Sobel X and Sobel Y across an
-					image to calculate horizontal and vertical change respectively. For each target pixel in the image, the kernel covers and
-					operates on a neighborhood of surrounding pixels. We compare these neighboring pixels with each other and use them to
-					assess the change of intensity at the target pixel. To demonstrate this, below is an interactive example using the Sobel X filter. Brighter areas in the
-					result are indicative of large positive change while darker areas are indicative of large negative change.
-					Use your mouse to drag the filter around and see how different areas reflect different intensity changes.
+					This is the driving principle behind a well-known edge detector called the <strong>Sobel
+						operator</strong>. The operator works
+					by dragging two <strong>kernels</strong> or <strong>filters</strong> called Sobel X and Sobel Y
+					across an
+					image to calculate horizontal and vertical change respectively. For each target pixel in the image,
+					the kernel covers and
+					operates on a neighborhood of surrounding pixels. We compare these neighboring pixels with each
+					other and use them to
+					assess the change of intensity at the target pixel. To demonstrate this, below is an interactive
+					example using the Sobel X filter. Brighter areas in the
+					result are indicative of large positive change while darker areas are indicative of large negative
+					change.
+					Use your mouse to drag the filter around and see how different areas reflect different intensity
+					changes.
 				</p>
 
 				<br>
@@ -106,21 +128,27 @@
 
 				<p>
 					Numerically, these filters are actually grids of values that are matched up to each neighborhood of
-					pixels and used in a weighted sum to calculate the change at each target pixel. In general, this concept of
-					operating on a grid of values by dragging a smaller grid of values across it is a powerful mathematical idea that
+					pixels and used in a weighted sum to calculate the change at each target pixel. In general, this
+					concept of
+					operating on a grid of values by dragging a smaller grid of values across it is a powerful
+					mathematical idea that
 					goes beyond edge detection known as <strong>convolution</strong>.
 				</p>
 
 				<br>
-				<img src="./images/filters.png" class="center display-image">
+				<img src="./images/filters.png" alt="Sobel X and Y filters" class="center display-image">
 				<br><br>
 
 				<p>
 					The end result of applying both the Sobel X and Sobel Y filters to our image is two grids containing
-					values that represent horizontal and vertical change respectively. These values can also be thought of
-					as the X and Y components for a grid of 2D arrows or <strong>vectors</strong>. The vectors gotten using the Sobel
-					operator are known as a <strong>gradients</strong> For a given pixel, the magnitude of the gradient represents
-					how much intensity change occurs at the pixel and the angle represents the direction of the greatest change from the pixel.
+					values that represent horizontal and vertical change respectively. These values can also be thought
+					of
+					as the X and Y components for a grid of 2D arrows or <strong>vectors</strong>. The vectors gotten
+					using the Sobel
+					operator are known as a <strong>gradients</strong> For a given pixel, the magnitude of the gradient
+					represents
+					how much intensity change occurs at the pixel and the angle represents the direction of the greatest
+					change from the pixel.
 				</p>
 
 				<p>
@@ -134,9 +162,12 @@
 				<br>
 
 				<p>
-					One can see why calculating gradients for intensity in our photograph using Sobel is a start to finding edges.
-					Locations where the gradient magnitudes are small reflect little intensity changes and no edges while locations
-					where the gradient magnitudes are large reflect great intensity changes and potential edges. To recap, below is an
+					One can see why calculating gradients for intensity in our photograph using Sobel is a start to
+					finding edges.
+					Locations where the gradient magnitudes are small reflect little intensity changes and no edges
+					while locations
+					where the gradient magnitudes are large reflect great intensity changes and potential edges. To
+					recap, below is an
 					outline of the steps we have taken to edge detection so far starting from a color photograph.
 				</p>
 
@@ -147,23 +178,25 @@
 				<h2>Gaussian Smoothing</h2>
 				<p>
 					The Sobel operator is a good start at edge detection, but it comes with its own share of faults.
-					One problem with solely using Sobel is that it is very susceptible to <strong>noise</strong>. Our current approach
+					One problem with solely using Sobel is that it is very susceptible to <strong>noise</strong>. Our
+					current approach
 					would count a single bright pixel in a sea of dark pixels as an edge which is undesirable.
 				</p>
 
 				<br>
-				<img src="../third-party/shannon-01.png" class="center display-image">
+				<img src="../third-party/shannon-01.png" alt="Edge detection on noisy input" class="center display-image">
 				<br><br>
 
 				<p>
-					To reduce noise in an image, we can choose to do <strong>Gaussian smoothing</strong> before attempting to apply
+					To reduce noise in an image, we can choose to do <strong>Gaussian smoothing</strong> before
+					attempting to apply
 					the Sobel operator. How Gaussian smoothing is done is very similar to Sobel; using a filter and
 					convolution to change the source image. The filter this time, however, is an approximation of the
 					Gaussian function or normal distribution in 2D.
 				</p>
 
 				<br>
-				<img src="../third-party/gaussian-2d.png" class="center display-image">
+				<img src="../third-party/gaussian-2d.png" alt="2D gaussian function" class="center display-image">
 				<br><br>
 
 				<p>
@@ -172,34 +205,41 @@
 				</p>
 
 				<br>
-				<img src="../third-party/shannon-02.png" class="center display-image">
+				<img src="../third-party/shannon-02.png" alt="Edge detection on noisy input after gaussian blur" class="center display-image">
 				<br><br>
 
 				<h2>Non-Maximum Suppression</h2>
 				<p>
-					While performing Gaussian smoothing before applying Sobel helps to reduce noise, the edge detection with
-					Sobel at this stage is still unsatisfactory, usually leaving behind a number of thick and blurry edges. Ideally,
-					we would want to thin these edges down. This is because producing thinner edges have many advantages when feeding
-					an edge-detected image further down an image processing pipeline, such as being able to do more accurate
+					While performing Gaussian smoothing before applying Sobel helps to reduce noise, the edge detection
+					with
+					Sobel at this stage is still unsatisfactory, usually leaving behind a number of thick and blurry
+					edges. Ideally,
+					we would want to thin these edges down. This is because producing thinner edges have many advantages
+					when feeding
+					an edge-detected image further down an image processing pipeline, such as being able to do more
+					accurate
 					object detection or perimeter calculation, for example.
 				</p>
 
 				<p>
 					To thin down our edges, one approach is to try to get rid of, or <strong>suppress</strong>,
 					the pixels with smaller gradient magnitudes within a blurry edge. This leaves behind only the
-					pixels with the sharpest intensity changes, making this a form of <strong>non-maximum suppression</strong>. For every pixel, the
-					gradient magnitudes of the two nearest pixels pointed at in both the positive and negative directions
+					pixels with the sharpest intensity changes, making this a form of <strong>non-maximum
+						suppression</strong>. For every pixel, the
+					gradient magnitudes of the two nearest pixels pointed at in both the positive and negative
+					directions
 					of the current pixel’s gradient are checked. If our current pixel has a greater magnitude than both
 					of them, we keep its current value. Otherwise, we suppress it by setting its magnitude to 0.
 				</p>
 
 				<p>
-					Below is a demonstration of non-maximum suppression on a single pixel. Paint the pixels around it and
-					notice the relationship between the direction of the gradient and the pixels we are interested in checking.
+					Below is a demonstration of non-maximum suppression on a single pixel. Paint the pixels around it
+					and
+					notice the relationship between the direction of the gradient and the pixels we are interested in
+					checking.
 					Remember that the vectors of greatest magnitude are red and that we are suppressing pixels on
 					a basis of gradient magnitude and not intensity.
 				</p>
-
 
 				<br>
 				<div id="suppression-root"></div>
@@ -209,10 +249,14 @@
 
 				<h2>Double Threshold</h2>
 				<p>
-					While non-maximum suppression gets rid of most of the unwanted pixels along an edge, some get left behind.
-					We can clean them up by performing a <strong>double threshold</strong> which defines an empirically-determined high and low threshold
-					to classify and cull pixels. Pixels above the high threshold are marked as strong edges, pixels between
-					the high and low thresholds are marked as weak edges, and pixels below the low threshold are suppressed.
+					While non-maximum suppression gets rid of most of the unwanted pixels along an edge, some get left
+					behind.
+					We can clean them up by performing a <strong>double threshold</strong> which defines an
+					empirically-determined high and low threshold
+					to classify and cull pixels. Pixels above the high threshold are marked as strong edges, pixels
+					between
+					the high and low thresholds are marked as weak edges, and pixels below the low threshold are
+					suppressed.
 				</p>
 
 				<br>
@@ -220,19 +264,67 @@
 				<br>
 
 				<h2>Edge Tracking by Hysteresis</h2>
-				TODO
+				<p>
+					At this stage, we are still left with several wrongly marked edges. While strong edges are most
+					likely true edges,
+					weak edges could be true edges or may simply be badly classified. How do we determine which weak
+					edges to keep and
+					which to throw away? Usually, the weak edges that we want are connected or adjacent to strong edges
+					while the
+					unwanted weak edges are isolated. Thus it is possible to do blob analysis where we search each weak
+					edge’s
+					8-pixel neighborhood for a strong edge. If a strong edge exists in the neighborhood, the weak edge
+					is kept,
+					otherwise it is thrown away.
+				</p>
+
 				<br>
+				<img src="./images/blobAnalysis.png" alt="Example of keeping or suppressing weak edge using blob" class="center display-image">
+				<br><br>
 
 				<h2>Canny Edge Detection</h2>
-				TODO
-
+				<p>
+					We could keep processing our image and fine tuning our edge detection process, but usually images at
+					this
+					stage have their edges detected reasonably well. From a photograph, we have managed to apply a
+					sequence of
+					techniques that extracts edges to some degree of satisfaction. In fact, this pipeline as a whole is
+					an
+					algorithm known as <strong>Canny edge detection</strong>, created by John Canny in 1986. Despite its
+					age
+					and various improvements in the field of computer vision and computing power since it was first
+					conceived,
+					Canny edge detection still remains one of the most effective and widely-used edge detection
+					algorithms today.
+				</p>
+				<p>
+					In summary, edge detection provides a way for machines to decode visual information, something we
+					humans take
+					for granted, by simplifying a complex image into a simpler one which outlines the boundaries of the
+					objects in
+					a scene. Edge detection opens many doors within computer vision, serving as a foundational step for
+					more
+					complicated algorithms such as those for image segmentation and object detection.
+				</p>
+				<p>
+					To do edge detection on a color image, we perform the following sequence of steps:
+				</p>
+				<ol>
+					<li>Convert the image to grayscale intensities</li>
+					<li>Blur the image to reduce noise</li>
+					<li>Apply the Sobel operator to crudely find edges</li>
+					<li>Perform non-maximum suppression, double thresholding, and edge tracking by hysteresis to thin
+						and clean detected edges</li>
+				</ol>
+				<p>
+					This sequence is famously known as Canny edge detection, an early edge detection algorithm that
+					still remains popular in computing.
+				</p>
 				<br>
 				<div id="sobel-image-root"></div>
 				<br>
-
 				<br>
 				<br>
-
 			</div>
 		</div>
 	</div>
@@ -244,7 +336,7 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/106/three.js"></script>
 	<script src="../third-party/OrbitControls.js"></script>
-	
+
 
 	<script type="text/javascript" src="./js/setup.js"></script>
 	<script type="text/javascript" src="./js/util.js"></script>
