@@ -20,6 +20,18 @@ input[type=number]::-webkit-outer-spin-button {
     display: list-item;
 }
 
+.demo-container {
+    background-color: gainsboro;
+    padding: 1vmax;
+    border-radius: 0.5vmax;
+}
+
+.flex-container {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
 .control-btn {
     margin: 0.1em 0.1em 0.1em 0.1em;
 }
@@ -63,18 +75,4 @@ input[type=number]::-webkit-outer-spin-button {
 
 .display-image {
     width: 40vmax;
-}
-
-.demo-card {
-    padding: 2% 2% 2% 2%;
-}
-
-.scene-3d {
-    height: 24vmax;
-    transform-style: preserve-3d;
-    //perspective: 30vmax;
-}
-
-.panel-3d {
-	position: absolute;
 }

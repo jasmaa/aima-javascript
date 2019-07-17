@@ -96,15 +96,13 @@ class TopologyDemo extends React.Component {
                 )
             ),
             e('br', null, null),
-            e('div', {className: 'jumbotron row'},
-                e('div', {className: 'col-md-6 col-xs-6'},
+            e('div', {className: 'demo-container'},
+                e('div', {className: 'flex-container'},
                     e('canvas', {
                         id: `${this.imageId}-canvas`,
                         width: this.size,
                         height: this.size,
-                    }, null)
-                ),
-                e('div', {className: 'col-md-6 col-xs-6'},
+                    }, null),
                     e('div', {
                         id: `${this.imageId}-topology`,
                     }, null)

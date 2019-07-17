@@ -113,7 +113,7 @@ class ThresholdDemo extends React.Component {
                 )
             ),
             e('br', null, null),
-            e('div', {className: 'jumbotron'},
+            e('div', {className: 'demo-container'},
                 e('div', {id: 'slider-range'}, null),
                 e('br', null, null),
                 e('canvas', {

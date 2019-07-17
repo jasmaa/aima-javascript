@@ -6,86 +6,19 @@
 class Cell extends React.Component {
 
     render(){
-        const highlightColor = this.props.highlightColor ? this.props.highlightColor : "red";
-        const highlightTextColor = this.props.highlightTextColor ? this.props.highlightTextColor : "white";
-
-        let bgColor = this.props.isHighlighted ? highlightColor : this.props.bgColor;
-        let textColor = this.props.isHighlighted ? highlightTextColor : "black";
 
         return e('div', {
                 className:'square',
                 style: {
-                    backgroundColor: bgColor,
+                    border: this.props.highlightColor ? `0.1vw solid ${this.props.highlightColor}` : '0.05vw solid gray',
+                    backgroundColor: this.props.bgColor,
                     cursor: this.props.handleMouseOver ? 'none' : null,
                 },
                 onMouseOver: this.props.handleMouseOver ? this.props.handleMouseOver : null,
             },
-            e('div', {style: {color: textColor}},
-                this.props.value
-            )
+            e('div', null, this.props.value)
         );
     }    
-}
-
-/**
- * Colored number display
- */
-class DisplayNumber extends React.Component {
-
-    render(){
-        return e('span', {
-            style: {
-                color: this.props.highlightColor,
-                fontSize: '1.7vmax',
-            }
-        }, this.props.value);
-    }
-}
-
-/**
- * Numerical input grid
- */
-class GridInput extends React.Component {
-
-    renderCells(){
-
-        let cells = [];
-
-        for(let i=0; i < this.props.grid.height; i++){
-            for(let j=0; j < this.props.grid.width; j++){
-
-                cells.push(e('input', {
-                    key: `cell-${i}-${j}`,
-                    className: 'square',
-                    id: `${this.props.idBase}-${i}-${j}`,
-                    type: 'number',
-                    style: {
-                        backgroundColor: this.props.gridColor ? this.props.gridColor.data[this.props.gridColor.channels*(this.props.gridColor.width*i + j) + 0] : "white",
-                    },
-                    value: this.props.grid.data[this.props.grid.channels*(this.props.grid.width*i + j) + 0],
-
-                    onChange: ()=>this.props.updateGridHandler(
-                        document.getElementById(`${this.props.idBase}-${i}-${j}`).value, i, j
-                    ),
-                }, null));
-            }
-        }
-
-        return cells;
-    }
-
-    render(){
-
-        return e('div', {
-            className:'square-grid-base',
-            style: {
-                gridTemplateColumns: `repeat(${this.props.grid.width}, 3vmax)`,
-                gridTemplateRows: `repeat(${this.props.grid.height}, 3vmax)`,
-            },
-        },
-            this.renderCells()
-        );
-    }
 }
 
 /**
@@ -128,7 +61,7 @@ class ImageUploader extends React.Component {
 }
 
 /**
- * Four direction control panel
+ * Legacy: Four direction control panel
  */
 class PositionControl extends React.Component {
 
@@ -177,10 +110,17 @@ class GradientCell extends React.Component {
         if(this.canvas){
             const context = this.canvas.getContext('2d');
             context.clearRect(0, 0, 80, 80);
-            
-            context.strokeStyle = this.props.color;
+
+            context.lineWidth = 3;
             context.beginPath();
-            canvas_arrow(context, 40, 40, 20*this.props.dx + 40, -20*this.props.dy + 40);
+            if(Number.isNaN(this.props.dx) && Number.isNaN(this.props.dy)){
+                context.strokeStyle = 'pink';
+                canvasCross(context, 40, 40)
+            }
+            else{
+                context.strokeStyle = this.props.color;
+                canvas_arrow(context, 40, 40, 20*this.props.dx + 40, -20*this.props.dy + 40);
+            }
             context.stroke();
         }
     }
@@ -195,7 +135,7 @@ class GradientCell extends React.Component {
             className: 'square',
             style: {
                 backgroundColor: gray2RGB(this.props.value),
-                border: this.props.isHighlighted ? 'solid red 0.5em' : 'none',
+                border: this.props.isHighlighted ? 'solid red 0.5em' : 'solid gray 0.05em',
             },
             onMouseOver: ()=>{
                 if(!isMouseDown){

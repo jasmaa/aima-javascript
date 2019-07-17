@@ -5,37 +5,36 @@
  */
 class ConvolutionGrid extends React.Component {
 
-    renderCells(){
+    renderCells() {
 
         // Add cells
         let cells = [];
-        for(let i=0; i < this.props.grid.height; i++){
-            for(let j=0; j < this.props.grid.width; j++){
+        for (let i = 0; i < this.props.grid.height; i++) {
+            for (let j = 0; j < this.props.grid.width; j++) {
 
                 let value = this.props.grid.getValue(i, j);
                 let isTarget = this.props.filterLocation.col == j && this.props.filterLocation.row == i;
 
                 cells.push(e(Cell, {
                     key: `cell-${i}-${j}`,
-                    isHighlighted: isTarget,
-                    highlightColor: '#fd6600',
+                    highlightColor: isTarget ? '#fd6600' : null,
                     bgColor: gray2RGB(value),
-                    handleMouseOver: ()=>this.props.handleMouseOver(i, j),
+                    handleMouseOver: () => this.props.handleMouseOver(i, j),
                 }, null));
             }
         }
-        
+
         return cells;
     }
 
-    render(){
+    render() {
         return e('div', {
-                className:'square-grid-base',
-                style: {
-                    'gridTemplateColumns': `repeat(${this.props.grid.width}, ${this.props.gridSize}vmax)`,
-                    'gridTemplateRows': `repeat(${this.props.grid.height}, ${this.props.gridSize}vmax)`,
-                }
-            },
+            className: 'square-grid-base',
+            style: {
+                'gridTemplateColumns': `repeat(${this.props.grid.width}, ${this.props.gridSize}vmax)`,
+                'gridTemplateRows': `repeat(${this.props.grid.height}, ${this.props.gridSize}vmax)`,
+            }
+        },
             this.renderCells()
         );
     }
@@ -47,31 +46,30 @@ class ConvolutionGrid extends React.Component {
  */
 class ConvolutionFilterGrid extends React.Component {
 
-    renderCells(){
+    renderCells() {
 
         let cells = []
-        for(let i=0; i < this.props.source.height; i++){
-            for(let j=0; j < this.props.source.width; j++){
+        for (let i = 0; i < this.props.source.height; i++) {
+            for (let j = 0; j < this.props.source.width; j++) {
 
                 // Highlight cells
-                let isWithinFilter =    i >= this.props.filterLocation.row - this.props.filter.centerRow &&
-                                        i <= this.props.filterLocation.row + this.props.filter.centerRow &&
-                                        j >= this.props.filterLocation.col - this.props.filter.centerCol &&
-                                        j <= this.props.filterLocation.col + this.props.filter.centerCol;
+                let isWithinFilter = i >= this.props.filterLocation.row - this.props.filter.centerRow &&
+                    i <= this.props.filterLocation.row + this.props.filter.centerRow &&
+                    j >= this.props.filterLocation.col - this.props.filter.centerCol &&
+                    j <= this.props.filterLocation.col + this.props.filter.centerCol;
 
-                let value = this.props.source.data[4*(this.props.source.width*i + j) + 0];
+                let value = this.props.source.getValue(i, j);
                 let filterRow = this.props.filter.height - (i - this.props.filterLocation.row + this.props.filter.centerRow) - 1;
                 let filterCol = this.props.filter.width - (j - this.props.filterLocation.col + this.props.filter.centerCol) - 1;
-                if(isWithinFilter){
+                if (isWithinFilter) {
                     value *= this.props.filter.getValue(filterRow, filterCol);
                 }
 
                 cells.push(e(Cell, {
                     key: `cell-${i}-${j}`,
-                    isHighlighted: isWithinFilter,
-                    highlightColor: this.props.filterColor.getValue(filterRow, filterCol),
-                    bgColor: gray2RGB(value),
-                    handleMouseOver: ()=>this.props.handleMouseOver(i, j),
+                    highlightColor: isWithinFilter ? this.props.filterColor.getValue(filterRow, filterCol) : null,
+                    bgColor: gray2RGB(this.props.source.getValue(i, j)),
+                    handleMouseOver: () => this.props.handleMouseOver(i, j),
                 }, null));
             }
         }
@@ -79,89 +77,16 @@ class ConvolutionFilterGrid extends React.Component {
         return cells;
     }
 
-    render(){
+    render() {
         return e('div', {
-                className:'square-grid-5',
-                style: {
-                    'gridTemplateColumns': `repeat(${this.props.source.width}, ${this.props.gridSize}vmax)`,
-                    'gridTemplateRows': `repeat(${this.props.source.height}, ${this.props.gridSize}vmax)`,
-                },
+            className: 'square-grid-5',
+            style: {
+                'gridTemplateColumns': `repeat(${this.props.source.width}, ${this.props.gridSize}vmax)`,
+                'gridTemplateRows': `repeat(${this.props.source.height}, ${this.props.gridSize}vmax)`,
             },
+        },
             this.renderCells()
         );
-    }
-}
-
-/**
- * Displays weighted sum operation
- */
-class ConvolutionMathDisplay extends React.Component {
-
-    renderNumList(){
-        let nums = []
-
-        let res = 0;
-        for(let i=0; i < this.props.source.height; i++){
-            for(let j=0; j < this.props.source.width; j++){
-
-                // Highlight cells
-                let isWithinFilter =    i >= this.props.filterLocation.row - this.props.filter.centerRow &&
-                                        i <= this.props.filterLocation.row + this.props.filter.centerRow &&
-                                        j >= this.props.filterLocation.col - this.props.filter.centerCol &&
-                                        j <= this.props.filterLocation.col + this.props.filter.centerCol;
-
-                let value = this.props.source.data[4*(this.props.source.width*i + j) + 0];
-                if(isWithinFilter){
-                    let filterRow = this.props.filter.height - (i - this.props.filterLocation.row + this.props.filter.centerRow) - 1;
-                    let filterCol = this.props.filter.width - (j - this.props.filterLocation.col + this.props.filter.centerCol) - 1;
-                    let weight = this.props.filter.data[this.props.filter.width*filterRow + filterCol];
-                    res += value * weight;
-
-                    nums.push(e(DisplayNumber, {
-                        key: `num-${i}-${j}-weight`,
-                        value: weight,
-                        highlightColor: this.props.filterColor.data[this.props.filterColor.width*filterRow + filterCol],
-                    }, null));
-                    nums.push(e(DisplayNumber, {
-                        key: `num-${i}-${j}-mult`,
-                        value: '×',
-                        highlightColor: 'black',
-                    }, null));
-                    nums.push(e(DisplayNumber, {
-                        key: `num-${i}-${j}-value`,
-                        value: value,
-                        highlightColor: 'black',
-                    }, null));
-                    nums.push(e(DisplayNumber, {
-                        key: `num-${i}-${j}-plus`,
-                        value: ' + ',
-                        highlightColor: 'black',
-                    }, null));
-                }
-            }
-        }
-
-        nums.pop();
-        nums.push(e(DisplayNumber, {
-            key: 'equals',
-            value: ' = ',
-            highlightColor: 'black',
-        }, null));
-        nums.push(e(DisplayNumber, {
-            key: 'res',
-            value: res,
-            highlightColor: 'red',
-        }, null));
-        return nums;
-    }
-
-    render(){
-        return e('p', {
-            style: {
-                margin: '3vmax 0vmax 3vmax 0vmax',
-            },
-            align: 'center',
-        }, this.renderNumList());
     }
 }
 
@@ -169,12 +94,12 @@ class ConvolutionMathDisplay extends React.Component {
  * Label with magnitude of change at indicated location
  */
 class ConvolutionChangeLabel extends React.Component {
-    render(){
+    render() {
 
         let signLabel = this.props.value > 127 ? 'Positive ' : 'Negative ';
         let magLabel = Math.abs(this.props.value - 127) > 63 ? 'Large ' : 'Small ';
 
-        return e('p', {align: 'center'},
+        return e('p', { align: 'center' },
             magLabel, signLabel, 'Change'
         );
     }
@@ -184,74 +109,96 @@ class ConvolutionChangeLabel extends React.Component {
  * Displays topological representation of grid
  */
 class ConvolutionTopologyDisplay extends React.Component {
-    constructor(props){
+    constructor(props) {
         super(props);
 
-        this.size = 200;
-        this.options = {
-            width: `${this.size}px`,
-            height: `${this.size}px`,
-            style: 'surface',
-            xBarWidth: 1,
-            yBarWidth: 1,
-            zMin: 0,
-            showPerspective: true,
-            showGrid: false,
-            showXAxis: false,
-            showYAxis: false,
-            showZAxis: false,
-            showShadow: false,
-            keepAspectRatio: true,
-            verticalRatio: 0.5,
-            backgroundColor: 'white',
-        };
-        this.graphContainer = null;
-        this.graph = null;
-        this.horiRot = 0;
+        // Three js setup
+        this.camera = new THREE.PerspectiveCamera(75, 1, 0.1, 100);
+        this.camera.position.z = 4 * Math.cos(Math.PI / 4);
+        this.camera.position.y = 4 * Math.sin(Math.PI / 4);
+        this.camera.lookAt(new THREE.Vector3(0, 0, 0));
+        this.scene = new THREE.Scene();
+
+        this.clearColor = 'pink';
+        this.objArr = new Array2D(new Array(this.props.grid.width * this.props.grid.height), this.props.grid.width, this.props.grid.height, 1);
     }
 
-    componentDidMount(){
-        // Init graph
-        let topoData = this.getTopologicalData();
-        this.graphContainer = document.getElementById(this.props.imageId);
-        this.graph = new vis.Graph3d(this.graphContainer, topoData, this.options);
-        this.graph.setCameraPosition({horizontal: this.horiRot, vertical: Math.PI / 4, distance: 2});
-        /*
-        this.graphRotater = setInterval(()=>{
-            this.horiRot += Math.PI / 50;
-            this.graph.setCameraPosition({horizontal: this.horiRot});
-            this.graph.redraw();
-        }, 50);
-        */
+    componentDidMount() {
+        // Set up 3d scene
+
+        // Renderer
+        const canvas = document.getElementById(`${this.props.imageId}-canvas3d`);
+        this.renderer = new THREE.WebGLRenderer({ canvas });
+        this.renderer.setClearColor(this.clearColor);
+
+        // Create main container
+        const container = new THREE.Object3D();
+        container.position.x = -1.5;
+        container.position.z = -1.5;
+
+        for (let i = 0; i < this.props.grid.height; i++) {
+            for (let j = 0; j < this.props.grid.width; j++) {
+                let pillarGeo = new THREE.BoxGeometry(1, 1, 1);
+                let pillarMat = new THREE.MeshBasicMaterial({ color: 'red' });
+                let pillar = new THREE.Mesh(pillarGeo, pillarMat);
+                pillar.position.y = 0.5;
+                pillar.position.x = 0.5;
+                pillar.position.z = 0.5;
+
+                let pillarContainer = new THREE.Object3D();
+                pillarContainer.add(pillar);
+
+                pillarContainer.position.x = j;
+                pillarContainer.position.z = i;
+
+                this.objArr.setValue({
+                    obj: pillarContainer,
+                    mat: pillarMat,
+                }, i, j);
+                container.add(pillarContainer);
+            }
+        }
+
+        // Create scene
+        this.scene.add(container);
+
+        this.updateScene();
     }
 
-    componentWillUnmount(){
-        clearInterval(this.graphRotater);
-    }
+    updateScene() {
+        // Update topo
+        for (let i = 0; i < this.props.grid.height; i++) {
+            for (let j = 0; j < this.props.grid.width; j++) {
 
-    /**
-     * Generates topological data for grid
-     */
-    getTopologicalData(){
-        let topoData = [];
-        for(let i=0; i < this.props.grid.height; i++){
-            for(let j=0; j < this.props.grid.width; j++){    
                 let value = this.props.grid.getValue(i, j);
-                if(value != null){
-                    topoData.push({x: j, y: -i, z: value});
+                let item = this.objArr.getValue(i, j);
+
+                if (value != null) {
+                    item.obj.scale.y = value / 255 + 0.1;
+                    item.mat.color.set(gray2RGB(value));
+                }
+                else {
+                    item.obj.scale.y = 0.001;
+                    item.mat.color.set(this.clearColor);
                 }
             }
         }
-        return topoData;
+
+        this.renderer.render(this.scene, this.camera);
     }
 
-    render(){
-        if(this.graph){
-            this.graph.setCameraPosition({horizontal: 0, vertical: Math.PI / 4, distance: 2});
-            this.graph.setData(this.getTopologicalData());
-            this.graph.redraw();
+    render() {
+        if (this.renderer) {
+            this.updateScene();
         }
-        return e('div', {id: this.props.imageId}, null);
+
+        return e('div', null,
+            e('canvas', {
+                id: `${this.props.imageId}-canvas3d`,
+                width: 200,
+                height: 200,
+            }, null),
+        );
     }
 }
 
@@ -260,20 +207,20 @@ class ConvolutionTopologyDisplay extends React.Component {
  */
 class ConvolutionDemo extends React.Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
 
-        const size = 20;
+        const size = 30;
         let source = new Array2D(
-            Array.from({length: 4*size*size}, ()=>0),
+            Array.from({ length: 4 * size * size }, () => 0),
             size, size, 4
         );
-        createDiagonalLine(source);
-            
+        createVerticalLine(source);
+
         this.state = {
             filter: new Array2D([...sobelX.data], sobelX.width, sobelX.height, sobelX.channels),
             source: source,
-            filterLocation: {row: 0, col: 0},
+            filterLocation: { row: 0, col: 0 },
             filterColor: new Array2D([
                 '#0078ff', '#0078ff', '#0078ff',
                 '#0078ff', '#fd6600', '#0078ff',
@@ -288,11 +235,11 @@ class ConvolutionDemo extends React.Component {
      * @param {integer} r - Rows to move filter
      * @param {integer} c - Columns to move filter
      */
-    move(r, c){
-        
-        if(this.state.filterLocation.col + c >= this.state.source.width || this.state.filterLocation.col + c < 0 ||
-            this.state.filterLocation.row + r >= this.state.source.height || this.state.filterLocation.row + r < 0){
-                return;
+    move(r, c) {
+
+        if (this.state.filterLocation.col + c >= this.state.source.width || this.state.filterLocation.col + c < 0 ||
+            this.state.filterLocation.row + r >= this.state.source.height || this.state.filterLocation.row + r < 0) {
+            return;
         }
 
         this.setState({
@@ -306,26 +253,9 @@ class ConvolutionDemo extends React.Component {
     /**
      * Reset convolution demo
      */
-    reset(){
+    reset() {
         this.setState({
-            filterLocation: {row: 0, col: 0},
-        });
-    }
-
-    /**
-     * Updates Array2D grid with value at (row, col)
-     * @param {Array2D} grid 
-     * @param {integer} value 
-     * @param {integer} row 
-     * @param {integer} col 
-     */
-    updateData(grid, value, row, col){
-
-        grid.setValue(value, row, col);
-
-        this.setState({
-            filter: this.filter,
-            source: this.source,
+            filterLocation: { row: 0, col: 0 },
         });
     }
 
@@ -334,7 +264,7 @@ class ConvolutionDemo extends React.Component {
      * @param {integer} row 
      * @param {integer} col 
      */
-    handleMouseOver(row, col){
+    handleMouseOver(row, col) {
         this.setState({
             filterLocation: {
                 row: row,
@@ -343,7 +273,7 @@ class ConvolutionDemo extends React.Component {
         });
     }
 
-    render(){
+    render() {
 
         // Recalculate convolution
         let convolveResult = new Array2D(
@@ -355,77 +285,53 @@ class ConvolutionDemo extends React.Component {
 
         // Get local source at filter
         let localSourceData = [];
-        for(let i=-1; i <= 1; i++){
-            for(let j=-1; j <= 1; j++){
-                for(let chan=0; chan < this.state.source.channels; chan++){
+        for (let i = -1; i <= 1; i++) {
+            for (let j = -1; j <= 1; j++) {
+                for (let chan = 0; chan < this.state.source.channels; chan++) {
 
                     let value = null;
-                    if(this.state.filterLocation.row + i >= 0 && this.state.filterLocation.row + i < this.state.source.height &&
-                        this.state.filterLocation.col + j >= 0 && this.state.filterLocation.col + i < this.state.source.width){
-                            value = this.state.source.getValue(this.state.filterLocation.row + i, this.state.filterLocation.col + j);
+                    if (this.state.filterLocation.row + i >= 0 && this.state.filterLocation.row + i < this.state.source.height &&
+                        this.state.filterLocation.col + j >= 0 && this.state.filterLocation.col + j < this.state.source.width) {
+                        value = this.state.source.getValue(this.state.filterLocation.row + i, this.state.filterLocation.col + j);
                     }
 
                     localSourceData.push(value);
                 }
             }
         }
+
         let localSource = new Array2D(localSourceData, this.state.filter.width, this.state.filter.height, this.state.source.channels);
 
-        return e('div', {className: 'jumbotron'}, 
-            e('div', {className: 'row'}, 
-                e('div', {className: 'col-xs-4'},
-                    e('h4', {align: 'center'}, "Source"),
-                    e(ConvolutionGrid, {
-                        gridSize: this.state.gridSize,
-                        grid: this.state.source,
-                        filterLocation: this.state.filterLocation,
-                        handleMouseOver: (r, c)=>this.handleMouseOver(r, c),
-                    }, null)
-                ),
-                e('div', {className: 'col-xs-4'},
-                    e('h4', {align: 'center'}, "Filter Applied"),
+        return e('div', { className: 'demo-container' },
+            e('div', { className: 'flex-container' },
+                e('div', null,
+                    e('h4', { align: 'center' }, "Source"),
                     e(ConvolutionFilterGrid, {
                         gridSize: this.state.gridSize,
                         filter: this.state.filter,
                         filterColor: this.state.filterColor,
                         filterLocation: this.state.filterLocation,
                         source: this.state.source,
-                        handleMouseOver: (r, c)=>this.handleMouseOver(r, c),
+                        handleMouseOver: (r, c) => this.handleMouseOver(r, c),
                     }, null)
                 ),
-                e('div', {className: 'col-xs-4'},
-                    e('h4', {align: 'center'}, "Result"),
-                    e(ConvolutionGrid, {
-                        gridSize: this.state.gridSize,
-                        grid: convolveResult,
-                        filterLocation: this.state.filterLocation,
-                        handleMouseOver: (r, c)=>this.handleMouseOver(r, c),
-                    }, null)
-                ),
-            ),
-            e('div', {className: 'row'},
-                e('div', {className: 'col-xs-4'},
-                    e('br', null, null),
-                    e(PositionControl, {
-                        moveHandler: (r, c)=>this.move(r, c),
-                        resetHandler: ()=>this.reset(),
-                    }, null)
-                ),
-                e('div', {className: 'col-xs-4'},
-                    e('br', null, null),
+                e('div', null,
+                    e('h4', { align: 'center' }, "Local Map"),
                     e(ConvolutionTopologyDisplay, {
                         imageId: 'convolution-topology-local',
                         grid: localSource,
                     }, null),
                 ),
-                e('div', {className: 'col-xs-4'},
-                    e('br', null, null),
-                    e('br', null, null),
-                    e(ConvolutionChangeLabel, {
-                        value: convolveResult.getValue(this.state.filterLocation.row, this.state.filterLocation.col)
-                    }, null),
+                e('div', null,
+                    e('h4', { align: 'center' }, "Result"),
+                    e(ConvolutionGrid, {
+                        gridSize: this.state.gridSize,
+                        grid: convolveResult,
+                        filterLocation: this.state.filterLocation,
+                        handleMouseOver: (r, c) => this.handleMouseOver(r, c),
+                    }, null)
                 ),
-            )
+            ),
         );
     }
 }

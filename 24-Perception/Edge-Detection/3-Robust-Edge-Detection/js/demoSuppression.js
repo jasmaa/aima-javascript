@@ -119,7 +119,7 @@ class SuppressionDemo extends React.Component {
         this.process();
 
         return e('div', null, 
-            e('div', {className: 'jumbotron'},
+            e('div', {className: 'demo-container'},
                 e('div', {className: 'row'},
                     e('div', {className: 'col-xs-6 text-left'},
                         e('div', {className: 'btn btn-danger', onClick: ()=>this.reset()},

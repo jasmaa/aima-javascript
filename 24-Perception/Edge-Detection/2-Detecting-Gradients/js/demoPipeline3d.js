@@ -188,13 +188,13 @@ class Pipeline3dDemo extends React.Component {
      */
     drawLabel(context, text, color){
         context.font = "30px Arial";
-        context.lineWidth = 3;
         context.fillStyle = color;
         context.textAlign = 'right';
         
         context.clearRect(0, 0, 200, 200);
         context.fillRect(0, 0, 200, 40);
-        context.strokeText(text, 190, 30);
+        context.fillStyle = 'black';
+        context.fillText(text, 190, 30);
     }
 
     /**
@@ -339,7 +339,7 @@ class Pipeline3dDemo extends React.Component {
                 )
             ),
             e('br', null, null),
-            e('div', {className: 'jumbotron'},
+            e('div', {className: 'demo-container'},
                 e(PositionControl, {
                     moveHandler: (r, c)=>{
                         if(this.position.row + r < 0 || this.position.row + r == this.size ||

@@ -82,13 +82,14 @@ class SobelImageDemo extends React.Component {
         context.putImageData(imgData, 600, 230);
 
         // Draw labels
-        context.strokeText("Color", 0, 200);
-        context.strokeText("Grayscale", 200, 200);
-        context.strokeText("Blurred", 400, 200);
-        context.strokeText("Gradients", 600, 200);
-        context.strokeText("Non-maximum Suppression", 200, 430);
-        context.strokeText("Double Thresholding", 400, 430);
-        context.strokeText("Edge Tracking by Hysteresis", 600, 430);
+        context.font = "11px Arial";
+        context.fillText("Color", 0, 200);
+        context.fillText("Grayscale", 200, 200);
+        context.fillText("Blurred", 400, 200);
+        context.fillText("Gradients", 600, 200);
+        context.fillText("Non-Maximum Suppression", 200, 430);
+        context.fillText("Double Thresholding", 400, 430);
+        context.fillText("Edge Tracking by Hysteresis", 600, 430);
 
 
         this.resize();
@@ -107,7 +108,10 @@ class SobelImageDemo extends React.Component {
             ),
             e('br', null, null),
             e('div', {className: 'row'},
-                e('div', {className: 'jumbotron col-md-12'},
+                e('div', {className: 'demo-container col-md-12', style: {
+                    display: 'flex',
+                    justifyContent: 'center',
+                }},
                     e('canvas', {
                         id: `${this.imageId}-canvas`,
                         width: '800',

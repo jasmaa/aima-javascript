@@ -68,13 +68,28 @@ function mag2d(x, y){
  * @param {Number} toy 
  */
 function canvas_arrow(context, fromx, fromy, tox, toy){
-    var headlen = 10;   // length of head in pixels
-    var angle = Math.atan2(toy-fromy,tox-fromx);
+    const headlen = 10;   // length of head in pixels
+    const angle = Math.atan2(toy-fromy,tox-fromx);
     context.moveTo(fromx, fromy);
     context.lineTo(tox, toy);
-    context.lineTo(tox-headlen*Math.cos(angle-Math.PI/6),toy-headlen*Math.sin(angle-Math.PI/6));
-    context.moveTo(tox, toy);
+    
+    context.moveTo(tox-headlen*Math.cos(angle-Math.PI/6),toy-headlen*Math.sin(angle-Math.PI/6));
+    context.lineTo(tox, toy);
     context.lineTo(tox-headlen*Math.cos(angle+Math.PI/6),toy-headlen*Math.sin(angle+Math.PI/6));
+}
+
+/**
+ * Draw X on canvas
+ * @param {CanvasRenderingContext2D} context 
+ * @param {Number} centerx 
+ * @param {Number} centery 
+ */
+function canvasCross(context, centerx, centery){
+    const len = 10;
+    context.moveTo(centerx+len*Math.cos(Math.PI/4), centery+len*Math.sin(Math.PI/4));
+    context.lineTo(centerx+len*Math.cos(5*Math.PI/4), centery+len*Math.sin(5*Math.PI/4));
+    context.moveTo(centerx+len*Math.cos(3*Math.PI/4), centery+len*Math.sin(3*Math.PI/4));
+    context.lineTo(centerx+len*Math.cos(-Math.PI/4), centery+len*Math.sin(-Math.PI/4));
 }
 
 /**
@@ -184,7 +199,8 @@ function createVerticalLine(source){
     for(let i=0; i < source.height; i++){
         for(let j=0; j < source.width; j++){
 
-            let value = Math.floor(Math.abs(source.centerCol - j) / source.centerCol * 206);
+            let value = Math.floor(Math.abs(source.centerCol - j) / 3 * 206);
+            value = Math.max(Math.min(value, 255), 0);
 
             source.setValue(value, i, j, 0);
             source.setValue(value, i, j, 1);
@@ -197,7 +213,8 @@ function createHorizontalLine(source){
     for(let i=0; i < source.height; i++){
         for(let j=0; j < source.width; j++){
 
-            let value = Math.floor(Math.abs(source.centerRow - i) / source.centerRow * 206);
+            let value = Math.floor(Math.abs(source.centerRow - i) / 3 * 206);
+            value = Math.max(Math.min(value, 255), 0);
 
             source.setValue(value, i, j, 0);
             source.setValue(value, i, j, 1);

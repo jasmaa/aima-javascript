@@ -94,7 +94,7 @@ class GradientDemo extends React.Component {
                 height: '20',
                 hidden: true,
             }, null),
-            e('div', {className: 'jumbotron'},
+            e('div', {className: 'demo-container'},
                 e('div', {className: 'row'},
                     e('div', {className: 'col-xs-6 text-left'},
                         e('div', {className: 'btn btn-danger', onClick: ()=>this.reset()},
