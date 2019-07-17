@@ -100,7 +100,7 @@ class SobelImageDemo extends React.Component {
                 e('div', {className: 'col-md-12'},
                     e(ImageUploader, {
                         imageId: this.imageId,
-                        defaultImage: 'images/test.png',
+                        defaultImage: '../images/test.png',
                         processHandler: () => this.process(),
                     }, null)
                 )

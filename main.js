@@ -21,12 +21,12 @@
         footer.setAttribute('class', 'container-fluid text-center');
         footer.innerHTML = '<img src="http://aima.cs.berkeley.edu/aima_logo.png">';
         body.append(footer);
-
+		
         if (document.location.protocol === 'file:') {
             // file: urls don't allow ajax calls needed to load the header, so load from main site instead
             $('header').load("http://aimacode.github.io/aima-javascript/header.html");
         } else {
-            $('header').load("../header.html");
+            $('header').load("/header.html");
         }
     });
 })();

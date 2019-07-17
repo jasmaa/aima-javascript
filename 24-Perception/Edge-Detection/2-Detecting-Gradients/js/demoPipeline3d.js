@@ -333,7 +333,7 @@ class Pipeline3dDemo extends React.Component {
                 e('div', {className: 'col-md-12'},
                     e(ImageUploader, {
                         imageId: this.imageId,
-                        defaultImage: 'images/test.png',
+                        defaultImage: '../images/test.png',
                         processHandler: () => this.process(),
                     }, null)
                 )
@@ -368,10 +368,12 @@ class Pipeline3dDemo extends React.Component {
 }
 
 // Render elements
+/*
 ReactDOM.render(
     e(Pipeline3dDemo, {steps: 3, imageId: 'pipeline3d-grayscale' }, null),
     document.getElementById('pipeline-grayscale-root')
 );
+*/
 
 ReactDOM.render(
     e(Pipeline3dDemo, {steps: 5, imageId: 'pipeline3d-grad'}, null),

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+	<title>24 Perception - Detecting Gradients</title>
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
+		integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	<link rel="stylesheet" href="/styles.css">
+	<link rel="stylesheet" href="../css/style.css">
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+	<script type="text/javascript" src="/main.js"></script>
+</head>
+
+<body>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-sm-6 col-md-offset-3" id="content">
+
+				<h1>Detecting Gradients</h1>
+				<br>
+
+				<p>
+					How do we go about solving the problem of detecting edges? Since our goal is to find locations where
+					image
+					intensity changes the most, we need some way of finding out how much the intensity changes as we
+					move across
+					the pixels in our image.
+				</p>
+				<p>
+					For problems like this, it helps to add an extra dimension for visualization. Let us re-imagine our
+					pixel
+					array as a 3D topological map, correlating the intensity of each pixel with height on the map. Below
+					is an example
+					of how one of these maps might look. Drag it around and observe how pixel intensities are translated
+					into 3D
+					elevation.
+				</p>
+
+				<br>
+				<div id="topology-root"></div>
+				<br>
+
+				<p>
+					Picking an arbitrary point on this map, we now want to figure out the change in elevation at that
+					point.
+					Knowing the point’s height alone is relatively unhelpful since, although it may tell us how high up
+					it is,
+					we get no information about changes in elevation. What if, in addition, we also considered the
+					height of
+					land a small distance to the west and east of our chosen point? Ah-hah! Now by comparing these
+					nearby
+					heights, we can get some idea of the local elevation changes around the point!
+				</p>
+
+				<br>
+				<img src="../images/elevation.png" alt="Elevation comparison example" class="center display-image">
+				<br><br>
+
+				<p>
+					This is the driving principle behind a well-known edge detector called the <strong>Sobel
+						operator</strong>. The operator works
+					by dragging two <strong>kernels</strong> or <strong>filters</strong> called Sobel X and Sobel Y
+					across an
+					image to calculate horizontal and vertical change respectively. For each target pixel in the image,
+					the kernel covers and
+					operates on a neighborhood of surrounding pixels. We compare these neighboring pixels with each
+					other and use them to
+					assess the change of intensity at the target pixel. To demonstrate this, below is an interactive
+					example using the Sobel X filter. Brighter areas in the
+					result are indicative of large positive change while darker areas are indicative of large negative
+					change.
+					Use your mouse to drag the filter around and see how different areas reflect different intensity
+					changes.
+				</p>
+
+				<br>
+				<div id="convolution-root"></div>
+				<br>
+
+				<p>
+					Numerically, these filters are actually grids of values that are matched up to each neighborhood of
+					pixels and used in a weighted sum to calculate the change at each target pixel. In general, this
+					concept of
+					operating on a grid of values by dragging a smaller grid of values across it is a powerful
+					mathematical idea that
+					goes beyond edge detection known as <strong>convolution</strong>.
+				</p>
+
+				<br>
+				<img src="../images/filters.png" alt="Sobel X and Y filters" class="center display-image">
+				<br><br>
+
+				<p>
+					The end result of applying both the Sobel X and Sobel Y filters to our image is two grids containing
+					values that represent horizontal and vertical change respectively. These values can also be thought
+					of
+					as the X and Y components for a grid of 2D arrows or <strong>vectors</strong>. The vectors gotten
+					using the Sobel
+					operator are known as a <strong>gradients</strong> For a given pixel, the magnitude of the gradient
+					represents
+					how much intensity change occurs at the pixel and the angle represents the direction of the greatest
+					change from the pixel.
+				</p>
+
+				<p>
+					Below is a visualization of an image’s gradients. Draw edges or select one of the preset images and
+					observe how the direction and magnitude of the gradient vectors change in response. The magnitude of
+					the vectors is indicated by color with blue being small and red being large.
+				</p>
+
+				<br>
+				<div id="gradient-root"></div>
+				<br>
+
+				<p>
+					One can see why calculating gradients for intensity in our photograph using Sobel is a start to
+					finding edges.
+					Locations where the gradient magnitudes are small reflect little intensity changes and no edges
+					while locations
+					where the gradient magnitudes are large reflect great intensity changes and potential edges. To
+					recap, below is an
+					outline of the steps we have taken to edge detection so far starting from a color photograph.
+				</p>
+
+				<br>
+				<div id="pipeline-grad-root"></div>
+				<br>
+
+				<div class="row">
+					<div class="col-sm-6 text-left">
+						<a href="../1-Introduction/"><<< Prev</a>
+					</div> <div class="col-sm-6 text-right">
+						<a href="../3-Robust-Edge-Detection/">Next >>></a>
+					</div>
+				</div>
+				<br>
+			</div>
+		</div>
+	</div>
+
+
+	<!-- Replace with third party -->
+	<script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+	<script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/106/three.js"></script>
+	<script src="/third-party/OrbitControls.js"></script>
+
+
+	<script type="text/javascript" src="../js/setup.js"></script>
+	<script type="text/javascript" src="../js/util.js"></script>
+	<script type="text/javascript" src="../js/ui.js"></script>
+	<script type="text/javascript" src="../js/imageProcessing.js"></script>
+
+	<script type="text/javascript" src="./js/demoConvolution.js"></script>
+	<script type="text/javascript" src="./js/demoGradient.js"></script>
+	<script type="text/javascript" src="./js/demoTopology.js"></script>
+	<script type="text/javascript" src="./js/demoPipeline3d.js"></script>
+
+	<script type="text/javascript">
+		// mobile setup
+		document.ontouchmove = function (event) {
+			event.preventDefault();
+		}
+	</script>
+
+</body>
+
+</html>

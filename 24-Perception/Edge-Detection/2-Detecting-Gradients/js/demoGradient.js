@@ -29,7 +29,7 @@ class GradientDemo extends React.Component {
                 grid: this.source,
             });
         };
-        img.src = "./images/starter.png";
+        img.src = "../images/starter.png";
     }
 
     /**
