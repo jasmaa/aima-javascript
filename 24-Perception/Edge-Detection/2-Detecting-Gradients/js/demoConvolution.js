@@ -106,21 +106,26 @@ class ConvolutionChangeLabel extends React.Component {
 }
 
 /**
- * Displays topological representation of grid
+ * Displays local topology of grid
  */
-class ConvolutionTopologyDisplay extends React.Component {
+class ConvolutionLocalTopologyDisplay extends React.Component {
     constructor(props) {
         super(props);
 
         // Three js setup
-        this.camera = new THREE.PerspectiveCamera(75, 1, 0.1, 100);
+        this.camera = new THREE.PerspectiveCamera(75, 1, 0.1, 10);
         this.camera.position.z = 4 * Math.cos(Math.PI / 4);
         this.camera.position.y = 4 * Math.sin(Math.PI / 4);
         this.camera.lookAt(new THREE.Vector3(0, 0, 0));
         this.scene = new THREE.Scene();
 
         this.clearColor = 'pink';
-        this.objArr = new Array2D(new Array(this.props.grid.width * this.props.grid.height), this.props.grid.width, this.props.grid.height, 1);
+        this.objArr = new Array2D(
+            new Array(this.props.grid.width * this.props.grid.height),
+            this.props.grid.width, this.props.grid.height, 1
+        );
+
+        $(window).resize(() => this.resize());
     }
 
     componentDidMount() {
@@ -136,20 +141,30 @@ class ConvolutionTopologyDisplay extends React.Component {
         container.position.x = -1.5;
         container.position.z = -1.5;
 
+        // Create pillars
         for (let i = 0; i < this.props.grid.height; i++) {
             for (let j = 0; j < this.props.grid.width; j++) {
-                let pillarGeo = new THREE.BoxGeometry(1, 1, 1);
-                let pillarMat = new THREE.MeshBasicMaterial({ color: 'red' });
-                let pillar = new THREE.Mesh(pillarGeo, pillarMat);
-                pillar.position.y = 0.5;
-                pillar.position.x = 0.5;
-                pillar.position.z = 0.5;
+                // Pillar mesh
+                const pillarGeo = new THREE.BoxBufferGeometry(1, 1, 1);
+                const pillarMat = new THREE.MeshBasicMaterial({ color: 'red' });
+                const pillar = new THREE.Mesh(pillarGeo, pillarMat);
+                pillar.position.set(0.5, 0.5, 0.5);
 
+                // Pillar edges
+                const pillarEdgeGeo = new THREE.EdgesGeometry(pillarGeo);
+                const pillarLines = new THREE.LineSegments(
+                    pillarEdgeGeo,
+                    new THREE.LineBasicMaterial({ color: this.props.filterColor.getValue(i, j) })
+                );
+                pillarLines.position.set(0.5, 0.5, 0.5);
+
+                // Pillar container
                 let pillarContainer = new THREE.Object3D();
                 pillarContainer.add(pillar);
+                pillarContainer.add(pillarLines);
 
-                pillarContainer.position.x = j;
-                pillarContainer.position.z = i;
+                pillarContainer.position.x = 1.06 * j;
+                pillarContainer.position.z = 1.06 * i;
 
                 this.objArr.setValue({
                     obj: pillarContainer,
@@ -161,12 +176,19 @@ class ConvolutionTopologyDisplay extends React.Component {
 
         // Create scene
         this.scene.add(container);
-
         this.updateScene();
+        this.resize();
     }
 
+    resize() {
+        const canvas = document.getElementById(`${this.props.imageId}-canvas3d`);
+        canvas.style.height = (innerHeight / 4) + 'px';
+    }
+
+    /**
+     * Updates pillars and re-renders
+     */
     updateScene() {
-        // Update topo
         for (let i = 0; i < this.props.grid.height; i++) {
             for (let j = 0; j < this.props.grid.width; j++) {
 
@@ -203,6 +225,90 @@ class ConvolutionTopologyDisplay extends React.Component {
 }
 
 /**
+ * Displays resulting ramp from Sobel X
+ */
+class ConvolutionResultTopologyDisplay extends React.Component {
+    constructor(props) {
+        super(props);
+
+        // Three js setup
+        this.camera = new THREE.PerspectiveCamera(75, 1, 0.1, 10);
+        this.camera.position.z = 4 * Math.cos(Math.PI / 4);
+        this.camera.position.y = 4 * Math.sin(Math.PI / 4);
+        this.camera.lookAt(new THREE.Vector3(0, 0, 0));
+        this.scene = new THREE.Scene();
+
+        this.clearColor = 'pink';
+
+        $(window).resize(() => this.resize());
+    }
+
+    componentDidMount() {
+        // Set up 3d scene
+
+        // Renderer
+        const canvas = document.getElementById(`${this.props.imageId}-canvas3d`);
+        this.renderer = new THREE.WebGLRenderer({ canvas });
+        this.renderer.setClearColor(this.clearColor);
+
+        // Create main container
+        this.container = new THREE.Object3D();
+
+        // Create plane
+        const planeGeo = new THREE.PlaneGeometry(3, 3);
+        this.planeMat = new THREE.MeshBasicMaterial({ color: 'red' });
+        const plane = new THREE.Mesh(planeGeo, this.planeMat);
+        plane.rotation.set(-Math.PI/2, 0, 0);
+
+        this.container.add(plane);
+
+        // Create scene
+        this.scene.add(this.container);
+        this.updateScene();
+        this.resize();
+    }
+
+    resize() {
+        const canvas = document.getElementById(`${this.props.imageId}-canvas3d`);
+        canvas.style.height = (innerHeight / 4) + 'px';
+    }
+
+    /**
+     * Updates pillars and re-renders
+     */
+    updateScene() {
+        // Calculate and update rotation and material
+        const right = this.props.grid.getValue(1, 2);
+        const left = this.props.grid.getValue(1, 0);
+
+        // Ignore edges
+        if(right == null || left == null){
+            return;
+        }
+
+        const diff =  right/255 - left/255;
+        this.container.rotation.set(0, 0, Math.atan(diff));
+        this.planeMat.color.set(gray2RGB(Math.floor(this.props.value)));
+
+        this.renderer.render(this.scene, this.camera);
+    }
+
+    render() {
+        if (this.renderer) {
+            this.updateScene();
+        }
+
+        return e('div', null,
+            e('canvas', {
+                id: `${this.props.imageId}-canvas3d`,
+                width: 200,
+                height: 200,
+            }, null),
+        );
+    }
+}
+
+/**
  * Top-level convolution demo
  */
 class ConvolutionDemo extends React.Component {
@@ -210,7 +316,7 @@ class ConvolutionDemo extends React.Component {
     constructor(props) {
         super(props);
 
-        const size = 30;
+        const size = 20;
         let source = new Array2D(
             Array.from({ length: 4 * size * size }, () => 0),
             size, size, 4
@@ -218,16 +324,24 @@ class ConvolutionDemo extends React.Component {
         createVerticalLine(source);
 
         this.state = {
-            filter: new Array2D([...sobelX.data], sobelX.width, sobelX.height, sobelX.channels),
+            filter: sobelX,
             source: source,
-            filterLocation: { row: 0, col: 0 },
+            filterLocation: { row: 1, col: 1 },
             filterColor: new Array2D([
                 '#0078ff', '#0078ff', '#0078ff',
                 '#0078ff', '#fd6600', '#0078ff',
                 '#0078ff', '#0078ff', '#0078ff',
             ], 3, 3),
-            gridSize: 0.5,
+            gridSize: 0.7,
         };
+
+        // Calculate convolution
+        this.convolveResult = new Array2D(
+            [...this.state.source.data],
+            this.state.source.width, this.state.source.height, this.state.source.channels
+        );
+        convolve(this.convolveResult, this.state.filter);
+        stretchColor(this.convolveResult);
     }
 
     /**
@@ -275,14 +389,6 @@ class ConvolutionDemo extends React.Component {
 
     render() {
 
-        // Recalculate convolution
-        let convolveResult = new Array2D(
-            [...this.state.source.data],
-            this.state.source.width, this.state.source.height, this.state.source.channels
-        );
-        convolve(convolveResult, this.state.filter);
-        stretchColor(convolveResult);
-
         // Get local source at filter
         let localSourceData = [];
         for (let i = -1; i <= 1; i++) {
@@ -299,8 +405,9 @@ class ConvolutionDemo extends React.Component {
                 }
             }
         }
-
         let localSource = new Array2D(localSourceData, this.state.filter.width, this.state.filter.height, this.state.source.channels);
+
+        const resValue = this.convolveResult.getValue(this.state.filterLocation.row, this.state.filterLocation.col);
 
         return e('div', { className: 'demo-container' },
             e('div', { className: 'flex-container' },
@@ -316,20 +423,35 @@ class ConvolutionDemo extends React.Component {
                     }, null)
                 ),
                 e('div', null,
-                    e('h4', { align: 'center' }, "Local Map"),
-                    e(ConvolutionTopologyDisplay, {
-                        imageId: 'convolution-topology-local',
+                    e('h4', { align: 'center' }, "Local Elevations"),
+                    e(ConvolutionLocalTopologyDisplay, {
+                        imageId: 'convolution-local-topology-local',
                         grid: localSource,
+                        filterColor: this.state.filterColor,
                     }, null),
                 ),
+            ),
+            e('br', null, null),
+            e('div', { className: 'flex-container' },
                 e('div', null,
-                    e('h4', { align: 'center' }, "Result"),
+                    e('h4', { align: 'center' }, "Sobel X Result"),
                     e(ConvolutionGrid, {
                         gridSize: this.state.gridSize,
-                        grid: convolveResult,
+                        grid: this.convolveResult,
                         filterLocation: this.state.filterLocation,
                         handleMouseOver: (r, c) => this.handleMouseOver(r, c),
                     }, null)
+                ),
+                e('div', null,
+                    e('h4', { align: 'center' }, "Local Ramp"),
+                    e(ConvolutionResultTopologyDisplay, {
+                        imageId: 'convolution-result-topology-local',
+                        grid: localSource,
+                        value: resValue,
+                    }, null),
+                    e(ConvolutionChangeLabel, {
+                        value: resValue,
+                    }, null),
                 ),
             ),
         );
