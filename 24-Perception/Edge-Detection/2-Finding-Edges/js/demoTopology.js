@@ -65,7 +65,7 @@ class TopologyDemo extends React.Component {
         let options = {
             width: `${this.size}px`,
             height: `${this.size}px`,
-            style: 'bar-color',
+            style: 'surface',
             xBarWidth: this.graphInterval,
             yBarWidth: this.graphInterval,
             zMin: 0,
@@ -77,7 +77,7 @@ class TopologyDemo extends React.Component {
             showShadow: false,
             keepAspectRatio: true,
             verticalRatio: 0.5,
-            backgroundColor: 'white',
+            backgroundColor: 'pink',
         };
 
         this.graphContainer = document.getElementById(`${this.imageId}-topology`);
