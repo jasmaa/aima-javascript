@@ -16,62 +16,62 @@
 	<script type="text/javascript" src="/main.js"></script>
 </head>
 
-<body>
-	<div class="container-fluid">
-		<div class="row">
-			<div class="col-sm-6 col-md-offset-3" id="content">
+<body class="flex-content-container">
+	<div class="flex-content">
 
-				<h1>Introduction</h1>
-				<br>
+		<div class="col-sm-6 col-md-offset-3" id="content">
 
-				<p>
-					For many of us, it is easy to find both the objects in a picture and their boundaries.
-					Humans are very good at identifying what something is and where it is given a clear line of
-					sight, but what if we need to find the boundaries of objects in an enormously large number photos?
-					While we could put a room full of toddlers with markers at work and tell them to outline the edges
-					in a stack of photos, we can do better in both performance and morals by making a computer do this
-					task
-					for us! In fact, in computer vision, this is a general problem known as <strong>edge
-						detection</strong>.
-				</p>
-				<p>
-					Formally, edge detection is the process of detecting the boundaries in an image that separate great
-					changes in brightness or <strong>intensity</strong>. One of the reasons to do edge detection is that
-					it is
-					able to reduce a complex image down to a simpler one where only these edges are marked. Because of
-					this,
-					edge detection often acts as a preliminary step to other computer vision processes.
-				</p>
+			<h1>Introduction</h1>
+			<br>
 
-				<br>
-				<img src="/third-party/photo-edge-detection.png" alt="Edge detection example on photo"
-					class="center display-image">
-				<br><br>
+			<p>
+				For many of us, it is easy to find both the objects in a picture and their boundaries.
+				Humans are very good at identifying what something is and where it is given a clear line of
+				sight, but what if we need to find the boundaries of objects in an enormously large number photos?
+				While we could put a room full of toddlers with markers at work and tell them to outline the edges
+				in a stack of photos, we can do better in both performance and morals by making a computer do this
+				task
+				for us! In fact, in computer vision, this is a general problem known as <strong>edge
+					detection</strong>.
+			</p>
+			<p>
+				Formally, edge detection is the process of detecting the boundaries in an image that separate great
+				changes in brightness or <strong>intensity</strong>. One of the reasons to do edge detection is that
+				it is
+				able to reduce a complex image down to a simpler one where only these edges are marked. Because of
+				this,
+				edge detection often acts as a preliminary step to other computer vision processes.
+			</p>
 
-				<p>
-					Before we dive into edge detection, we must talk about how an image is represented on a machine.
-					While our toddler workforce may work with physical photographs, computers work with images as 2D
-					grids known as <strong>pixel arrays</strong>. A color image, for instance, is commonly represented
-					with 3 grids,
-					storing the red, green, and blue color values at each pixel. With edge detection, since we are
-					generally
-					only interested in the intensity of a pixel, or how bright or dark it is, we will often first
-					convert
-					our color images to <strong>grayscale</strong> intensities which can be calculated from the
-					red, green, and blue color values.
-				</p>
-				<br>
+			<br>
+			<img src="/third-party/photo-edge-detection.png" alt="Edge detection example on photo"
+				class="center display-image">
+			<br><br>
 
-				<div class="row">
-					<div class="col-sm-6 text-left">
-					</div>
-					<div class="col-sm-6 text-right">
-						<a href="../2-Detecting-Gradients/">Next <i class="fas fa-arrow-right"></i></a>
-					</div>
+			<p>
+				Before we dive into edge detection, we must talk about how an image is represented on a machine.
+				While our toddler workforce may work with physical photographs, computers work with images as 2D
+				grids known as <strong>pixel arrays</strong>. A color image, for instance, is commonly represented
+				with 3 grids,
+				storing the red, green, and blue color values at each pixel. With edge detection, since we are
+				generally
+				only interested in the intensity of a pixel, or how bright or dark it is, we will often first
+				convert
+				our color images to <strong>grayscale</strong> intensities which can be calculated from the
+				red, green, and blue color values.
+			</p>
+			<br>
+
+			<div class="row">
+				<div class="col-sm-6 text-left">
 				</div>
-				<br>
+				<div class="col-sm-6 text-right">
+					<a href="../2-Detecting-Gradients/">Next <i class="fas fa-arrow-right"></i></a>
+				</div>
 			</div>
+			<br>
 		</div>
+
 	</div>
 
 

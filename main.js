@@ -15,10 +15,45 @@
     $(function() {
         var body = document.getElementsByTagName('body')[0];
 
+		// Inject breadcrumbs
+		var ancestors = window.location.pathname.split('/');
+		
+		var crumbs = document.createElement('nav');
+		crumbs.setAttribute('class', 'crumbs');
+		var crumbsList = document.createElement('ol');
+		
+		ancestors.slice(0, ancestors.length-1).forEach((name, i)=>{
+			var crumb = document.createElement('li');
+			crumb.setAttribute('class', 'crumb');
+			
+			if(i == 0){
+				crumb.innerHTML = `<a href=/>Home</a>`;
+			}
+			else if(i == ancestors.length-2){
+				crumb.innerHTML = name;
+			}
+			else{
+				var href = ancestors.slice(0, i+1).join("/");
+				crumb.innerHTML = `<a href=${href}>${name}</a>`;
+			}
+			crumbsList.append(crumb);
+		});
+		crumbs.append(crumbsList);
+		
+		try {
+			document.getElementById('content').prepend(crumbs);
+		}
+		catch(err) {
+			console.error(`Could not find content: Make sure id="content" in your content container`);
+		}
+
+		// Inject header
         var header = document.createElement('header');
         body.insertBefore(header, body.firstChild);
+		
+		// Inject footer
         var footer = document.createElement('footer');
-        footer.setAttribute('class', 'container-fluid text-center');
+        footer.setAttribute('class', 'text-center');
         footer.innerHTML = '<img src="http://aima.cs.berkeley.edu/aima_logo.png">';
         body.append(footer);
 		
