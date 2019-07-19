@@ -9,7 +9,7 @@ class TopologyDemo extends React.Component {
         super(props);
         this.imageId = 'topology-image';
         this.size = 400;
-        this.graphInterval = 10;
+        this.graphInterval = 8;
         this.canvas = null;
         this.graphContainer = null;
 

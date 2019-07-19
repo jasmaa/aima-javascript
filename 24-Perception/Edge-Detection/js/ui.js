@@ -178,7 +178,7 @@ class GradientGrid extends React.Component {
                 }
 
                 // Calculate arrow color from
-                const color = wavelengthToColor((this.props.magGrid.getValue(i, j) - minMag) / (maxMag - minMag) * 250 + 450)[0];
+                const color = heatMapColorforValue((this.props.magGrid.getValue(i, j) - minMag) / (maxMag - minMag));
 
                 cells.push(e(GradientCell, {
                     key: `${this.props.idBase}-gradient-cell-${i}-${j}`,
