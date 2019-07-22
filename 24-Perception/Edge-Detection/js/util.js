@@ -70,7 +70,7 @@ function mag2d(x, y){
 function canvas_arrow(context, fromx, fromy, tox, toy){
     const headlen = 10;   // length of head in pixels
     const angle = Math.atan2(toy-fromy,tox-fromx);
-    context.moveTo(fromx, fromy);
+    context.moveTo(fromx + fromx-tox, fromy + fromy-toy);
     context.lineTo(tox, toy);
     
     context.moveTo(tox-headlen*Math.cos(angle-Math.PI/6),toy-headlen*Math.sin(angle-Math.PI/6));
@@ -100,7 +100,7 @@ function canvasCross(context, centerx, centery){
  */
 function heatMapColorforValue(value){
     var h = (1.0 - value) * 240
-    return "hsl(" + h + ", 100%, 50%)";
+    return `hsl(${h}, ${50*value + 50}%, 50%)`;
 }
 
 /**
@@ -184,7 +184,8 @@ function createLineGradient(source){
     for(let i=0; i < source.height; i++){
         for(let j=0; j < source.width; j++){
 
-            let value = Math.floor(255 * j / source.width);
+            let value = Math.floor(Math.abs(source.centerCol - j) * 20);
+            value = Math.max(Math.min(value, 255), 0);
 
             source.setValue(value, i, j, 0);
             source.setValue(value, i, j, 1);
@@ -197,7 +198,7 @@ function createRadialGradient(source){
     for(let i=0; i < source.height; i++){
         for(let j=0; j < source.width; j++){
 
-            let value = Math.floor(Math.sqrt(Math.pow(i-source.centerRow, 2) + Math.pow(j-source.centerCol, 2)) * 50);
+            let value = Math.floor(Math.sqrt(Math.pow(i-source.centerRow, 2) + Math.pow(j-source.centerCol, 2)) * 15);
             value = Math.min(value, 255);
 
             source.setValue(value, i, j, 0);

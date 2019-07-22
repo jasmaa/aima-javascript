@@ -144,7 +144,7 @@ class GradientDemo extends React.Component {
                     e('div', {className: 'col-xs-12'},
                         e(GradientGrid, {
                             idBase: 'gradient',
-                            gridUnit: 1.8,
+                            gridUnit: 2,
                             source: this.source,
                             magGrid: this.magGrid,
                             sobelX: this.sobelXData,

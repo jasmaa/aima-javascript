@@ -113,13 +113,18 @@ class GradientCell extends React.Component {
 
             context.lineWidth = 3;
             context.beginPath();
+
             if(Number.isNaN(this.props.dx) && Number.isNaN(this.props.dy)){
+                context.globalAlpha = 0.5;
                 context.strokeStyle = 'pink';
                 canvasCross(context, 40, 40)
             }
             else{
-                context.strokeStyle = this.props.color;
-                canvas_arrow(context, 40, 40, 20*this.props.dx + 40, -20*this.props.dy + 40);
+                context.globalAlpha = (this.props.ratio + 1) / 2;
+                context.lineWidth = 7*this.props.ratio + 2;
+                context.strokeStyle = heatMapColorforValue(this.props.ratio);
+                const lenWeight = 10*this.props.ratio + 10;
+                canvas_arrow(context, 40, 40, lenWeight*this.props.dx + 40, -lenWeight*this.props.dy + 40);
             }
             context.stroke();
         }
@@ -161,15 +166,23 @@ class GradientGrid extends React.Component {
 
     renderCells(){
 
-        let minMag = Math.min(...this.props.magGrid.data);
-        let maxMag = Math.max(...this.props.magGrid.data);
+        // Find max and min mags for scaling
+        let minMag = Infinity;
+        let maxMag = -Infinity;
+        for(let i=1; i < this.props.magGrid.height-1; i++){
+            for(let j=1; j < this.props.magGrid.width-1; j++){
+                const currMag = this.props.magGrid.getValue(i, j);
+                minMag = Math.min(minMag, currMag);
+                maxMag = Math.max(maxMag, currMag);
+            }
+        }
 
         let cells = [];
         for(let i=0; i < this.props.magGrid.height; i++){
             for(let j=0; j < this.props.magGrid.width; j++){
 
                 // Hide gradient on border
-                const isShowGrad = i > 0 && j > 0 && i < this.props.source.height-1 && j < this.props.source.width-1;
+                const isShowGrad = i > 0 && j > 0 && i < this.props.magGrid.height-1 && j < this.props.magGrid.width-1;
 
                 // Highlight cell
                 let isHighlighted = false;
@@ -178,13 +191,13 @@ class GradientGrid extends React.Component {
                 }
 
                 // Calculate arrow color from
-                const color = heatMapColorforValue((this.props.magGrid.getValue(i, j) - minMag) / (maxMag - minMag));
+                const ratio = (this.props.magGrid.getValue(i, j) - minMag) / (maxMag - minMag);
 
                 cells.push(e(GradientCell, {
                     key: `${this.props.idBase}-gradient-cell-${i}-${j}`,
                     idBase: `${this.props.idBase}-gradient-cell-${i}-${j}`,
                     value: this.props.source.getValue(i, j),
-                    color: color,
+                    ratio: ratio,
                     dx: this.props.sobelX.getValue(i, j) / this.props.magGrid.getValue(i, j),
                     dy: this.props.sobelY.getValue(i, j) / this.props.magGrid.getValue(i, j),
                     isShowGrad: isShowGrad,
