@@ -99,8 +99,9 @@ function canvasCross(context, centerx, centery){
  * @param {Number} value 
  */
 function heatMapColorforValue(value){
-    var h = (1.0 - value) * 240
-    return `hsl(${h}, ${50*value + 50}%, 50%)`;
+    const h = Math.floor((1.0 - value) * 240);
+    const s = Math.floor(50*value + 50);
+    return `hsl(${h}, ${s}%, 50%)`;
 }
 
 /**

@@ -6,19 +6,18 @@
 class ConvolutionGrid extends React.Component {
 
     renderCells() {
-
         // Add cells
         let cells = [];
         for (let i = 0; i < this.props.grid.height; i++) {
             for (let j = 0; j < this.props.grid.width; j++) {
 
-                let value = this.props.grid.getValue(i, j);
-                let isTarget = this.props.filterLocation.col == j && this.props.filterLocation.row == i;
+                const value = this.props.grid.getValue(i, j);
+                const isTarget = this.props.filterLocation.col == j && this.props.filterLocation.row == i;
 
                 cells.push(e(Cell, {
                     key: `cell-${i}-${j}`,
                     highlightColor: isTarget ? '#fd6600' : null,
-                    bgColor: gray2RGB(value),
+                    bgColor: heatMapColorforValue(value),
                     handleMouseOver: () => this.props.handleMouseOver(i, j),
                 }, null));
             }
@@ -96,8 +95,8 @@ class ConvolutionFilterGrid extends React.Component {
 class ConvolutionChangeLabel extends React.Component {
     render() {
 
-        let signLabel = this.props.value > 127 ? 'Positive ' : 'Negative ';
-        let magLabel = Math.abs(this.props.value - 127) > 63 ? 'Large ' : 'Small ';
+        let signLabel = this.props.value > 0.5 ? 'Positive ' : 'Negative ';
+        let magLabel = Math.abs(this.props.value - 0.5) > 0.2 ? 'Large ' : 'Small ';
 
         return e('p', { align: 'center' },
             magLabel, signLabel, 'Change'
@@ -114,8 +113,8 @@ class ConvolutionLocalTopologyDisplay extends React.Component {
 
         // Three js setup
         this.camera = new THREE.PerspectiveCamera(75, 1, 0.1, 10);
-        this.camera.position.z = 4 * Math.cos(Math.PI / 4);
-        this.camera.position.y = 4 * Math.sin(Math.PI / 4);
+        this.camera.position.z = 5 * Math.cos(Math.PI / 4);
+        this.camera.position.y = 5 * Math.sin(Math.PI / 4);
         this.camera.lookAt(new THREE.Vector3(0, 0, 0));
         this.scene = new THREE.Scene();
 
@@ -174,8 +173,33 @@ class ConvolutionLocalTopologyDisplay extends React.Component {
             }
         }
 
+        // Create plane
+        this.planeContainer = new THREE.Object3D();
+        this.planeMat = new THREE.MeshLambertMaterial({ color: 'red' });
+        const arrowHead = new THREE.Mesh(
+            new THREE.ConeGeometry( 0.2, 1, 32 ),
+            this.planeMat,
+        );
+        const arrowBody = new THREE.Mesh(
+            new THREE.CylinderGeometry( 0.1, 0.1, 1, 32 ),
+            this.planeMat,
+        );
+        arrowHead.rotation.set(0, 0, Math.PI/2);
+        arrowBody.rotation.set(0, 0, Math.PI/2);
+        arrowHead.position.set(-0.5, 0, 0);
+        arrowBody.position.set(0.5, 0, 0);
+        this.planeContainer.add(arrowHead);
+        this.planeContainer.add(arrowBody);
+        this.planeContainer.position.set(0, 2, 0);
+
+        // Create light
+        let light = new THREE.PointLight('white', 1, 100);
+        light.position.set(5, 5, 5);
+
         // Create scene
         this.scene.add(container);
+        this.scene.add(this.planeContainer);
+        this.scene.add(light);
         this.updateScene();
         this.resize();
     }
@@ -189,6 +213,18 @@ class ConvolutionLocalTopologyDisplay extends React.Component {
      * Updates pillars and re-renders
      */
     updateScene() {
+        // Calculate and update rotation and material
+        const right = this.props.grid.getValue(1, 2);
+        const left = this.props.grid.getValue(1, 0);
+
+        // Ignore edges
+        if(right != null && left != null){
+            const diff =  right/255 - left/255;
+            this.planeContainer.rotation.set(0, 0, Math.atan(diff));
+            this.planeMat.color.set(heatMapColorforValue(this.props.currGradValue));
+        }
+
+        // Update pillars
         for (let i = 0; i < this.props.grid.height; i++) {
             for (let j = 0; j < this.props.grid.width; j++) {
 
@@ -341,7 +377,7 @@ class ConvolutionDemo extends React.Component {
             this.state.source.width, this.state.source.height, this.state.source.channels
         );
         convolve(this.convolveResult, this.state.filter);
-        stretchColor(this.convolveResult);
+        stretchColor(this.convolveResult, 0, 1);
     }
 
     /**
@@ -407,10 +443,11 @@ class ConvolutionDemo extends React.Component {
         }
         let localSource = new Array2D(localSourceData, this.state.filter.width, this.state.filter.height, this.state.source.channels);
 
+        // Get current gradient value
         const resValue = this.convolveResult.getValue(this.state.filterLocation.row, this.state.filterLocation.col);
 
         return e('div', { className: 'demo-container' },
-            e('div', { className: 'flex-container' },
+            e('div', { className: 'flex-container', style: {alignItems: 'baseline'} },
                 e('div', null,
                     e('h4', { align: 'center' }, "Source"),
                     e(ConvolutionFilterGrid, {
@@ -423,16 +460,17 @@ class ConvolutionDemo extends React.Component {
                     }, null)
                 ),
                 e('div', null,
-                    e('h4', { align: 'center' }, "Local Elevations"),
+                    e('h4', { align: 'center' }, "Local Area"),
                     e(ConvolutionLocalTopologyDisplay, {
                         imageId: 'convolution-local-topology-local',
                         grid: localSource,
                         filterColor: this.state.filterColor,
+                        currGradValue: resValue,
+                    }, null),
+                    e(ConvolutionChangeLabel, {
+                        value: resValue,
                     }, null),
                 ),
-            ),
-            e('br', null, null),
-            e('div', { className: 'flex-container' },
                 e('div', null,
                     e('h4', { align: 'center' }, "Sobel X Result"),
                     e(ConvolutionGrid, {
@@ -440,17 +478,6 @@ class ConvolutionDemo extends React.Component {
                         grid: this.convolveResult,
                         filterLocation: this.state.filterLocation,
                         handleMouseOver: (r, c) => this.handleMouseOver(r, c),
-                    }, null)
-                ),
-                e('div', null,
-                    e('h4', { align: 'center' }, "Local Ramp"),
-                    e(ConvolutionResultTopologyDisplay, {
-                        imageId: 'convolution-result-topology-local',
-                        grid: localSource,
-                        value: resValue,
-                    }, null),
-                    e(ConvolutionChangeLabel, {
-                        value: resValue,
                     }, null),
                 ),
             ),

@@ -324,7 +324,7 @@ function edgeConnect(source){
  * 
  * @param {Array2D} source - RGBA source
  */
-function stretchColor(source){
+function stretchColor(source, targetMin=0, targetMax=255){
 
     let max = source.data.reduce(function(a, b) {
         return Math.max(a, b);
@@ -337,7 +337,7 @@ function stretchColor(source){
         for(let j=0; j < source.width; j++){
             for(let k=0; k < 3; k++){
                 value = source.getValue(i, j, k);
-                value = (value-min) / (max-min) * 255;
+                value = (value-min)/(max-min) * (targetMax-targetMin) + targetMin;
                 
                 source.setValue(value, i, j, k);
             }
