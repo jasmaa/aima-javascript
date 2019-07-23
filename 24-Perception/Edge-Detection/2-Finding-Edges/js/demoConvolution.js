@@ -14,10 +14,16 @@ class ConvolutionGrid extends React.Component {
                 const value = this.props.grid.getValue(i, j);
                 const isTarget = this.props.filterLocation.col == j && this.props.filterLocation.row == i;
 
+                // Mark edge cells as out of bounds
+                let bgColor = heatMapColorforValue(value);
+                if(i == 0 || i == this.props.grid.height-1 || j == 0 || j == this.props.grid.width-1){
+                    bgColor = 'pink';
+                }
+
                 cells.push(e(Cell, {
                     key: `cell-${i}-${j}`,
                     highlightColor: isTarget ? '#fd6600' : null,
-                    bgColor: heatMapColorforValue(value),
+                    bgColor: bgColor,
                     handleMouseOver: () => this.props.handleMouseOver(i, j),
                 }, null));
             }
@@ -57,12 +63,15 @@ class ConvolutionFilterGrid extends React.Component {
                     j >= this.props.filterLocation.col - this.props.filter.centerCol &&
                     j <= this.props.filterLocation.col + this.props.filter.centerCol;
 
-                let value = this.props.source.getValue(i, j);
                 let filterRow = this.props.filter.height - (i - this.props.filterLocation.row + this.props.filter.centerRow) - 1;
                 let filterCol = this.props.filter.width - (j - this.props.filterLocation.col + this.props.filter.centerCol) - 1;
+
+                /*
+                let value = this.props.source.getValue(i, j);
                 if (isWithinFilter) {
                     value *= this.props.filter.getValue(filterRow, filterCol);
                 }
+                */
 
                 cells.push(e(Cell, {
                     key: `cell-${i}-${j}`,
@@ -95,12 +104,23 @@ class ConvolutionFilterGrid extends React.Component {
 class ConvolutionChangeLabel extends React.Component {
     render() {
 
-        let signLabel = this.props.value > 0.5 ? 'Positive ' : 'Negative ';
-        let magLabel = Math.abs(this.props.value - 0.5) > 0.2 ? 'Large ' : 'Small ';
+        const right = this.props.grid.getValue(1, 2);
+        const left = this.props.grid.getValue(1, 0);
+        const up = this.props.grid.getValue(0, 1);
+        const down = this.props.grid.getValue(2, 1);
 
-        return e('p', { align: 'center' },
-            magLabel, signLabel, 'Change'
-        );
+        // Update text
+        let outStr = 'No Change';
+        if(right == null || left == null || up == null || down == null){
+            outStr = 'Out of Bounds';
+        }
+        else if (Math.abs(Math.abs(this.props.value) - 0.5) > 0.0001){
+            const signLabel = this.props.value > 0.5 ? 'Positive ' : 'Negative ';
+            const magLabel = Math.abs(this.props.value - 0.5) > 0.2 ? 'Large ' : 'Small ';
+            outStr =  `${magLabel} ${signLabel} Change`;
+        }
+
+        return e('p', { align: 'center' }, outStr);
     }
 }
 
@@ -175,7 +195,7 @@ class ConvolutionLocalTopologyDisplay extends React.Component {
 
         // Create plane
         this.planeContainer = new THREE.Object3D();
-        this.planeMat = new THREE.MeshLambertMaterial({ color: 'red' });
+        this.planeMat = new THREE.MeshToonMaterial({ color: 'red' });
         const arrowHead = new THREE.Mesh(
             new THREE.ConeGeometry( 0.2, 1, 32 ),
             this.planeMat,
@@ -216,12 +236,19 @@ class ConvolutionLocalTopologyDisplay extends React.Component {
         // Calculate and update rotation and material
         const right = this.props.grid.getValue(1, 2);
         const left = this.props.grid.getValue(1, 0);
+        const up = this.props.grid.getValue(0, 1);
+        const down = this.props.grid.getValue(2, 1);
 
-        // Ignore edges
-        if(right != null && left != null){
+        // Update arrow
+        if(right != null && left != null && up != null && down != null){
             const diff =  right/255 - left/255;
             this.planeContainer.rotation.set(0, 0, Math.atan(diff));
+            this.planeContainer.position.set(0, 2, 0);
             this.planeMat.color.set(heatMapColorforValue(this.props.currGradValue));
+        }
+        else{
+            // Hide arrow
+            this.planeContainer.position.set(0, -2, 0);
         }
 
         // Update pillars
@@ -241,90 +268,6 @@ class ConvolutionLocalTopologyDisplay extends React.Component {
                 }
             }
         }
-
-        this.renderer.render(this.scene, this.camera);
-    }
-
-    render() {
-        if (this.renderer) {
-            this.updateScene();
-        }
-
-        return e('div', null,
-            e('canvas', {
-                id: `${this.props.imageId}-canvas3d`,
-                width: 200,
-                height: 200,
-            }, null),
-        );
-    }
-}
-
-/**
- * Displays resulting ramp from Sobel X
- */
-class ConvolutionResultTopologyDisplay extends React.Component {
-    constructor(props) {
-        super(props);
-
-        // Three js setup
-        this.camera = new THREE.PerspectiveCamera(75, 1, 0.1, 10);
-        this.camera.position.z = 4 * Math.cos(Math.PI / 4);
-        this.camera.position.y = 4 * Math.sin(Math.PI / 4);
-        this.camera.lookAt(new THREE.Vector3(0, 0, 0));
-        this.scene = new THREE.Scene();
-
-        this.clearColor = 'pink';
-
-        $(window).resize(() => this.resize());
-    }
-
-    componentDidMount() {
-        // Set up 3d scene
-
-        // Renderer
-        const canvas = document.getElementById(`${this.props.imageId}-canvas3d`);
-        this.renderer = new THREE.WebGLRenderer({ canvas });
-        this.renderer.setClearColor(this.clearColor);
-
-        // Create main container
-        this.container = new THREE.Object3D();
-
-        // Create plane
-        const planeGeo = new THREE.PlaneGeometry(3, 3);
-        this.planeMat = new THREE.MeshBasicMaterial({ color: 'red' });
-        const plane = new THREE.Mesh(planeGeo, this.planeMat);
-        plane.rotation.set(-Math.PI/2, 0, 0);
-
-        this.container.add(plane);
-
-        // Create scene
-        this.scene.add(this.container);
-        this.updateScene();
-        this.resize();
-    }
-
-    resize() {
-        const canvas = document.getElementById(`${this.props.imageId}-canvas3d`);
-        canvas.style.height = (innerHeight / 4) + 'px';
-    }
-
-    /**
-     * Updates pillars and re-renders
-     */
-    updateScene() {
-        // Calculate and update rotation and material
-        const right = this.props.grid.getValue(1, 2);
-        const left = this.props.grid.getValue(1, 0);
-
-        // Ignore edges
-        if(right == null || left == null){
-            return;
-        }
-
-        const diff =  right/255 - left/255;
-        this.container.rotation.set(0, 0, Math.atan(diff));
-        this.planeMat.color.set(gray2RGB(Math.floor(this.props.value)));
 
         this.renderer.render(this.scene, this.camera);
     }
@@ -468,6 +411,7 @@ class ConvolutionDemo extends React.Component {
                         currGradValue: resValue,
                     }, null),
                     e(ConvolutionChangeLabel, {
+                        grid: localSource,
                         value: resValue,
                     }, null),
                 ),

@@ -1,9 +1,30 @@
-// Sobel operator image demo UI
+// 2D pipeline demo
+
+
+class Pipeline2dImage extends React.Component {
+
+    componentDidMount(){
+        const canvas = document.getElementById(`${this.imageId}-canvas`);
+        this.context = canvas.getContext('2d');
+    }
+
+    process(){
+        this.context.putImageData(this.props.imageData, 0, 0);
+    }
+
+    render(){
+        this.process();
+
+        return e('canvas', {
+            id: `${this.imageId}-canvas`
+        }, null);
+    }
+}
 
 /**
- * Sobel operator image demo
+ * 2D pipeline-top level demo
  */
-class SobelImageDemo extends React.Component {
+class Pipeline2dDemo extends React.Component {
 
     constructor(props){
         super(props);
@@ -38,7 +59,7 @@ class SobelImageDemo extends React.Component {
         context.drawImage(img, 0, 0, size, size);
         let imgData = context.getImageData(0, 0, size, size);
         let source = new Array2D([...imgData.data], imgData.width, imgData.height, 4);
-        
+
         // Convert to grayscale
         grayscale(source);
         
@@ -91,7 +112,6 @@ class SobelImageDemo extends React.Component {
         context.fillText("Double Thresholding", 400, 430);
         context.fillText("Edge Tracking by Hysteresis", 600, 430);
 
-
         this.resize();
     }
 
@@ -125,6 +145,6 @@ class SobelImageDemo extends React.Component {
 
 // Render elements
 ReactDOM.render(
-    e(SobelImageDemo, null, null),
+    e(Pipeline2dDemo, {stepTo: 8}, null),
     document.getElementById('sobel-image-root')
 );
