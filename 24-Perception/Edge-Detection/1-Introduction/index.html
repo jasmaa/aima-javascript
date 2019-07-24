@@ -44,21 +44,26 @@
 			<div id="pipeline2d-direct-root"></div>
 			<br>
 
-			<h1>Image Representation</h1>
-			<br>
 			<p>
 				Before coming up with an algorithm for edge detection, we must first understand what kind of data it
 				will work with. While our toddler workforce may work with images as physical photographs, computers work
 				with images as 2D grids known as <strong>pixel arrays</strong>. A color image is commonly represented
-				with 3 pixel arrays, storing the red, green, and blue color values for each pixel. With edge detection,
-				since we are only interested in the intensity of a given pixel, we want our images to be represented as
-				<strong>grayscale intensities</strong>. The intensity of a pixel can be directly calculated from its
-				red, green, and blue color values. This allows us to easily convert color images to grayscale before
-				trying to detect any edges.
+				with 3 pixel arrays, storing the red, green, and blue color values for each pixel.
+			</p>
+
+			<br>
+			<div id="rgb-root"></div>
+			<br>
+
+			<p>
+				With edge detection, since we are only interested in the intensity of a given pixel, we want our images
+				to be represented as <strong>grayscale intensities</strong>. The intensity of a pixel can be directly
+				calculated from its red, green, and blue color values. This allows us to easily convert color images to
+				grayscale before trying to detect any edges.
 			</p>
 			<p>
 				We have introduced the problem of edge detection and established what kind of data we are going to
-				process. In the next section, we will understand the underlying mechanism for detecting edges.
+				process. In the next section, we will explore the underlying mechanism for detecting edges.
 			</p>
 			<br>
 
@@ -82,6 +87,7 @@
 	<script type="text/javascript" src="../js/ui.js"></script>
 	<script type="text/javascript" src="../js/imageProcessing.js"></script>
 
+	<script type="text/javascript" src="./js/demoRGB.js"></script>
 	<script type="text/javascript" src="../js/demoPipeline2D.js"></script>
 </body>
 

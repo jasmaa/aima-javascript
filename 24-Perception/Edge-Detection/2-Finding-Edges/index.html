@@ -5,7 +5,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 	<title>Edge Detection - Finding Edges</title>
-	
+
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
 		integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
 	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
@@ -55,10 +55,8 @@
 				intensity changes respectively. For each target pixel in the image, the kernel covers and performs an
 				operation on a neighborhood of surrounding pixels. We compare the intensity of these neighboring pixels
 				with each other and use them to compute the change of intensity at the target pixel. To demonstrate
-				this, below is an interactive example using the Sobel X filter. Brighter areas in the result are
-				indicative of large positive horizontal changes while darker areas are indicative of large negative
-				horizontal changes. Use your mouse to drag the filter around and see how different areas reflect
-				different intensity changes.
+				this, below is an interactive example using the Sobel X filter. Use your mouse to drag the filter around
+				and see how different areas reflect different intensity changes.
 			</p>
 
 			<br>
@@ -66,10 +64,11 @@
 			<br>
 
 			<p>
-				Numerically, these filters are actually grids of values that are matched up to each neighborhood of
-				pixels and used in a weighted sum to calculate the change at each target pixel. In general, this concept
-				of operating on a grid of values by dragging a smaller grid of values across it is a powerful
-				mathematical idea that goes beyond edge detection known as <strong>convolution</strong>.
+				These filters are actually grids of numerical weights that are matched up to each neighborhood of
+				pixels. The filter weights and the pixel intensities are used in a weighted sum to
+				calculate a metric of change at each target pixel. In general, this concept of operating on a grid of
+				values by dragging a smaller grid of values across it is a powerful mathematical idea that goes beyond
+				edge detection known as <strong>convolution</strong>.
 			</p>
 
 			<br>
@@ -81,14 +80,13 @@
 				values that represent horizontal and vertical changes respectively. These values can also be thought of
 				as the X and Y components for a grid of 2D arrows or vectors. The vectors gotten using the Sobel
 				operator are known as <strong>gradients</strong>. For a given pixel, the magnitude of the gradient tells
-				us how much intensity change occurs at the pixel and the angle tells us the direction of the greatest
-				change from the pixel.
+				us how much overall intensity change occurs at the pixel and the angle tells us the general direction of
+				that change.
 			</p>
 
 			<p>
 				Below is a demonstration that calculates image gradients. Draw edges or select one of the preset images
-				and observe how the direction and magnitude of the gradient vectors change in response. The magnitude of
-				the vectors is indicated by color with blue being small and red being large.
+				and observe how the direction and magnitude of the gradient vectors change in response.
 			</p>
 
 			<br>
@@ -96,8 +94,9 @@
 			<br>
 
 			<p>
-				Displaying the gradient magnitudes, we can see edges begin to manifest as pixels where the change in
-				intensity is strong are lit up.
+				Below is an outline of steps for our edge detection algorithm so far with Sobel X, Sobel Y, and the
+				gradient magnitudes converted to grayscale for display purposes. Observing the gradient magnitudes,
+				we can see edges begin to manifest as pixels where the change in intensity is strong are lit up.
 			</p>
 
 			<br>
@@ -108,8 +107,13 @@
 				We have reasoned out a way to evaluate intensity change for a given pixel by observing its neighbors. We
 				have also introduced the Sobel operator which uses this reasoning to find the horizontal and vertical
 				intensity change at every pixel. This allows us to build gradient vectors, giving us information about
-				the amount and direction of intensity change at every pixel. In the next section, we will build upon our
-				working edge detection algorithm to improve its performance.
+				the amount and direction of intensity change at every pixel.
+			</p>
+			<p>
+				Plugging images through our current algorithm, you may have already noticed that Sobel by itself does
+				not perform very well. Our edge detection is not very good at producing clean edges or dealing with
+				grainy images. In the next section, we will address these problems by adding a variety of pre and post
+				processing techniques into our working edge detection pipeline.
 			</p>
 
 			<br>

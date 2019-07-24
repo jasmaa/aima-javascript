@@ -100,12 +100,31 @@ function grayscale(source){
  * @param {integer} channel - channel to isolate
  */
 function isolateColor(source, channel){
+    if(channel == 0){
+        filterColor(source, true, false, false);
+    }
+    else if(channel == 1){
+        filterColor(source, false, true, false);
+    }
+    else if(channel == 2){
+        filterColor(source, false, false, true);
+    }
+}
+
+/**
+ * Filter color based on RGB channels
+ * 
+ * @param {Array2D} source 
+ * @param {boolean} showR 
+ * @param {boolean} showG 
+ * @param {boolean} showB 
+ */
+function filterColor(source, showR, showG, showB){
     for(let i=0; i < source.height; i++){
         for(let j=0; j < source.width; j++){
-            let value = source.getValue(i, j, channel);
-            source.setValue(channel == 0 ? value : 0, i, j, 0);
-            source.setValue(channel == 1 ? value : 0, i, j, 1);
-            source.setValue(channel == 2 ? value : 0, i, j, 2);
+            source.setValue(showR ? source.getValue(i, j, 0) : 0, i, j, 0);
+            source.setValue(showG ? source.getValue(i, j, 1) : 0, i, j, 1);
+            source.setValue(showB ? source.getValue(i, j, 2) : 0, i, j, 2);
         }
     }
 }
