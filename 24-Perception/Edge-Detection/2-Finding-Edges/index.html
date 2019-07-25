@@ -19,107 +19,96 @@
 
 <body class="flex-content-container">
 	<div class="flex-content">
-
 		<div class="col-sm-6 col-md-offset-3" id="content">
+			<div style="display: flex; flex-direction: column; row-gap: 1em;">
 
-			<h1>Finding Edges</h1>
-			<br>
+				<h1>Finding Edges</h1>
 
-			<p>
-				We have defined edges as locations where drastic changes in intensity occur. To find these locations, we
-				need some way of quantifying how much the intensity changes as we move across the pixels in our image.
-				To illustrate this problem, let us re-imagine our pixel array as a 3D topological map, correlating the
-				intensity of each pixel with height on the map.
-			</p>
+				<p>
+					We have defined edges as locations where drastic changes in intensity occur. To find these
+					locations, we need some way of quantifying how much the intensity changes as we move across the
+					pixels in our image. To illustrate this problem, let us re-imagine our pixel array as a 3D
+					topological map, correlating the intensity of each pixel with height on the map.
+				</p>
 
-			<br>
-			<div id="topology-root"></div>
-			<br>
+				<div id="topology-root"></div>
 
-			<p>
-				Picking an arbitrary point on this map, we want to figure out the change in elevation around that point.
-				Knowing the point’s height alone is relatively unhelpful since, although it may tell us how high up it
-				is, we get no information about the changes around it. What if, in addition, we also considered the
-				height of land a small distance away from our chosen point? Ah-hah! Now by comparing these nearby
-				heights, we can get some idea of the local elevation changes around the point!
-			</p>
+				<p>
+					Picking an arbitrary point on this map, we want to figure out the change in elevation around that
+					point. Knowing the point’s height alone is relatively unhelpful since, although it may tell us how
+					high up it is, we get no information about the changes around it. What if, in addition, we also
+					considered the height of land a small distance away from our chosen point? Ah-hah! Now by comparing
+					these nearby heights, we can get some idea of the local elevation changes around the point!
+				</p>
 
-			<br>
-			<img src="../images/elevation.png" alt="Elevation comparison example" class="center display-image">
-			<br><br>
+				<img src="../images/elevation.png" alt="Elevation comparison example" class="center display-image">
 
-			<p>
-				This is the driving principle behind a well-known edge detector called the <strong>Sobel
-					operator</strong>. The operator works by dragging two <strong>kernels</strong> or
-				<strong>filters</strong> called Sobel X and Sobel Y across an image to calculate horizontal and vertical
-				intensity changes respectively. For each target pixel in the image, the kernel covers and performs an
-				operation on a neighborhood of surrounding pixels. We compare the intensity of these neighboring pixels
-				with each other and use them to compute the change of intensity at the target pixel. To demonstrate
-				this, below is an interactive example using the Sobel X filter. Use your mouse to drag the filter around
-				and see how different areas reflect different intensity changes.
-			</p>
+				<p>
+					This is the driving principle behind a well-known edge detector called the <strong>Sobel
+						operator</strong>. The operator works by dragging two <strong>kernels</strong> or
+					<strong>filters</strong> called Sobel X and Sobel Y across an image to calculate horizontal and
+					vertical intensity changes respectively. For each target pixel in the image, the kernel covers and
+					performs an operation on a neighborhood of surrounding pixels. We compare the intensity of these
+					neighboring pixels with each other and use them to compute the change of intensity at the target
+					pixel. To demonstrate this, below is an interactive example using the Sobel X filter. Use your mouse
+					to drag the filter around and see how different areas reflect different intensity changes.
+				</p>
 
-			<br>
-			<div id="convolution-root"></div>
-			<br>
+				<div id="convolution-root"></div>
 
-			<p>
-				These filters are actually grids of numerical weights that are matched up to each neighborhood of
-				pixels. The filter weights and the pixel intensities are used in a weighted sum to
-				calculate a metric of change at each target pixel. In general, this concept of operating on a grid of
-				values by dragging a smaller grid of values across it is a powerful mathematical idea that goes beyond
-				edge detection known as <strong>convolution</strong>.
-			</p>
+				<p>
+					These filters are actually grids of numerical weights that are matched up to each neighborhood of
+					pixels. The filter weights and the pixel intensities are used in a weighted sum to
+					calculate a metric of change at each target pixel. In general, this concept of operating on a grid
+					of values by dragging a smaller grid of values across it is a powerful mathematical idea that goes
+					beyond edge detection known as <strong>convolution</strong>.
+				</p>
 
-			<br>
-			<img src="../images/filters.png" alt="Sobel X and Y filters" class="center display-image">
-			<br><br>
+				<img src="../images/filters.png" alt="Sobel X and Y filters" class="center display-image">
 
-			<p>
-				The end result of applying both the Sobel X and Sobel Y filters to our image is two grids containing
-				values that represent horizontal and vertical changes respectively. These values can also be thought of
-				as the X and Y components for a grid of 2D arrows or vectors. The vectors gotten using the Sobel
-				operator are known as <strong>gradients</strong>. For a given pixel, the magnitude of the gradient tells
-				us how much overall intensity change occurs at the pixel and the angle tells us the general direction of
-				that change.
-			</p>
+				<p>
+					The end result of applying both the Sobel X and Sobel Y filters to our image is two grids containing
+					values that represent horizontal and vertical changes respectively. These values can also be thought
+					of as the X and Y components for a grid of 2D arrows or vectors. The vectors gotten using the Sobel
+					operator are known as <strong>gradients</strong>. For a given pixel, the magnitude of the gradient
+					tells us how much overall intensity change occurs at the pixel and the angle tells us the general
+					direction of that change.
+				</p>
 
-			<p>
-				Below is a demonstration that calculates image gradients. Draw edges or select one of the preset images
-				and observe how the direction and magnitude of the gradient vectors change in response.
-			</p>
+				<p>
+					Below is a demonstration that calculates image gradients. Draw edges or select one of the preset
+					images and observe how the direction and magnitude of the gradient vectors change in response.
+				</p>
 
-			<br>
-			<div id="gradient-root"></div>
-			<br>
+				<div id="gradient-root"></div>
 
-			<p>
-				Below is an outline of steps for our edge detection algorithm so far with Sobel X, Sobel Y, and the
-				gradient magnitudes converted to grayscale for display purposes. Observing the gradient magnitudes,
-				we can see edges begin to manifest as pixels where the change in intensity is strong are lit up.
-			</p>
+				<p>
+					Below is an outline of steps for our edge detection algorithm so far with Sobel X, Sobel Y, and the
+					gradient magnitudes converted to grayscale for display purposes. Observing the gradient magnitudes,
+					we can see edges begin to manifest as pixels where the change in intensity is strong are lit up.
+				</p>
 
-			<br>
-			<div id="pipeline2d-short-root"></div>
-			<br>
+				<div id="pipeline2d-short-root"></div>
 
-			<p>
-				We have reasoned out a way to evaluate intensity change for a given pixel by observing its neighbors. We
-				have also introduced the Sobel operator which uses this reasoning to find the horizontal and vertical
-				intensity change at every pixel. This allows us to build gradient vectors, giving us information about
-				the amount and direction of intensity change at every pixel.
-			</p>
-			<p>
-				Plugging images through our current algorithm, you may have already noticed that Sobel by itself does
-				not perform very well. Our edge detection is not very good at producing clean edges or dealing with
-				grainy images. In the next section, we will address these problems by adding a variety of pre and post
-				processing techniques into our working edge detection pipeline.
-			</p>
+				<p>
+					We have reasoned out a way to evaluate intensity change for a given pixel by observing its
+					neighbors. We have also introduced the Sobel operator which uses this reasoning to find the
+					horizontal and vertical intensity change at every pixel. This allows us to build gradient vectors,
+					giving us information about the amount and direction of intensity change at every pixel.
+				</p>
 
-			<br>
-			<div id="pipeline-grad-root"></div>
-			<br>
+				<p>
+					Plugging images through our current algorithm, you may have already noticed that Sobel by itself
+					does not perform very well. Our edge detection is not very good at producing clean edges or dealing
+					with grainy images. In the next section, we will address these problems by adding a variety of pre
+					and post processing techniques into our working edge detection pipeline.
+				</p>
 
+				<div id="pipeline-grad-root"></div>
+
+			</div>
+
+			<hr>
 			<div class="row">
 				<div class="col-sm-6 text-left">
 					<a href="../1-Introduction/"><i class="fas fa-arrow-left"></i> Prev</a>

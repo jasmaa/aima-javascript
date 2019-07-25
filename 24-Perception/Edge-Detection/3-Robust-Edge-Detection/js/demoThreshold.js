@@ -4,7 +4,7 @@
  */
 class ThresholdDemo extends React.Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
 
         this.imageId = 'threshold';
@@ -15,31 +15,44 @@ class ThresholdDemo extends React.Component {
             hiThreshold: 125,
             loThreshold: 50,
         }
+
+        $(window).resize(() => this.resize());
     }
 
-    componentDidMount(){
+    componentDidMount() {
         this.canvas = document.getElementById(`${this.imageId}-canvas`);
 
-        $( "#slider-range" ).slider({
+        $("#slider-range").slider({
             range: true,
             min: 0,
             max: 255,
-            values: [ this.state.loThreshold, this.state.hiThreshold ],
-            slide: (event, ui)=>{
+            values: [this.state.loThreshold, this.state.hiThreshold],
+            slide: (event, ui) => {
                 this.setState({
                     loThreshold: ui.values[0],
                     hiThreshold: ui.values[1],
                 });
             }
         });
+
+        this.resize();
+    }
+
+    resize() {
+        if (innerWidth > 700) {
+            this.canvas.style.width = (innerWidth / 2 - 200) + 'px';
+        }
+        else {
+            this.canvas.style.width = (innerWidth - 100) + 'px';
+        }
     }
 
     /**
      * Process image on upload
      */
-    process(){
+    process() {
 
-        if(this.canvas == null){
+        if (this.canvas == null) {
             return;
         }
 
@@ -52,21 +65,21 @@ class ThresholdDemo extends React.Component {
         context.drawImage(img, 0, 0, 200, 200);
         let imgData = context.getImageData(0, 0, 200, 200);
         let source = new Array2D([...imgData.data], imgData.width, imgData.height, 4);
-        
+
         // Convert to grayscale
         grayscale(source);
 
         // Do gaussian blur with 5x5 filter
         convolve(source, gaussianBlur5);
-        
+
         // Apply Sobel operator horizontally
         let sobelXData = new Array2D([...source.data], source.width, source.height, 4);
         convolve(sobelXData, sobelX);
-        
+
         // Apply Sobel operator vertically
         let sobelYData = new Array2D([...source.data], source.width, source.height, 4);
         convolve(sobelYData, sobelY);
-        
+
         // Calculate magnitude of gradients
         const [magGrid, angleGrid] = computeGradients(sobelXData, sobelYData);
         stretchColor(magGrid);
@@ -81,9 +94,9 @@ class ThresholdDemo extends React.Component {
     /**
      * Updates image on threshold value change
      */
-    updateThreshold(){
+    updateThreshold() {
 
-        if(this.suppressed == null){
+        if (this.suppressed == null) {
             return;
         }
 
@@ -98,31 +111,25 @@ class ThresholdDemo extends React.Component {
         context.putImageData(imgData, 0, 0);
     }
 
-    render(){
+    render() {
 
         this.updateThreshold();
 
-        return e('div', null,
-            e('div', {className: 'row'},
-                e('div', {className: 'col-md-12'},
-                    e(ImageUploader, {
-                        imageId: this.imageId,
-                        defaultImage: '../images/test.png',
-                        processHandler: () => this.process(),
-                    }, null)
-                )
-            ),
+        return e('div', { className: 'demo-container' },
+            e(ImageUploader, {
+                imageId: this.imageId,
+                defaultImage: '../images/test.png',
+                processHandler: () => this.process(),
+            }, null),
             e('br', null, null),
-            e('div', {className: 'demo-container'},
-                e('div', {id: 'slider-range'}, null),
-                e('br', null, null),
-                e('canvas', {
-                    id: `${this.imageId}-canvas`,
-                    className: 'center',
-                    width: 200,
-                    height: 200,
-                }, null),
-            )
+            e('div', { id: 'slider-range' }, null),
+            e('br', null, null),
+            e('canvas', {
+                id: `${this.imageId}-canvas`,
+                className: 'center',
+                width: 200,
+                height: 200,
+            }, null),
         );
     }
 }

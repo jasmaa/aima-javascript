@@ -1,4 +1,4 @@
-// 2D pipeline demo
+// 2D pipeline demos
 
 /**
  * 2D pipeline top-level demo
@@ -6,27 +6,27 @@
  */
 class Pipeline2dDirectDemo extends React.Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
         this.imageId = 'pipeline2d-direct-image';
 
         this.canvas = null;
-        $(window).resize(()=>this.resize());
+        $(window).resize(() => this.resize());
     }
 
-    resize(){
-        if(innerWidth > 700){
-            this.canvas.style.width = (innerWidth / 2 - 100)+'px';
+    resize() {
+        if (innerWidth > 700) {
+            this.canvas.style.width = (innerWidth / 2 - 100) + 'px';
         }
-        else{
-            this.canvas.style.width = (innerWidth - 30)+'px';
+        else {
+            this.canvas.style.width = (innerWidth - 30) + 'px';
         }
     }
 
     /**
      * Do edge detection pipeline on inputted image
      */
-    process(){
+    process() {
 
         const size = 190;
         this.canvas = document.getElementById(`${this.imageId}-canvas`);
@@ -45,15 +45,15 @@ class Pipeline2dDirectDemo extends React.Component {
 
         // Do gaussian blur with 5x5 filter
         convolve(source, gaussianBlur5);
-        
+
         // Apply Sobel operator horizontally
         let sobelXData = new Array2D([...source.data], source.width, source.height, 4);
         convolve(sobelXData, sobelX);
-        
+
         // Apply Sobel operator vertically
         let sobelYData = new Array2D([...source.data], source.width, source.height, 4);
         convolve(sobelYData, sobelY);
-        
+
         // Calculate magnitude of gradients
         const [magGrid, angleGrid] = computeGradients(sobelXData, sobelYData);
         stretchColor(magGrid);
@@ -74,29 +74,99 @@ class Pipeline2dDirectDemo extends React.Component {
         this.resize();
     }
 
-    render(){
-        return e('div', null,
-            e('div', {className: 'row'},
-                e('div', {className: 'col-md-12'},
-                    e(ImageUploader, {
-                        imageId: this.imageId,
-                        defaultImage: '../images/test.png',
-                        processHandler: () => this.process(),
-                    }, null)
-                )
-            ),
+    render() {
+        return e('div', { className: 'demo-container' },
+            e(ImageUploader, {
+                imageId: this.imageId,
+                defaultImage: '../images/test.png',
+                processHandler: () => this.process(),
+            }, null),
             e('br', null, null),
-            e('div', {className: 'row'},
-                e('div', {className: 'demo-container col-md-12', style: {
+            e('div', {
+                style: {
                     display: 'flex',
                     justifyContent: 'center',
-                }},
-                    e('canvas', {
-                        id: `${this.imageId}-canvas`,
-                        width: '400',
-                        height: '200'
-                    }, null),
-                ),
+                }
+            },
+                e('canvas', {
+                    id: `${this.imageId}-canvas`,
+                    width: '400',
+                    height: '200'
+                }, null),
+            ),
+
+        );
+    }
+}
+
+/**
+ * 2D pipeline top-level demo
+ * Direct pipeline: color-> gray
+ */
+class Pipeline2dGrayscaleDemo extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.imageId = 'pipeline2d-gray-image';
+
+        this.canvas = null;
+        $(window).resize(() => this.resize());
+    }
+
+    resize() {
+        if (innerWidth > 700) {
+            this.canvas.style.width = (innerWidth / 2 - 100) + 'px';
+        }
+        else {
+            this.canvas.style.width = (innerWidth - 30) + 'px';
+        }
+    }
+
+    /**
+     * Do edge detection pipeline on inputted image
+     */
+    process() {
+
+        const size = 190;
+        this.canvas = document.getElementById(`${this.imageId}-canvas`);
+        const context = this.canvas.getContext('2d');
+        const img = document.getElementById(`${this.imageId}-img`);
+
+        // Clear canvas
+        context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+        context.drawImage(img, 0, 0, size, size);
+        let imgData = context.getImageData(0, 0, size, size);
+        let source = new Array2D([...imgData.data], imgData.width, imgData.height, 4);
+
+        // Convert to grayscale
+        grayscale(source);
+
+        fillArray(imgData.data, source.data, imgData.data.length);
+        context.putImageData(imgData, 200, 0);
+
+        this.resize();
+    }
+
+    render() {
+        return e('div', { className: 'demo-container ' },
+            e(ImageUploader, {
+                imageId: this.imageId,
+                defaultImage: '../images/test.png',
+                processHandler: () => this.process(),
+            }, null),
+            e('br', null, null),
+            e('div', {
+                style: {
+                    display: 'flex',
+                    justifyContent: 'center',
+                }
+            },
+                e('canvas', {
+                    id: `${this.imageId}-canvas`,
+                    width: '400',
+                    height: '200'
+                }, null),
             ),
         );
     }
@@ -108,27 +178,27 @@ class Pipeline2dDirectDemo extends React.Component {
  */
 class Pipeline2dShortDemo extends React.Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
         this.imageId = 'pipeline2d-short-image';
 
         this.canvas = null;
-        $(window).resize(()=>this.resize());
+        $(window).resize(() => this.resize());
     }
 
-    resize(){
-        if(innerWidth > 700){
-            this.canvas.style.width = (innerWidth / 2 - 100)+'px';
+    resize() {
+        if (innerWidth > 700) {
+            this.canvas.style.width = (innerWidth / 2 - 100) + 'px';
         }
-        else{
-            this.canvas.style.width = (innerWidth - 30)+'px';
+        else {
+            this.canvas.style.width = (innerWidth - 30) + 'px';
         }
     }
 
     /**
      * Do edge detection pipeline on inputted image
      */
-    process(){
+    process() {
 
         const size = 190;
         this.canvas = document.getElementById(`${this.imageId}-canvas`);
@@ -144,18 +214,18 @@ class Pipeline2dShortDemo extends React.Component {
 
         // Convert to grayscale
         grayscale(source);
-        
+
         fillArray(imgData.data, source.data, imgData.data.length);
         context.putImageData(imgData, 220, 100);
-        
+
         // Apply Sobel operator horizontally
         let sobelXData = new Array2D([...source.data], source.width, source.height, 4);
         convolve(sobelXData, sobelX);
-        
+
         // Apply Sobel operator vertically
         let sobelYData = new Array2D([...source.data], source.width, source.height, 4);
         convolve(sobelYData, sobelY);
-        
+
         // Calculate magnitude of gradients
         const [magGrid, angleGrid] = computeGradients(sobelXData, sobelYData);
         stretchColor(magGrid);
@@ -183,29 +253,25 @@ class Pipeline2dShortDemo extends React.Component {
         this.resize();
     }
 
-    render(){
-        return e('div', null,
-            e('div', {className: 'row'},
-                e('div', {className: 'col-md-12'},
-                    e(ImageUploader, {
-                        imageId: this.imageId,
-                        defaultImage: '../images/test.png',
-                        processHandler: () => this.process(),
-                    }, null)
-                )
-            ),
+    render() {
+        return e('div', { className: 'demo-container' },
+            e(ImageUploader, {
+                imageId: this.imageId,
+                defaultImage: '../images/test.png',
+                processHandler: () => this.process(),
+            }, null),
             e('br', null, null),
-            e('div', {className: 'row'},
-                e('div', {className: 'demo-container col-md-12', style: {
+            e('div', {
+                style: {
                     display: 'flex',
                     justifyContent: 'center',
-                }},
-                    e('canvas', {
-                        id: `${this.imageId}-canvas`,
-                        width: '850',
-                        height: '420'
-                    }, null),
-                ),
+                }
+            },
+                e('canvas', {
+                    id: `${this.imageId}-canvas`,
+                    width: '850',
+                    height: '420'
+                }, null),
             ),
         );
     }
@@ -217,27 +283,27 @@ class Pipeline2dShortDemo extends React.Component {
  */
 class Pipeline2dLongDemo extends React.Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
         this.imageId = 'pipeline2d-long-image';
 
         this.canvas = null;
-        $(window).resize(()=>this.resize());
+        $(window).resize(() => this.resize());
     }
 
-    resize(){
-        if(innerWidth > 700){
-            this.canvas.style.width = (innerWidth / 2 - 100)+'px';
+    resize() {
+        if (innerWidth > 700) {
+            this.canvas.style.width = (innerWidth / 2 - 100) + 'px';
         }
-        else{
-            this.canvas.style.width = (innerWidth - 30)+'px';
+        else {
+            this.canvas.style.width = (innerWidth - 30) + 'px';
         }
     }
 
     /**
      * Do edge detection pipeline on inputted image
      */
-    process(){
+    process() {
 
         const size = 190;
         this.canvas = document.getElementById(`${this.imageId}-canvas`);
@@ -253,24 +319,24 @@ class Pipeline2dLongDemo extends React.Component {
 
         // Convert to grayscale
         grayscale(source);
-        
+
         fillArray(imgData.data, source.data, imgData.data.length);
         context.putImageData(imgData, 200, 0);
 
         // Do gaussian blur with 5x5 filter
         convolve(source, gaussianBlur5);
-        
+
         fillArray(imgData.data, source.data, imgData.data.length);
         context.putImageData(imgData, 400, 0);
-        
+
         // Apply Sobel operator horizontally
         let sobelXData = new Array2D([...source.data], source.width, source.height, 4);
         convolve(sobelXData, sobelX);
-        
+
         // Apply Sobel operator vertically
         let sobelYData = new Array2D([...source.data], source.width, source.height, 4);
         convolve(sobelYData, sobelY);
-        
+
         // Calculate magnitude of gradients
         const [magGrid, angleGrid] = computeGradients(sobelXData, sobelYData);
         stretchColor(magGrid);
@@ -307,29 +373,25 @@ class Pipeline2dLongDemo extends React.Component {
         this.resize();
     }
 
-    render(){
-        return e('div', null,
-            e('div', {className: 'row'},
-                e('div', {className: 'col-md-12'},
-                    e(ImageUploader, {
-                        imageId: this.imageId,
-                        defaultImage: '../images/test.png',
-                        processHandler: () => this.process(),
-                    }, null)
-                )
-            ),
+    render() {
+        return e('div', { className: 'demo-container' },
+            e(ImageUploader, {
+                imageId: this.imageId,
+                defaultImage: '../images/test.png',
+                processHandler: () => this.process(),
+            }, null),
             e('br', null, null),
-            e('div', {className: 'row'},
-                e('div', {className: 'demo-container col-md-12', style: {
+            e('div', {
+                style: {
                     display: 'flex',
                     justifyContent: 'center',
-                }},
-                    e('canvas', {
-                        id: `${this.imageId}-canvas`,
-                        width: '800',
-                        height: '440'
-                    }, null),
-                ),
+                }
+            },
+                e('canvas', {
+                    id: `${this.imageId}-canvas`,
+                    width: '800',
+                    height: '440'
+                }, null),
             ),
         );
     }
@@ -337,21 +399,27 @@ class Pipeline2dLongDemo extends React.Component {
 
 
 // Render elements
-if(document.getElementById('pipeline2d-direct-root')){
+if (document.getElementById('pipeline2d-direct-root')) {
     ReactDOM.render(
         e(Pipeline2dDirectDemo, null, null),
         document.getElementById('pipeline2d-direct-root')
     );
 }
-if(document.getElementById('pipeline2d-short-root')){
+if (document.getElementById('pipeline2d-short-root')) {
     ReactDOM.render(
         e(Pipeline2dShortDemo, null, null),
         document.getElementById('pipeline2d-short-root')
     );
 }
-if(document.getElementById('pipeline2d-long-root')){
+if (document.getElementById('pipeline2d-long-root')) {
     ReactDOM.render(
         e(Pipeline2dLongDemo, null, null),
         document.getElementById('pipeline2d-long-root')
+    );
+}
+if (document.getElementById('pipeline2d-gray-root')) {
+    ReactDOM.render(
+        e(Pipeline2dGrayscaleDemo, null, null),
+        document.getElementById('pipeline2d-gray-root')
     );
 }

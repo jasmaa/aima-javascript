@@ -89,28 +89,22 @@ class TopologyDemo extends React.Component {
 
     render() {
 
-        return e('div', null,
-            e('div', { className: 'row' },
-                e('div', { className: 'col-md-12' },
-                    e(ImageUploader, {
-                        imageId: this.imageId,
-                        defaultImage: '../images/test.png',
-                        processHandler: () => this.process(),
-                    }, null)
-                )
-            ),
+        return e('div', { className: 'demo-container' },
+            e(ImageUploader, {
+                imageId: this.imageId,
+                defaultImage: '../images/test.png',
+                processHandler: () => this.process(),
+            }, null),
             e('br', null, null),
-            e('div', { className: 'demo-container' },
-                e('div', { className: 'flex-container' },
-                    e('canvas', {
-                        id: `${this.imageId}-canvas`,
-                        width: this.size,
-                        height: this.size,
-                    }, null),
-                    e('div', {
-                        id: `${this.imageId}-topology`,
-                    }, null)
-                ),
+            e('div', { className: 'flex-container' },
+                e('canvas', {
+                    id: `${this.imageId}-canvas`,
+                    width: this.size,
+                    height: this.size,
+                }, null),
+                e('div', {
+                    id: `${this.imageId}-topology`,
+                }, null)
             ),
         );
     }

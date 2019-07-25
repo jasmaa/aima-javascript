@@ -11,6 +11,15 @@ input[type=number]::-webkit-outer-spin-button {
       width: 3vmax;
 }
 
+p {
+    line-height: 180%;
+    font-size: 1.2em;
+}
+li {
+    line-height: 180%;
+    font-size: 1.2em;
+}
+
 .list-group {
     list-style: decimal inside;
     color: grey;
@@ -23,6 +32,7 @@ input[type=number]::-webkit-outer-spin-button {
 .demo-container {
     background-color: gainsboro;
     padding: 1vmax;
+    margin: 1vmax;
     border-radius: 0.5vmax;
 }
 
@@ -75,4 +85,6 @@ input[type=number]::-webkit-outer-spin-button {
 
 .display-image {
     width: 40vmax;
+    margin-top: 1vmax;
+    margin-bottom: 1vmax;
 }
