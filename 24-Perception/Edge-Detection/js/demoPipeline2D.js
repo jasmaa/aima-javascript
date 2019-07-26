@@ -250,6 +250,16 @@ class Pipeline2dShortDemo extends React.Component {
         context.fillText("Sobel Y", 440, 410);
         context.fillText("Gradients", 660, 300);
 
+        // Draw lines
+        context.lineWidth = 2;
+        context.beginPath();
+        canvasArrowCurveX(context, 0+size, 100+size/2, 220, 100+size/2);
+        canvasArrowCurveX(context, 220+size, 100+size/2, 440, 0+size/2);
+        canvasArrowCurveX(context, 220+size, 100+size/2, 440, 210+size/2);
+        canvasArrowCurveX(context, 440+size, 0+size/2, 660, 100+size/2);
+        canvasArrowCurveX(context, 440+size, 210+size/2, 660, 100+size/2);
+        context.stroke();
+
         this.resize();
     }
 
@@ -368,7 +378,6 @@ class Pipeline2dLongDemo extends React.Component {
         context.fillText("Non-Maximum Suppression", 200, 430);
         context.fillText("Double Thresholding", 400, 430);
         context.fillText("Edge Tracking by Hysteresis", 600, 430);
-
 
         this.resize();
     }

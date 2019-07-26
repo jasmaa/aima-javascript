@@ -121,9 +121,9 @@ class GradientCell extends React.Component {
             }
             else{
                 context.globalAlpha = (this.props.ratio + 1) / 2;
-                context.lineWidth = 7*this.props.ratio + 2;
+                context.lineWidth = 9*this.props.ratio + 2;
                 context.strokeStyle = heatMapColorforValue(this.props.ratio);
-                const lenWeight = 10*this.props.ratio + 10;
+                const lenWeight = 15*this.props.ratio + 8;
                 canvas_arrow(context, 40, 40, lenWeight*this.props.dx + 40, -lenWeight*this.props.dy + 40);
             }
             context.stroke();
@@ -166,16 +166,9 @@ class GradientGrid extends React.Component {
 
     renderCells(){
 
-        // Find max and min mags for scaling
-        let minMag = Infinity;
-        let maxMag = -Infinity;
-        for(let i=1; i < this.props.magGrid.height-1; i++){
-            for(let j=1; j < this.props.magGrid.width-1; j++){
-                const currMag = this.props.magGrid.getValue(i, j);
-                minMag = Math.min(minMag, currMag);
-                maxMag = Math.max(maxMag, currMag);
-            }
-        }
+        // Set max and min mags
+        const minMag = 0;
+        const maxMag = 1020;
 
         let cells = [];
         for(let i=0; i < this.props.magGrid.height; i++){

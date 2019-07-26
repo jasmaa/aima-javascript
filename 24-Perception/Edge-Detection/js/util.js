@@ -58,21 +58,43 @@ function mag2d(x, y){
 }
 
 /**
- * Draws arrow on canvas
+ * Draws gradient arrow on canvas
  * https://stackoverflow.com/questions/808826/draw-arrow-on-canvas-tag
  * 
  * @param {CanvasRenderingContext2D} context 
- * @param {Number} fromx 
- * @param {Number} fromy 
+ * @param {Number} centerx 
+ * @param {Number} centery 
  * @param {Number} tox 
  * @param {Number} toy 
  */
-function canvas_arrow(context, fromx, fromy, tox, toy){
+function canvas_arrow(context, centerx, centery, tox, toy){
     const headlen = 10;   // length of head in pixels
-    const angle = Math.atan2(toy-fromy,tox-fromx);
-    context.moveTo(fromx + fromx-tox, fromy + fromy-toy);
+    const angle = Math.atan2(toy-centery,tox-centerx);
+    context.moveTo(centerx + centerx-tox, centery + centery-toy);
     context.lineTo(tox, toy);
     
+    context.moveTo(tox-headlen*Math.cos(angle-Math.PI/6),toy-headlen*Math.sin(angle-Math.PI/6));
+    context.lineTo(tox, toy);
+    context.lineTo(tox-headlen*Math.cos(angle+Math.PI/6),toy-headlen*Math.sin(angle+Math.PI/6));
+}
+
+function canvasArrowCurveX(context, fromx, fromy, tox, toy){
+    const headlen = 8;
+    const angle = tox-fromx > 0 ? 0 : Math.PI; // Snap angle to x axis
+
+    const midx = fromx + (tox-fromx)/2;
+    const offsetx = fromx + 5*(tox-fromx)/8;
+
+    context.moveTo(fromx, fromy);
+    context.bezierCurveTo(
+        midx, fromy,
+        midx, toy,
+        offsetx, toy
+    );
+
+    context.lineTo(tox, toy);
+
+    // Paint head
     context.moveTo(tox-headlen*Math.cos(angle-Math.PI/6),toy-headlen*Math.sin(angle-Math.PI/6));
     context.lineTo(tox, toy);
     context.lineTo(tox-headlen*Math.cos(angle+Math.PI/6),toy-headlen*Math.sin(angle+Math.PI/6));
@@ -100,7 +122,7 @@ function canvasCross(context, centerx, centery){
  */
 function heatMapColorforValue(value){
     const h = Math.floor((1.0 - value) * 240);
-    const s = Math.floor(50*value + 50);
+    const s = Math.floor(60*value + 30);
     return `hsl(${h}, ${s}%, 50%)`;
 }
 
@@ -185,7 +207,7 @@ function createLineGradient(source){
     for(let i=0; i < source.height; i++){
         for(let j=0; j < source.width; j++){
 
-            let value = Math.floor(Math.abs(source.centerCol - j) * 20);
+            let value = Math.floor(j * 10);
             value = Math.max(Math.min(value, 255), 0);
 
             source.setValue(value, i, j, 0);

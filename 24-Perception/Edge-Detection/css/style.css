@@ -15,10 +15,6 @@ p {
     line-height: 180%;
     font-size: 1.2em;
 }
-li {
-    line-height: 180%;
-    font-size: 1.2em;
-}
 
 .list-group {
     list-style: decimal inside;
