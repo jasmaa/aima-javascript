@@ -31,8 +31,8 @@ class ImageUploader extends React.Component {
 
     render() {
 
-        return e('div', {style: {marginRight: 10}},
-            e('label', {className: 'btn btn-success'},
+        return e('div', { style: { marginRight: 10 } },
+            e('label', { className: 'btn btn-success' },
                 e('input', {
                     id: `${this.props.imageId}-input`,
                     type: 'file',
@@ -66,14 +66,8 @@ class ImageUploader extends React.Component {
  */
 class WebcamCapture extends React.Component {
 
-    componentDidMount() {
-        setInterval(() => {
-            this.props.processHandler();
-        }, 100);
-    }
-
     render() {
-        return e('div', {style: {marginRight: 10}},
+        return e('div', { style: { marginRight: 10 } },
             e('video', {
                 autoPlay: true,
                 id: `${this.props.imageId}-webcam`,
@@ -83,13 +77,22 @@ class WebcamCapture extends React.Component {
                 className: 'btn btn-primary',
                 onClick: () => {
                     this.props.changeHandler();
-                    
+
                     if (navigator.mediaDevices.getUserMedia) {
                         let video = document.getElementById(`${this.props.imageId}-webcam`);
 
                         navigator.mediaDevices.getUserMedia({ video: true })
                             .then((stream) => {
                                 video.srcObject = stream;
+                            })
+                            .then(()=>{
+                                let update = ()=>{
+                                    if(video.srcObject){
+                                        this.props.processHandler();
+                                        requestAnimationFrame(update);
+                                    }
+                                }
+                                requestAnimationFrame(update);
                             })
                             .catch((err) => {
                                 console.log(err);
@@ -221,37 +224,5 @@ class GradientGrid extends React.Component {
         },
             this.renderCells(),
         )
-    }
-}
-
-/**
- * Remove: Four direction control panel
- */
-class PositionControl extends React.Component {
-
-    render() {
-        return e('div', {
-            className: 'square-grid-3'
-        },
-            e('div', null, null),
-            e('div', { className: 'control-btn btn btn-primary', onClick: () => this.props.moveHandler(-1, 0) },
-                e('i', { className: 'fas fa-arrow-up' }, null)
-            ),
-            e('div', null, null),
-            e('div', { className: 'control-btn btn btn-primary', onClick: () => this.props.moveHandler(0, -1) },
-                e('i', { className: 'fas fa-arrow-left' }, null)
-            ),
-            e('div', { className: 'control-btn btn btn-danger', onClick: () => this.props.resetHandler() },
-                e('i', { className: 'fas fa-undo' }, null)
-            ),
-            e('div', { className: 'control-btn btn btn-primary', onClick: () => this.props.moveHandler(0, 1) },
-                e('i', { className: 'fas fa-arrow-right' }, null)
-            ),
-            e('div', null, null),
-            e('div', { className: 'control-btn btn btn-primary', onClick: () => this.props.moveHandler(1, 0) },
-                e('i', { className: 'fas fa-arrow-down' }, null)
-            ),
-            e('div', null, null),
-        );
     }
 }
