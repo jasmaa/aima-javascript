@@ -32,10 +32,7 @@ class ImageUploader extends React.Component {
     render() {
 
         return e('div', {style: {marginRight: 10}},
-            e('label', {
-                className: 'btn btn-success',
-                onClick: this.props.changeHandler,
-            },
+            e('label', {className: 'btn btn-success'},
                 e('input', {
                     id: `${this.props.imageId}-input`,
                     type: 'file',
@@ -43,6 +40,7 @@ class ImageUploader extends React.Component {
                     accept: 'image/x-png,image/gif,image/jpeg',
                     style: { display: 'none' },
                     onChange: () => {
+                        this.props.changeHandler();
                         document.body.style.opacity = '0.3';
                         readURL(`${this.props.imageId}-img`, document.getElementById(`${this.props.imageId}-input`))
                             .then((result) => this.props.processHandler())

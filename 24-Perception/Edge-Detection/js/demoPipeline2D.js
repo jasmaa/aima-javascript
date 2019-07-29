@@ -1,5 +1,93 @@
 // 2D pipeline demos
 
+// === HELPER FUNCS ===
+
+/**
+ * Resize canvas
+ */
+function pipelineResize() {
+    if (innerWidth > 700) {
+        this.canvas.style.width = (innerWidth / 2 - 100) + 'px';
+    }
+    else {
+        this.canvas.style.width = (innerWidth - 30) + 'px';
+    }
+}
+
+/**
+ * Change input method
+ * @param {string} input - Input method identifier
+ */
+function pipelineChangeInput(input) {
+    if (input == 'webcam') {
+        this.img = document.getElementById(`${this.imageId}-webcam`);
+    }
+    else if (input == 'image') {
+        this.img = document.getElementById(`${this.imageId}-img`);
+
+        // Shut off webcam
+        let video = document.getElementById(`${this.imageId}-webcam`);
+        let stream = video.srcObject;
+        if(stream){
+            let tracks = stream.getTracks();
+
+            for (let i = 0; i < tracks.length; i++) {
+                let track = tracks[i];
+                track.stop();
+            }
+
+            video.srcObject = null;
+        }
+    }
+}
+
+/**
+ * Render pipeline demo
+ */
+function pipelineRender() {
+    return e('div', { className: 'demo-container' },
+
+        e('div', { style: { display: 'flex', flexDirection: 'row' } },
+            e(ImageUploader, {
+                imageId: this.imageId,
+                defaultImage: '../images/test.png',
+                processHandler: () => this.process(),
+                changeHandler: () => this.changeInput('image'),
+            }, null),
+            e(WebcamCapture, {
+                imageId: this.imageId,
+                processHandler: () => this.process(),
+                changeHandler: () => this.changeInput('webcam'),
+            }, null),
+        ),
+
+        e('br', null, null),
+        e('div', {
+            style: {
+                display: 'flex',
+                justifyContent: 'center',
+            }
+        },
+            e('canvas', {
+                id: `${this.imageId}-canvas`,
+                width: this.canvasWidth,
+                height: this.canvasHeight,
+            }, null),
+        ),
+
+    );
+}
+
+/**
+ * Set image on mount
+ */
+function pipelineComponentDidMount(){
+    this.img = document.getElementById(`${this.imageId}-img`);
+}
+
+
+// === COMPONENTS ===
+
 /**
  * 2D pipeline top-level demo
  * Direct pipeline: color-> final
@@ -9,45 +97,16 @@ class Pipeline2dDirectDemo extends React.Component {
     constructor(props) {
         super(props);
         this.imageId = 'pipeline2d-direct-image';
-
+        this.canvasWidth = 400;
+        this.canvasHeight = 200;
         this.canvas = null;
+
+        this.resize = pipelineResize.bind(this);
+        this.changeInput = pipelineChangeInput.bind(this);
+        this.render = pipelineRender.bind(this);
+        this.componentDidMount = pipelineComponentDidMount.bind(this);
+
         $(window).resize(() => this.resize());
-    }
-
-    componentDidMount() {
-        this.img = document.getElementById(`${this.imageId}-img`);
-    }
-
-    resize() {
-        if (innerWidth > 700) {
-            this.canvas.style.width = (innerWidth / 2 - 100) + 'px';
-        }
-        else {
-            this.canvas.style.width = (innerWidth - 30) + 'px';
-        }
-    }
-
-    changeInput(input) {
-        if (input == 'webcam') {
-            this.img = document.getElementById(`${this.imageId}-webcam`);
-        }
-        else if (input == 'image') {
-            this.img = document.getElementById(`${this.imageId}-img`);
-
-            // Shut off webcam
-            let video = document.getElementById(`${this.imageId}-webcam`);
-            let stream = video.srcObject;
-            if(stream){
-                let tracks = stream.getTracks();
-
-                for (let i = 0; i < tracks.length; i++) {
-                    let track = tracks[i];
-                    track.stop();
-                }
-
-                video.srcObject = null;
-            }
-        }
     }
 
     /**
@@ -98,41 +157,7 @@ class Pipeline2dDirectDemo extends React.Component {
         context.putImageData(imgData, 200, 0);
 
         this.resize();
-    }
-
-    render() {
-        return e('div', { className: 'demo-container' },
-
-            e('div', { style: { display: 'flex', flexDirection: 'row' } },
-                e(ImageUploader, {
-                    imageId: this.imageId,
-                    defaultImage: '../images/test.png',
-                    processHandler: () => this.process(),
-                    changeHandler: () => this.changeInput('image'),
-                }, null),
-                e(WebcamCapture, {
-                    imageId: this.imageId,
-                    processHandler: () => this.process(),
-                    changeHandler: () => this.changeInput('webcam'),
-                }, null),
-            ),
-
-            e('br', null, null),
-            e('div', {
-                style: {
-                    display: 'flex',
-                    justifyContent: 'center',
-                }
-            },
-                e('canvas', {
-                    id: `${this.imageId}-canvas`,
-                    width: '400',
-                    height: '200'
-                }, null),
-            ),
-
-        );
-    }
+    }   
 }
 
 /**
@@ -144,18 +169,16 @@ class Pipeline2dGrayscaleDemo extends React.Component {
     constructor(props) {
         super(props);
         this.imageId = 'pipeline2d-gray-image';
-
+        this.canvasWidth = 400;
+        this.canvasHeight = 200;
         this.canvas = null;
-        $(window).resize(() => this.resize());
-    }
 
-    resize() {
-        if (innerWidth > 700) {
-            this.canvas.style.width = (innerWidth / 2 - 100) + 'px';
-        }
-        else {
-            this.canvas.style.width = (innerWidth - 30) + 'px';
-        }
+        this.resize = pipelineResize.bind(this);
+        this.changeInput = pipelineChangeInput.bind(this);
+        this.render = pipelineRender.bind(this);
+        this.componentDidMount = pipelineComponentDidMount.bind(this);
+
+        $(window).resize(() => this.resize());
     }
 
     /**
@@ -166,12 +189,11 @@ class Pipeline2dGrayscaleDemo extends React.Component {
         const size = 190;
         this.canvas = document.getElementById(`${this.imageId}-canvas`);
         const context = this.canvas.getContext('2d');
-        const img = document.getElementById(`${this.imageId}-img`);
 
         // Clear canvas
         context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        context.drawImage(img, 0, 0, size, size);
+        context.drawImage(this.img, 0, 0, size, size);
         let imgData = context.getImageData(0, 0, size, size);
         let source = new Array2D([...imgData.data], imgData.width, imgData.height, 4);
 
@@ -182,29 +204,6 @@ class Pipeline2dGrayscaleDemo extends React.Component {
         context.putImageData(imgData, 200, 0);
 
         this.resize();
-    }
-
-    render() {
-        return e('div', { className: 'demo-container ' },
-            e(ImageUploader, {
-                imageId: this.imageId,
-                defaultImage: '../images/test.png',
-                processHandler: () => this.process(),
-            }, null),
-            e('br', null, null),
-            e('div', {
-                style: {
-                    display: 'flex',
-                    justifyContent: 'center',
-                }
-            },
-                e('canvas', {
-                    id: `${this.imageId}-canvas`,
-                    width: '400',
-                    height: '200'
-                }, null),
-            ),
-        );
     }
 }
 
@@ -217,18 +216,16 @@ class Pipeline2dShortDemo extends React.Component {
     constructor(props) {
         super(props);
         this.imageId = 'pipeline2d-short-image';
-
+        this.canvasWidth = 850;
+        this.canvasHeight = 420;
         this.canvas = null;
-        $(window).resize(() => this.resize());
-    }
 
-    resize() {
-        if (innerWidth > 700) {
-            this.canvas.style.width = (innerWidth / 2 - 100) + 'px';
-        }
-        else {
-            this.canvas.style.width = (innerWidth - 30) + 'px';
-        }
+        this.resize = pipelineResize.bind(this);
+        this.changeInput = pipelineChangeInput.bind(this);
+        this.render = pipelineRender.bind(this);
+        this.componentDidMount = pipelineComponentDidMount.bind(this);
+
+        $(window).resize(() => this.resize());
     }
 
     /**
@@ -239,12 +236,11 @@ class Pipeline2dShortDemo extends React.Component {
         const size = 190;
         this.canvas = document.getElementById(`${this.imageId}-canvas`);
         const context = this.canvas.getContext('2d');
-        const img = document.getElementById(`${this.imageId}-img`);
 
         // Clear canvas
         context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        context.drawImage(img, 0, 100, size, size);
+        context.drawImage(this.img, 0, 100, size, size);
         let imgData = context.getImageData(0, 100, size, size);
         let source = new Array2D([...imgData.data], imgData.width, imgData.height, 4);
 
@@ -298,29 +294,6 @@ class Pipeline2dShortDemo extends React.Component {
 
         this.resize();
     }
-
-    render() {
-        return e('div', { className: 'demo-container' },
-            e(ImageUploader, {
-                imageId: this.imageId,
-                defaultImage: '../images/test.png',
-                processHandler: () => this.process(),
-            }, null),
-            e('br', null, null),
-            e('div', {
-                style: {
-                    display: 'flex',
-                    justifyContent: 'center',
-                }
-            },
-                e('canvas', {
-                    id: `${this.imageId}-canvas`,
-                    width: '850',
-                    height: '420'
-                }, null),
-            ),
-        );
-    }
 }
 
 /**
@@ -332,18 +305,17 @@ class Pipeline2dLongDemo extends React.Component {
     constructor(props) {
         super(props);
         this.imageId = 'pipeline2d-long-image';
+        this.canvasWidth = 850;
+        this.canvasHeight = 440;
+        this.canvas = null;
+
+        this.resize = pipelineResize.bind(this);
+        this.changeInput = pipelineChangeInput.bind(this);
+        this.render = pipelineRender.bind(this);
+        this.componentDidMount = pipelineComponentDidMount.bind(this);
 
         this.canvas = null;
         $(window).resize(() => this.resize());
-    }
-
-    resize() {
-        if (innerWidth > 700) {
-            this.canvas.style.width = (innerWidth / 2 - 100) + 'px';
-        }
-        else {
-            this.canvas.style.width = (innerWidth - 30) + 'px';
-        }
     }
 
     /**
@@ -354,12 +326,11 @@ class Pipeline2dLongDemo extends React.Component {
         const size = 190;
         this.canvas = document.getElementById(`${this.imageId}-canvas`);
         const context = this.canvas.getContext('2d');
-        const img = document.getElementById(`${this.imageId}-img`);
 
         // Clear canvas
         context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        context.drawImage(img, 0, 0, size, size);
+        context.drawImage(this.img, 0, 0, size, size);
         let imgData = context.getImageData(0, 0, size, size);
         let source = new Array2D([...imgData.data], imgData.width, imgData.height, 4);
 
@@ -416,29 +387,6 @@ class Pipeline2dLongDemo extends React.Component {
         context.fillText("Edge Tracking by Hysteresis", 600, 430);
 
         this.resize();
-    }
-
-    render() {
-        return e('div', { className: 'demo-container' },
-            e(ImageUploader, {
-                imageId: this.imageId,
-                defaultImage: '../images/test.png',
-                processHandler: () => this.process(),
-            }, null),
-            e('br', null, null),
-            e('div', {
-                style: {
-                    display: 'flex',
-                    justifyContent: 'center',
-                }
-            },
-                e('canvas', {
-                    id: `${this.imageId}-canvas`,
-                    width: '800',
-                    height: '440'
-                }, null),
-            ),
-        );
     }
 }
 
