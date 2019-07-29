@@ -73,14 +73,14 @@ class WebcamCapture extends React.Component {
     }
 
     render() {
-        return e('div', null,
+        return e('div', {style: {marginRight: 10}},
             e('video', {
                 autoPlay: true,
                 id: `${this.props.imageId}-webcam`,
                 hidden: true,
             }, null),
             e('div', {
-                className: 'btn btn-info',
+                className: 'btn btn-primary',
                 onClick: () => {
                     this.props.changeHandler();
                     

@@ -28,7 +28,7 @@ function pipelineChangeInput(input) {
         // Shut off webcam
         let video = document.getElementById(`${this.imageId}-webcam`);
         let stream = video.srcObject;
-        if(stream){
+        if (stream) {
             let tracks = stream.getTracks();
 
             for (let i = 0; i < tracks.length; i++) {
@@ -74,14 +74,13 @@ function pipelineRender() {
                 height: this.canvasHeight,
             }, null),
         ),
-
     );
 }
 
 /**
  * Set image on mount
  */
-function pipelineComponentDidMount(){
+function pipelineComponentDidMount() {
     this.img = document.getElementById(`${this.imageId}-img`);
 }
 
@@ -157,7 +156,7 @@ class Pipeline2dDirectDemo extends React.Component {
         context.putImageData(imgData, 200, 0);
 
         this.resize();
-    }   
+    }
 }
 
 /**
@@ -222,7 +221,7 @@ class Pipeline2dShortDemo extends React.Component {
 
         this.resize = pipelineResize.bind(this);
         this.changeInput = pipelineChangeInput.bind(this);
-        this.render = pipelineRender.bind(this);
+        //this.render = pipelineRender.bind(this);
         this.componentDidMount = pipelineComponentDidMount.bind(this);
 
         $(window).resize(() => this.resize());
@@ -293,6 +292,81 @@ class Pipeline2dShortDemo extends React.Component {
         context.stroke();
 
         this.resize();
+    }
+
+    render() {
+        return e('div', { className: 'demo-container' },
+
+            e('div', { className: 'row' },
+                e('div', { className: 'col-xs-6 text-left' },
+                    e('div', { style: { display: 'flex', flexDirection: 'row' } },
+                        e(ImageUploader, {
+                            imageId: this.imageId,
+                            defaultImage: '../images/test.png',
+                            processHandler: () => this.process(),
+                            changeHandler: () => this.changeInput('image'),
+                        }, null),
+                        e(WebcamCapture, {
+                            imageId: this.imageId,
+                            processHandler: () => this.process(),
+                            changeHandler: () => this.changeInput('webcam'),
+                        }, null),
+                    ),
+                ),
+                e('div', { className: 'col-xs-6 text-right' },
+                    e('div', { className: 'btn-group mr-2', role: 'group' },
+                        e('div', {
+                            className: 'btn btn-info', onClick: () => {
+                                this.img.src = "../images/vertLines.png";
+                                this.changeInput('image');
+                                this.process();
+                            }
+                        }, '▥'),
+                        e('div', {
+                            className: 'btn btn-info', onClick: () => {
+                                this.img.src = "../images/horiLines.png";
+                                this.changeInput('image');
+                                this.process();
+                            }
+                        }, '▤'),
+                        e('div', {
+                            className: 'btn btn-info', onClick: () => {
+                                this.img.src = "../images/gridLines.png";
+                                this.changeInput('image');
+                                this.process();
+                            }
+                        }, '▦'),
+                        e('div', {
+                            className: 'btn btn-info', onClick: () => {
+                                this.img.src = "../images/radGrad.png";
+                                this.changeInput('image');
+                                this.process();
+                            }
+                        }, '◎'),
+                        e('div', {
+                            className: 'btn btn-info', onClick: () => {
+                                this.img.src = "../images/horiGrad.png";
+                                this.changeInput('image');
+                                this.process();
+                            }
+                        }, '◧'),
+                    ),
+                ),
+            ),
+            e('br', null, null),
+            e('div', {
+                style: {
+                    display: 'flex',
+                    justifyContent: 'center',
+                }
+            },
+                e('canvas', {
+                    id: `${this.imageId}-canvas`,
+                    width: this.canvasWidth,
+                    height: this.canvasHeight,
+                }, null),
+            ),
+        );
     }
 }
 

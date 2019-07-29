@@ -102,40 +102,37 @@ class GradientDemo extends React.Component {
                         ),
                     ),
                     e('div', {className: 'col-xs-6 text-right'},
-                        e('div', {
-                            className: 'btn-group mr-2',
-                            role: 'group',
-                        },
+                        e('div', {className: 'btn-group mr-2', role: 'group'},
                             e('div', {className: 'btn btn-info', onClick: ()=>{
                                 createVerticalLine(this.source);
                                 this.setState({
                                     grid: this.source,
                                 });
-                            }}, '1'),
+                            }}, '|'),
                             e('div', {className: 'btn btn-info', onClick: ()=>{
                                 createHorizontalLine(this.source);
                                 this.setState({
                                     grid: this.source,
                                 });
-                            }}, '2'),
-                            e('div', {className: 'btn btn-info', onClick: ()=>{
-                                createRadialGradient(this.source);
-                                this.setState({
-                                    grid: this.source,
-                                });
-                            }}, '3'),
+                            }}, '―'),
                             e('div', {className: 'btn btn-info', onClick: ()=>{
                                 createDiagonalLine(this.source);
                                 this.setState({
                                     grid: this.source,
                                 });
-                            }}, '4'),
+                            }}, '╲'),
+                            e('div', {className: 'btn btn-info', onClick: ()=>{
+                                createRadialGradient(this.source);
+                                this.setState({
+                                    grid: this.source,
+                                });
+                            }}, '◎'),
                             e('div', {className: 'btn btn-info', onClick: ()=>{
                                 createLineGradient(this.source);
                                 this.setState({
                                     grid: this.source,
                                 });
-                            }}, '5'),
+                            }}, '◧'),
                         ),
                     ),
                 ),
