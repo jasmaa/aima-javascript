@@ -14,12 +14,39 @@ class Pipeline2dDirectDemo extends React.Component {
         $(window).resize(() => this.resize());
     }
 
+    componentDidMount() {
+        this.img = document.getElementById(`${this.imageId}-img`);
+    }
+
     resize() {
         if (innerWidth > 700) {
             this.canvas.style.width = (innerWidth / 2 - 100) + 'px';
         }
         else {
             this.canvas.style.width = (innerWidth - 30) + 'px';
+        }
+    }
+
+    changeInput(input) {
+        if (input == 'webcam') {
+            this.img = document.getElementById(`${this.imageId}-webcam`);
+        }
+        else if (input == 'image') {
+            this.img = document.getElementById(`${this.imageId}-img`);
+
+            // Shut off webcam
+            let video = document.getElementById(`${this.imageId}-webcam`);
+            let stream = video.srcObject;
+            if(stream){
+                let tracks = stream.getTracks();
+
+                for (let i = 0; i < tracks.length; i++) {
+                    let track = tracks[i];
+                    track.stop();
+                }
+
+                video.srcObject = null;
+            }
         }
     }
 
@@ -31,12 +58,11 @@ class Pipeline2dDirectDemo extends React.Component {
         const size = 190;
         this.canvas = document.getElementById(`${this.imageId}-canvas`);
         const context = this.canvas.getContext('2d');
-        const img = document.getElementById(`${this.imageId}-img`);
 
         // Clear canvas
         context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        context.drawImage(img, 0, 0, size, size);
+        context.drawImage(this.img, 0, 0, size, size);
         let imgData = context.getImageData(0, 0, size, size);
         let source = new Array2D([...imgData.data], imgData.width, imgData.height, 4);
 
@@ -76,11 +102,21 @@ class Pipeline2dDirectDemo extends React.Component {
 
     render() {
         return e('div', { className: 'demo-container' },
-            e(ImageUploader, {
-                imageId: this.imageId,
-                defaultImage: '../images/test.png',
-                processHandler: () => this.process(),
-            }, null),
+
+            e('div', { style: { display: 'flex', flexDirection: 'row' } },
+                e(ImageUploader, {
+                    imageId: this.imageId,
+                    defaultImage: '../images/test.png',
+                    processHandler: () => this.process(),
+                    changeHandler: () => this.changeInput('image'),
+                }, null),
+                e(WebcamCapture, {
+                    imageId: this.imageId,
+                    processHandler: () => this.process(),
+                    changeHandler: () => this.changeInput('webcam'),
+                }, null),
+            ),
+
             e('br', null, null),
             e('div', {
                 style: {
@@ -253,11 +289,11 @@ class Pipeline2dShortDemo extends React.Component {
         // Draw lines
         context.lineWidth = 2;
         context.beginPath();
-        canvasArrowCurveX(context, 0+size, 100+size/2, 220, 100+size/2);
-        canvasArrowCurveX(context, 220+size, 100+size/2, 440, 0+size/2);
-        canvasArrowCurveX(context, 220+size, 100+size/2, 440, 210+size/2);
-        canvasArrowCurveX(context, 440+size, 0+size/2, 660, 100+size/2);
-        canvasArrowCurveX(context, 440+size, 210+size/2, 660, 100+size/2);
+        canvasArrowCurveX(context, 0 + size, 100 + size / 2, 220, 100 + size / 2);
+        canvasArrowCurveX(context, 220 + size, 100 + size / 2, 440, 0 + size / 2);
+        canvasArrowCurveX(context, 220 + size, 100 + size / 2, 440, 210 + size / 2);
+        canvasArrowCurveX(context, 440 + size, 0 + size / 2, 660, 100 + size / 2);
+        canvasArrowCurveX(context, 440 + size, 210 + size / 2, 660, 100 + size / 2);
         context.stroke();
 
         this.resize();
