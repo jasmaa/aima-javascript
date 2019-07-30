@@ -25,6 +25,11 @@ p {
     display: list-item;
 }
 
+.content-container {
+    margin-left: 25%;
+    margin-right: 25%;
+}
+
 .demo-container {
     background-color: gainsboro;
     padding: 1vmax;

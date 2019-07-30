@@ -40,7 +40,9 @@ class ImageUploader extends React.Component {
                     accept: 'image/x-png,image/gif,image/jpeg',
                     style: { display: 'none' },
                     onChange: () => {
-                        this.props.changeHandler();
+                        if(this.props.changeHandler){
+                            this.props.changeHandler();
+                        }
                         document.body.style.opacity = '0.3';
                         readURL(`${this.props.imageId}-img`, document.getElementById(`${this.props.imageId}-input`))
                             .then((result) => this.props.processHandler())
@@ -103,7 +105,6 @@ class WebcamCapture extends React.Component {
         );
     }
 }
-
 
 /**
  * Cell with gradient arrow
