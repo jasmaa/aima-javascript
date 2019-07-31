@@ -126,6 +126,16 @@ function heatMapColorforValue(value){
     return `hsl(${h}, ${s}%, 50%)`;
 }
 
+function redGreenMap(value){
+    const scaledValue = 2*(value-0.5);
+    if(scaledValue < 0){
+        return `rgb(0, ${Math.floor(-scaledValue*255)}, 0)`;
+    }
+    else{
+        return `rgb(${Math.floor(scaledValue*255)}, 0, 0)`;
+    }
+}
+
 /**
  * Texture load as promise
  * https://gist.github.com/zadvorsky/a79787a4703ecc74cab2fdbd05888e9b

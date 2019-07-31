@@ -15,7 +15,7 @@ class ConvolutionGrid extends React.Component {
                 const isTarget = this.props.filterLocation.col == j && this.props.filterLocation.row == i;
 
                 // Mark edge cells as out of bounds
-                let bgColor = heatMapColorforValue(value);
+                let bgColor = redGreenMap(value);
                 if(i == 0 || i == this.props.grid.height-1 || j == 0 || j == this.props.grid.width-1){
                     bgColor = 'pink';
                 }
@@ -244,7 +244,7 @@ class ConvolutionLocalTopologyDisplay extends React.Component {
             const diff =  right/255 - left/255;
             this.planeContainer.rotation.set(0, 0, Math.atan(diff));
             this.planeContainer.position.set(0, 2, 0);
-            this.planeMat.color.set(heatMapColorforValue(this.props.currGradValue));
+            this.planeMat.color.set(redGreenMap(this.props.currGradValue));
         }
         else{
             // Hide arrow
@@ -320,7 +320,7 @@ class ConvolutionDemo extends React.Component {
             this.state.source.width, this.state.source.height, this.state.source.channels
         );
         convolve(this.convolveResult, this.state.filter);
-        stretchColor(this.convolveResult, 0, 1);
+        stretchColorRange(this.convolveResult, -1020, 1020, 0, 1);
     }
 
     /**

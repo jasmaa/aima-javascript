@@ -181,7 +181,7 @@ class GradientGrid extends React.Component {
 
         // Set max and min mags
         const minMag = 0;
-        const maxMag = 1020;
+        const maxMag = 1141;
 
         let cells = [];
         for (let i = 0; i < this.props.magGrid.height; i++) {

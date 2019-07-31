@@ -221,7 +221,6 @@ class Pipeline2dShortDemo extends React.Component {
 
         this.resize = pipelineResize.bind(this);
         this.changeInput = pipelineChangeInput.bind(this);
-        //this.render = pipelineRender.bind(this);
         this.componentDidMount = pipelineComponentDidMount.bind(this);
 
         $(window).resize(() => this.resize());
@@ -259,17 +258,48 @@ class Pipeline2dShortDemo extends React.Component {
 
         // Calculate magnitude of gradients
         const [magGrid, angleGrid] = computeGradients(sobelXData, sobelYData);
-        stretchColor(magGrid);
 
-        // Normalize sobel grids after grad calculation
-        stretchColor(sobelXData);
-        stretchColor(sobelYData);
 
+        // Display sobels with red-green
+        stretchColorRange(sobelXData, -1020, 1020, 0, 1);
+        for(let i=0; i < sobelXData.height; i++){
+            for(let j=0; j < sobelXData.width; j++){
+                const scaledValue = 2*(sobelXData.getValue(i, j)-0.5);
+                if(scaledValue < 0){
+                    sobelXData.setValue(0, i, j, 0);
+                    sobelXData.setValue(Math.floor(-scaledValue*255), i, j, 1);
+                    sobelXData.setValue(0, i, j, 2);
+                }
+                else{
+                    sobelXData.setValue(Math.floor(scaledValue*255), i, j, 0);
+                    sobelXData.setValue(0, i, j, 1);
+                    sobelXData.setValue(0, i, j, 2);
+                }
+            }
+        }
         fillArray(imgData.data, sobelXData.data, imgData.data.length);
         context.putImageData(imgData, 440, 0);
+
+        stretchColorRange(sobelYData, -1020, 1020, 0, 1);
+        for(let i=0; i < sobelYData.height; i++){
+            for(let j=0; j < sobelYData.width; j++){
+                const scaledValue = 2*(sobelYData.getValue(i, j)-0.5);
+                if(scaledValue < 0){
+                    sobelYData.setValue(0, i, j, 0);
+                    sobelYData.setValue(Math.floor(-scaledValue*255), i, j, 1);
+                    sobelYData.setValue(0, i, j, 2);
+                }
+                else{
+                    sobelYData.setValue(Math.floor(scaledValue*255), i, j, 0);
+                    sobelYData.setValue(0, i, j, 1);
+                    sobelYData.setValue(0, i, j, 2);
+                }
+            }
+        }
         fillArray(imgData.data, sobelYData.data, imgData.data.length);
         context.putImageData(imgData, 440, 210);
 
+        stretchColor(magGrid, 0, 255);
         fillArray(imgData.data, magGrid.data, imgData.data.length);
         context.putImageData(imgData, 660, 100);
 

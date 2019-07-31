@@ -339,7 +339,7 @@ function edgeConnect(source){
 }
 
 /**
- * Stretches color of source to between 0-255
+ * Stretches color of source with local max and min
  * 
  * @param {Array2D} source - RGBA source
  */
@@ -351,6 +351,16 @@ function stretchColor(source, targetMin=0, targetMax=255){
     let min = source.data.reduce(function(a, b) {
         return Math.min(a, b);
     });
+    
+    stretchColorRange(source, min, max, targetMin, targetMax);
+}
+
+/**
+ * Stretches color of source with inputted max and min
+ * 
+ * @param {Array2D} source - RGBA source
+ */
+function stretchColorRange(source, min, max, targetMin=0, targetMax=255){
 
     for(let i=0; i < source.height; i++){
         for(let j=0; j < source.width; j++){
