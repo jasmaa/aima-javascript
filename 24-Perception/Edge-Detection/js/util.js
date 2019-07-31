@@ -126,6 +126,10 @@ function heatMapColorforValue(value){
     return `hsl(${h}, ${s}%, 50%)`;
 }
 
+/**
+ * Maps [0 - 1] to red-green color scale
+ * @param {*} value 
+ */
 function redGreenMap(value){
     const scaledValue = 2*(value-0.5);
     if(scaledValue < 0){

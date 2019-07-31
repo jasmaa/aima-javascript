@@ -83,19 +83,13 @@
 				<div id="gradient-root"></div>
 
 				<p>
-					Below is an outline of steps for our edge detection algorithm so far with Sobel X, Sobel Y, and the
-					gradient magnitudes converted to grayscale for display purposes. Observing the gradient magnitudes,
-					we can see edges begin to manifest as pixels where the change in intensity is strong are lit up.
+					So far, our algorithm consists of taking a color image, converting it to grayscale intensities,
+					and applying the Sobel operator to it to find the image's gradients. Observing the magnitudes
+					of these gradients, we can already see edges begin to manifest as lit-up pixels where intensity
+					change is strong.
 				</p>
 
 				<div id="pipeline2d-short-root"></div>
-
-				<p>
-					We have reasoned out a way to evaluate intensity change for a given pixel by observing its
-					neighbors. We have also introduced the Sobel operator which uses this reasoning to find the
-					horizontal and vertical intensity change at every pixel. This allows us to build gradient vectors,
-					giving us information about the amount and direction of intensity change at every pixel.
-				</p>
 
 				<p>
 					Plugging images through our current algorithm, you may have already noticed that Sobel by itself
@@ -104,7 +98,7 @@
 					and post processing techniques into our working edge detection pipeline.
 				</p>
 
-				<div id="pipeline-grad-root"></div>
+				<img src="/third-party/shannon-01.png" alt="Edge detection on noisy input" class="center display-image">
 
 			</div>
 
