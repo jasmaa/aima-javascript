@@ -5,12 +5,12 @@
  */
 class SuppressionDemo extends React.Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
 
         const size = 5;
-        this.source = new Array2D(Array.from({length: 4*size*size}, ()=>255), size, size, 4);
-        this.highlightMask = new Array2D(Array.from({length: size*size}, ()=>false), size, size, 1);
+        this.source = new Array2D(Array.from({ length: 4 * size * size }, () => 255), size, size, 4);
+        this.highlightMask = new Array2D(Array.from({ length: size * size }, () => false), size, size, 1);
         this.magGrid = null;
         this.sobelXData = null;
         this.sobelYData = null;
@@ -21,12 +21,12 @@ class SuppressionDemo extends React.Component {
     /**
      * Computes gradient, draws vector field, and highlights neighbors
      */
-    process(){
+    process() {
 
         // Apply Sobel operator horizontally
         this.sobelXData = new Array2D([...this.source.data], this.source.width, this.source.height, 4);
         convolve(this.sobelXData, sobelX);
-        
+
         // Apply Sobel operator vertically
         this.sobelYData = new Array2D([...this.source.data], this.source.width, this.source.height, 4);
         convolve(this.sobelYData, sobelY);
@@ -38,7 +38,7 @@ class SuppressionDemo extends React.Component {
 
         // Highlight and collect mags for interested cells
         this.highlightMask = new Array2D(
-            Array.from({length: this.source.width*this.source.height}, ()=>false),
+            Array.from({ length: this.source.width * this.source.height }, () => false),
             this.source.width, this.source.height, 1);
 
         this.highlightMask.setValue(true, this.source.centerRow, this.source.centerCol);
@@ -46,38 +46,38 @@ class SuppressionDemo extends React.Component {
         const currMag = this.magGrid.getValue(this.source.centerRow, this.source.centerCol);
         let mags = [currMag];
 
-        if(this.magGrid.getValue(this.source.centerRow, this.source.centerCol)){
+        if (this.magGrid.getValue(this.source.centerRow, this.source.centerCol)) {
             const angle = this.angleGrid.getValue(this.source.centerRow, this.source.centerCol);
 
-            if(angle >= 0 && angle < Math.PI/8){
-                this.highlightMask.setValue(true, this.source.centerRow, this.source.centerCol-1);
-                this.highlightMask.setValue(true, this.source.centerRow, this.source.centerCol+1);
-                mags.push(magGrid.getValue(this.source.centerRow, this.source.centerCol-1));
-                mags.push(magGrid.getValue(this.source.centerRow, this.source.centerCol+1));
+            if (angle >= 0 && angle < Math.PI / 8) {
+                this.highlightMask.setValue(true, this.source.centerRow, this.source.centerCol - 1);
+                this.highlightMask.setValue(true, this.source.centerRow, this.source.centerCol + 1);
+                mags.push(magGrid.getValue(this.source.centerRow, this.source.centerCol - 1));
+                mags.push(magGrid.getValue(this.source.centerRow, this.source.centerCol + 1));
             }
-            else if(angle >= Math.PI/8 && angle < 3*Math.PI/8){
-                this.highlightMask.setValue(true, this.source.centerRow-1, this.source.centerCol+1);
-                this.highlightMask.setValue(true, this.source.centerRow+1, this.source.centerCol-1);
-                mags.push(magGrid.getValue(this.source.centerRow-1, this.source.centerCol+1));
-                mags.push(magGrid.getValue(this.source.centerRow+1, this.source.centerCol-1));
+            else if (angle >= Math.PI / 8 && angle < 3 * Math.PI / 8) {
+                this.highlightMask.setValue(true, this.source.centerRow - 1, this.source.centerCol + 1);
+                this.highlightMask.setValue(true, this.source.centerRow + 1, this.source.centerCol - 1);
+                mags.push(magGrid.getValue(this.source.centerRow - 1, this.source.centerCol + 1));
+                mags.push(magGrid.getValue(this.source.centerRow + 1, this.source.centerCol - 1));
             }
-            else if(angle >= 3*Math.PI/8 && angle < 5*Math.PI/8){
-                this.highlightMask.setValue(true, this.source.centerRow-1, this.source.centerCol);
-                this.highlightMask.setValue(true, this.source.centerRow+1, this.source.centerCol);
-                mags.push(magGrid.getValue(this.source.centerRow-1, this.source.centerCol));
-                mags.push(magGrid.getValue(this.source.centerRow+1, this.source.centerCol));
+            else if (angle >= 3 * Math.PI / 8 && angle < 5 * Math.PI / 8) {
+                this.highlightMask.setValue(true, this.source.centerRow - 1, this.source.centerCol);
+                this.highlightMask.setValue(true, this.source.centerRow + 1, this.source.centerCol);
+                mags.push(magGrid.getValue(this.source.centerRow - 1, this.source.centerCol));
+                mags.push(magGrid.getValue(this.source.centerRow + 1, this.source.centerCol));
             }
-            else if(angle >= 5*Math.PI/8 && angle < 7*Math.PI/8){
-                this.highlightMask.setValue(true, this.source.centerRow-1, this.source.centerCol-1);
-                this.highlightMask.setValue(true, this.source.centerRow+1, this.source.centerCol+1);
-                mags.push(magGrid.getValue(this.source.centerRow-1, this.source.centerCol-1));
-                mags.push(magGrid.getValue(this.source.centerRow+1, this.source.centerCol+1));
+            else if (angle >= 5 * Math.PI / 8 && angle < 7 * Math.PI / 8) {
+                this.highlightMask.setValue(true, this.source.centerRow - 1, this.source.centerCol - 1);
+                this.highlightMask.setValue(true, this.source.centerRow + 1, this.source.centerCol + 1);
+                mags.push(magGrid.getValue(this.source.centerRow - 1, this.source.centerCol - 1));
+                mags.push(magGrid.getValue(this.source.centerRow + 1, this.source.centerCol + 1));
             }
-            else{
-                this.highlightMask.setValue(true, this.source.centerRow, this.source.centerCol-1);
-                this.highlightMask.setValue(true, this.source.centerRow, this.source.centerCol+1);
-                mags.push(magGrid.getValue(this.source.centerRow, this.source.centerCol-1));
-                mags.push(magGrid.getValue(this.source.centerRow, this.source.centerCol+1));
+            else {
+                this.highlightMask.setValue(true, this.source.centerRow, this.source.centerCol - 1);
+                this.highlightMask.setValue(true, this.source.centerRow, this.source.centerCol + 1);
+                mags.push(magGrid.getValue(this.source.centerRow, this.source.centerCol - 1));
+                mags.push(magGrid.getValue(this.source.centerRow, this.source.centerCol + 1));
             }
         }
 
@@ -91,7 +91,7 @@ class SuppressionDemo extends React.Component {
      * @param {integer} row 
      * @param {integer} col 
      */
-    drawHandler(row, col){
+    drawHandler(row, col) {
         let value = this.source.getValue(row, col) - 20;
         value = Math.max(0, Math.min(255, value));
         this.source.setValue(value, row, col);
@@ -104,10 +104,10 @@ class SuppressionDemo extends React.Component {
     /**
      * Clears drawing
      */
-    reset(){
+    reset() {
         createClear(this.source);
         this.highlightMask = new Array2D(
-            Array.from({length: this.source.width*this.source.height}, ()=>false),
+            Array.from({ length: this.source.width * this.source.height }, () => false),
             this.source.width, this.source.height, 1);
 
         this.setState({
@@ -115,35 +115,30 @@ class SuppressionDemo extends React.Component {
         });
     }
 
-    render(){
+    render() {
         this.process();
 
-        return e('div', null, 
-            e('div', {className: 'demo-container'},
-                e('div', {className: 'row'},
-                    e('div', {className: 'col-xs-6 text-left'},
-                        e('div', {className: 'btn btn-danger', onClick: ()=>this.reset()},
-                            e('i', {className: 'fas fa-eraser'}, null)
-                        ),
+        return e('div', null,
+            e('div', { className: 'demo-container' },
+
+                e('div', { style: { display: 'flex', flexDirection: 'row', alignItems: 'center'} },
+                    e('div', { className: 'btn btn-danger', onClick: () => this.reset() },
+                        e('i', { className: 'fas fa-eraser' }, null)
                     ),
-                    e('div', {className: 'col-xs-6 text-right'},
-                        e('h3', null, this.isSuppressed ? 'Suppressed' : 'Not Suppressed'),
-                    ),
+                    e('div', { style: { display: 'flex', flex: 1 } }, null),
+                    e('h3', null, this.isSuppressed ? 'Suppressed' : 'Not Suppressed'),
                 ),
-                e('div', {className: 'row'},
-                    e('div', {className: 'col-xs-12'},
-                        e(GradientGrid, {
-                            idBase: 'suppression',
-                            gridUnit: 6,
-                            source: this.source,
-                            magGrid: this.magGrid,
-                            sobelX: this.sobelXData,
-                            sobelY: this.sobelYData,
-                            highlightMask: this.highlightMask,
-                            drawHandler: (i, j)=>this.drawHandler(i, j),
-                        }, null),
-                    ),
-                ),
+                e('br', null, null),
+                e(GradientGrid, {
+                    idBase: 'suppression',
+                    gridUnit: 6,
+                    source: this.source,
+                    magGrid: this.magGrid,
+                    sobelX: this.sobelXData,
+                    sobelY: this.sobelYData,
+                    highlightMask: this.highlightMask,
+                    drawHandler: (i, j) => this.drawHandler(i, j),
+                }, null),
             )
         );
     }

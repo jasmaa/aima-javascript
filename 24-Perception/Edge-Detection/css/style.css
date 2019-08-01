@@ -29,6 +29,12 @@ p {
     margin-left: 25%;
     margin-right: 25%;
 }
+@media only screen and (max-width: 800px) {
+    .content-container {
+        margin-left: 5%;
+        margin-right: 5%;
+    }
+}
 
 .demo-container {
     background-color: gainsboro;

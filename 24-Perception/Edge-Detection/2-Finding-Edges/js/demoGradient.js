@@ -5,20 +5,20 @@
  */
 class GradientDemo extends React.Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
 
         // Generate source array2d
         const size = 20;
 
-        this.source = new Array2D(Array.from({length: 4*size*size}, ()=>255), size, size, 4);
+        this.source = new Array2D(Array.from({ length: 4 * size * size }, () => 255), size, size, 4);
         this.process();
     }
 
-    componentDidMount(){
+    componentDidMount() {
         // Set starter image
         const img = new Image(20, 20);
-        img.onload = ()=>{
+        img.onload = () => {
             const canvas = document.getElementById('gradient-starter-canvas');
             const context = canvas.getContext('2d');
             context.drawImage(img, 0, 0, 20, 20);
@@ -35,12 +35,12 @@ class GradientDemo extends React.Component {
     /**
      * Computes gradient and draws vector field
      */
-    process(){
+    process() {
 
         // Apply Sobel operator horizontally
         this.sobelXData = new Array2D([...this.source.data], this.source.width, this.source.height, 4);
         convolve(this.sobelXData, sobelX);
-        
+
         // Apply Sobel operator vertically
         this.sobelYData = new Array2D([...this.source.data], this.source.width, this.source.height, 4);
         convolve(this.sobelYData, sobelY);
@@ -57,13 +57,13 @@ class GradientDemo extends React.Component {
      * @param {integer} row 
      * @param {integer} col 
      */
-    drawHandler(row, col){
-        for(let i=-2; i <= 2; i++){
-            for(let j=-2; j <= 2; j++){
+    drawHandler(row, col) {
+        for (let i = -2; i <= 2; i++) {
+            for (let j = -2; j <= 2; j++) {
                 // Stamp circle on drawing
-                if(row+i >= 0 && row+i < this.source.height && col+j >= 0 && col+j < this.source.width){
-                    let value = Math.max(0, Math.min(255, 100*mag2d(i, j), this.source.getValue(row+i, col+j)));
-                    this.source.setValue(value, row+i, col+j);
+                if (row + i >= 0 && row + i < this.source.height && col + j >= 0 && col + j < this.source.width) {
+                    let value = Math.max(0, Math.min(255, 100 * mag2d(i, j), this.source.getValue(row + i, col + j)));
+                    this.source.setValue(value, row + i, col + j);
                 }
             }
         }
@@ -76,7 +76,7 @@ class GradientDemo extends React.Component {
     /**
      * Clears drawing
      */
-    reset(){
+    reset() {
         createClear(this.source);
 
         this.setState({
@@ -84,7 +84,7 @@ class GradientDemo extends React.Component {
         });
     }
 
-    render(){
+    render() {
         this.process();
 
         return e('div', null,
@@ -94,51 +94,59 @@ class GradientDemo extends React.Component {
                 height: '20',
                 hidden: true,
             }, null),
-            e('div', {className: 'demo-container'},
-                e('div', {className: 'row'},
-                    e('div', {className: 'col-xs-6 text-left'},
-                        e('div', {className: 'btn btn-danger', onClick: ()=>this.reset()},
-                            e('i', {className: 'fas fa-eraser'}, null)
-                        ),
+            e('div', { className: 'demo-container' },
+
+                e('div', {style: {display: 'flex', flexDirection: 'row'}},
+                    e('div', { className: 'btn btn-danger', onClick: () => this.reset() },
+                        e('i', { className: 'fas fa-eraser' }, null)
                     ),
-                    e('div', {className: 'col-xs-6 text-right'},
-                        e('div', {className: 'btn-group mr-2', role: 'group'},
-                            e('div', {className: 'btn btn-info', onClick: ()=>{
+                    e('div', {style: {display: 'flex', flex: 1}}, null),
+                    e('div', { className: 'btn-group mr-2', role: 'group' },
+                        e('div', {
+                            className: 'btn btn-info', onClick: () => {
                                 createVerticalLine(this.source);
                                 this.setState({
                                     grid: this.source,
                                 });
-                            }}, '|'),
-                            e('div', {className: 'btn btn-info', onClick: ()=>{
+                            }
+                        }, '|'),
+                        e('div', {
+                            className: 'btn btn-info', onClick: () => {
                                 createHorizontalLine(this.source);
                                 this.setState({
                                     grid: this.source,
                                 });
-                            }}, '―'),
-                            e('div', {className: 'btn btn-info', onClick: ()=>{
+                            }
+                        }, '―'),
+                        e('div', {
+                            className: 'btn btn-info', onClick: () => {
                                 createDiagonalLine(this.source);
                                 this.setState({
                                     grid: this.source,
                                 });
-                            }}, '╲'),
-                            e('div', {className: 'btn btn-info', onClick: ()=>{
+                            }
+                        }, '╲'),
+                        e('div', {
+                            className: 'btn btn-info', onClick: () => {
                                 createRadialGradient(this.source);
                                 this.setState({
                                     grid: this.source,
                                 });
-                            }}, '◎'),
-                            e('div', {className: 'btn btn-info', onClick: ()=>{
+                            }
+                        }, '◎'),
+                        e('div', {
+                            className: 'btn btn-info', onClick: () => {
                                 createLineGradient(this.source);
                                 this.setState({
                                     grid: this.source,
                                 });
-                            }}, '◧'),
-                        ),
+                            }
+                        }, '◧'),
                     ),
                 ),
                 e('br', null, null),
-                e('div', {className: 'row'},
-                    e('div', {className: 'col-xs-12'},
+                e('div', { className: 'row' },
+                    e('div', { className: 'col-xs-12' },
                         e(GradientGrid, {
                             idBase: 'gradient',
                             gridUnit: 2,
@@ -146,7 +154,7 @@ class GradientDemo extends React.Component {
                             magGrid: this.magGrid,
                             sobelX: this.sobelXData,
                             sobelY: this.sobelYData,
-                            drawHandler: (i, j)=>this.drawHandler(i, j),
+                            drawHandler: (i, j) => this.drawHandler(i, j),
                         }, null),
                     ),
                 ),

@@ -262,16 +262,16 @@ class Pipeline2dShortDemo extends React.Component {
 
         // Display sobels with red-green
         stretchColorRange(sobelXData, -1020, 1020, 0, 1);
-        for(let i=0; i < sobelXData.height; i++){
-            for(let j=0; j < sobelXData.width; j++){
-                const scaledValue = 2*(sobelXData.getValue(i, j)-0.5);
-                if(scaledValue < 0){
+        for (let i = 0; i < sobelXData.height; i++) {
+            for (let j = 0; j < sobelXData.width; j++) {
+                const scaledValue = 2 * (sobelXData.getValue(i, j) - 0.5);
+                if (scaledValue < 0) {
                     sobelXData.setValue(0, i, j, 0);
-                    sobelXData.setValue(Math.floor(-scaledValue*255), i, j, 1);
+                    sobelXData.setValue(Math.floor(-scaledValue * 255), i, j, 1);
                     sobelXData.setValue(0, i, j, 2);
                 }
-                else{
-                    sobelXData.setValue(Math.floor(scaledValue*255), i, j, 0);
+                else {
+                    sobelXData.setValue(Math.floor(scaledValue * 255), i, j, 0);
                     sobelXData.setValue(0, i, j, 1);
                     sobelXData.setValue(0, i, j, 2);
                 }
@@ -281,16 +281,16 @@ class Pipeline2dShortDemo extends React.Component {
         context.putImageData(imgData, 440, 0);
 
         stretchColorRange(sobelYData, -1020, 1020, 0, 1);
-        for(let i=0; i < sobelYData.height; i++){
-            for(let j=0; j < sobelYData.width; j++){
-                const scaledValue = 2*(sobelYData.getValue(i, j)-0.5);
-                if(scaledValue < 0){
+        for (let i = 0; i < sobelYData.height; i++) {
+            for (let j = 0; j < sobelYData.width; j++) {
+                const scaledValue = 2 * (sobelYData.getValue(i, j) - 0.5);
+                if (scaledValue < 0) {
                     sobelYData.setValue(0, i, j, 0);
-                    sobelYData.setValue(Math.floor(-scaledValue*255), i, j, 1);
+                    sobelYData.setValue(Math.floor(-scaledValue * 255), i, j, 1);
                     sobelYData.setValue(0, i, j, 2);
                 }
-                else{
-                    sobelYData.setValue(Math.floor(scaledValue*255), i, j, 0);
+                else {
+                    sobelYData.setValue(Math.floor(scaledValue * 255), i, j, 0);
                     sobelYData.setValue(0, i, j, 1);
                     sobelYData.setValue(0, i, j, 2);
                 }
@@ -327,62 +327,58 @@ class Pipeline2dShortDemo extends React.Component {
     render() {
         return e('div', { className: 'demo-container' },
 
-            e('div', { className: 'row' },
-                e('div', { className: 'col-xs-6 text-left' },
-                    e('div', { style: { display: 'flex', flexDirection: 'row' } },
-                        e(ImageUploader, {
-                            imageId: this.imageId,
-                            defaultImage: '../images/test.png',
-                            processHandler: () => this.process(),
-                            changeHandler: () => this.changeInput('image'),
-                        }, null),
-                        e(WebcamCapture, {
-                            imageId: this.imageId,
-                            processHandler: () => this.process(),
-                            changeHandler: () => this.changeInput('webcam'),
-                        }, null),
-                    ),
-                ),
-                e('div', { className: 'col-xs-6 text-right' },
-                    e('div', { className: 'btn-group mr-2', role: 'group' },
-                        e('div', {
-                            className: 'btn btn-info', onClick: () => {
-                                this.img.src = "../images/vertLines.png";
-                                this.changeInput('image');
-                                this.process();
-                            }
-                        }, '▥'),
-                        e('div', {
-                            className: 'btn btn-info', onClick: () => {
-                                this.img.src = "../images/horiLines.png";
-                                this.changeInput('image');
-                                this.process();
-                            }
-                        }, '▤'),
-                        e('div', {
-                            className: 'btn btn-info', onClick: () => {
-                                this.img.src = "../images/gridLines.png";
-                                this.changeInput('image');
-                                this.process();
-                            }
-                        }, '▦'),
-                        e('div', {
-                            className: 'btn btn-info', onClick: () => {
-                                this.img.src = "../images/radGrad.png";
-                                this.changeInput('image');
-                                this.process();
-                            }
-                        }, '◎'),
-                        e('div', {
-                            className: 'btn btn-info', onClick: () => {
-                                this.img.src = "../images/horiGrad.png";
-                                this.changeInput('image');
-                                this.process();
-                            }
-                        }, '◧'),
-                    ),
+            e('div', { style: { display: 'flex', flexDirection: 'row' } },
+                e(ImageUploader, {
+                    imageId: this.imageId,
+                    defaultImage: '../images/test.png',
+                    processHandler: () => this.process(),
+                    changeHandler: () => this.changeInput('image'),
+                }, null),
+                e(WebcamCapture, {
+                    imageId: this.imageId,
+                    processHandler: () => this.process(),
+                    changeHandler: () => this.changeInput('webcam'),
+                }, null),
+                e('div', {style: {display: 'flex', flex: 1}}, null),
+                e('div', { className: 'btn-group mr-2', role: 'group'},
+                    e('div', {
+                        className: 'btn btn-info', onClick: () => {
+                            this.img.src = "../images/vertLines.png";
+                            this.changeInput('image');
+                            this.process();
+                        }
+                    }, '▥'),
+                    e('div', {
+                        className: 'btn btn-info', onClick: () => {
+                            this.img.src = "../images/horiLines.png";
+                            this.changeInput('image');
+                            this.process();
+                        }
+                    }, '▤'),
+                    e('div', {
+                        className: 'btn btn-info', onClick: () => {
+                            this.img.src = "../images/gridLines.png";
+                            this.changeInput('image');
+                            this.process();
+                        }
+                    }, '▦'),
+                    e('div', {
+                        className: 'btn btn-info', onClick: () => {
+                            this.img.src = "../images/radGrad.png";
+                            this.changeInput('image');
+                            this.process();
+                        }
+                    }, '◎'),
+                    e('div', {
+                        className: 'btn btn-info', onClick: () => {
+                            this.img.src = "../images/horiGrad.png";
+                            this.changeInput('image');
+                            this.process();
+                        }
+                    }, '◧'),
                 ),
             ),
+
             e('br', null, null),
             e('div', {
                 style: {

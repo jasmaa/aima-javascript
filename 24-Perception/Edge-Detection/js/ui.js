@@ -111,9 +111,20 @@ class WebcamCapture extends React.Component {
  */
 class GradientCell extends React.Component {
 
+    constructor(props){
+        super(props);
+
+        $(window).resize(() => this.resize());
+    }
+
     componentDidMount() {
         this.canvas = document.getElementById(`${this.props.idBase}-canvas`);
         this.updateCanvas();
+        this.resize();
+    }
+
+    resize(){
+        this.canvas.style.width = (innerWidth / this.props.gridWidth) + 'px';
     }
 
     /**
@@ -208,6 +219,7 @@ class GradientGrid extends React.Component {
                     dy: this.props.sobelY.getValue(i, j) / this.props.magGrid.getValue(i, j),
                     isShowGrad: isShowGrad,
                     isHighlighted: isHighlighted,
+                    gridWidth: this.props.source.width,
                     drawHandler: () => this.props.drawHandler(i, j),
                 }, null));
             }

@@ -15,6 +15,7 @@ class RGBGrid extends React.Component {
                 const b = this.props.grid.getValue(i, j, 2);
                 cells.push(
                     e(Cell, {
+                        key: `rgbcell-${i}-${j}`,
                         bgColor: `rgb(${r}, ${g}, ${b})`,
                     }, null)
                 );
@@ -113,7 +114,7 @@ class RGBDemo extends React.Component {
             this.canvas.style.width = (innerWidth / 3) + 'px';
         }
         else {
-            this.canvas.style.width = (innerWidth - 30) + 'px';
+            this.canvas.style.width = (innerWidth - 70) + 'px';
         }
     }
 
