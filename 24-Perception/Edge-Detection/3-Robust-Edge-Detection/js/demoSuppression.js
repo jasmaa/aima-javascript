@@ -121,12 +121,29 @@ class SuppressionDemo extends React.Component {
         return e('div', null,
             e('div', { className: 'demo-container' },
 
-                e('div', { style: { display: 'flex', flexDirection: 'row', alignItems: 'center'} },
+                e('div', { style: { display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'} },
                     e('div', { className: 'btn btn-danger', onClick: () => this.reset() },
                         e('i', { className: 'fas fa-eraser' }, null)
                     ),
-                    e('div', { style: { display: 'flex', flex: 1 } }, null),
-                    e('h3', null, this.isSuppressed ? 'Suppressed' : 'Not Suppressed'),
+                    e('h3', null, this.isSuppressed ? 'Suppress' : 'Keep'),
+                    e('div', { className: 'btn-group mr-2', role: 'group' },
+                        e('div', {
+                            className: 'btn btn-info', onClick: () => {
+                                createVerticalLineThick(this.source, 2);
+                                this.setState({
+                                    grid: this.source,
+                                });
+                            }
+                        }, '✔'),
+                        e('div', {
+                            className: 'btn btn-info', onClick: () => {
+                                createVerticalLineThick(this.source, 1);
+                                this.setState({
+                                    grid: this.source,
+                                });
+                            }
+                        }, '✘'),
+                    ),
                 ),
                 e('br', null, null),
                 e(GradientGrid, {

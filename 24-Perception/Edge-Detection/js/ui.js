@@ -40,7 +40,7 @@ class ImageUploader extends React.Component {
                     accept: 'image/x-png,image/gif,image/jpeg',
                     style: { display: 'none' },
                     onChange: () => {
-                        if(this.props.changeHandler){
+                        if (this.props.changeHandler) {
                             this.props.changeHandler();
                         }
                         document.body.style.opacity = '0.3';
@@ -87,9 +87,9 @@ class WebcamCapture extends React.Component {
                             .then((stream) => {
                                 video.srcObject = stream;
                             })
-                            .then(()=>{
-                                let update = ()=>{
-                                    if(video.srcObject){
+                            .then(() => {
+                                let update = () => {
+                                    if (video.srcObject) {
                                         this.props.processHandler();
                                         requestAnimationFrame(update);
                                     }
@@ -111,7 +111,7 @@ class WebcamCapture extends React.Component {
  */
 class GradientCell extends React.Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
 
         $(window).resize(() => this.resize());
@@ -123,7 +123,7 @@ class GradientCell extends React.Component {
         this.resize();
     }
 
-    resize(){
+    resize() {
         this.canvas.style.width = (innerWidth / this.props.gridWidth) + 'px';
     }
 

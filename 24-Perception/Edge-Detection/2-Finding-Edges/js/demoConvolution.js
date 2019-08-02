@@ -16,7 +16,7 @@ class ConvolutionGrid extends React.Component {
 
                 // Mark edge cells as out of bounds
                 let bgColor = redGreenMap(value);
-                if(i == 0 || i == this.props.grid.height-1 || j == 0 || j == this.props.grid.width-1){
+                if (i == 0 || i == this.props.grid.height - 1 || j == 0 || j == this.props.grid.width - 1) {
                     bgColor = 'pink';
                 }
 
@@ -111,13 +111,13 @@ class ConvolutionChangeLabel extends React.Component {
 
         // Update text
         let outStr = 'No Change';
-        if(right == null || left == null || up == null || down == null){
+        if (right == null || left == null || up == null || down == null) {
             outStr = 'Out of Bounds';
         }
-        else if (Math.abs(Math.abs(this.props.value) - 0.5) > 0.0001){
+        else if (Math.abs(Math.abs(this.props.value) - 0.5) > 0.0001) {
             const signLabel = this.props.value > 0.5 ? 'Positive ' : 'Negative ';
             const magLabel = Math.abs(this.props.value - 0.5) > 0.2 ? 'Large ' : 'Small ';
-            outStr =  `${magLabel} ${signLabel} Change`;
+            outStr = `${magLabel} ${signLabel} Change`;
         }
 
         return e('p', { align: 'center' }, outStr);
@@ -193,19 +193,19 @@ class ConvolutionLocalTopologyDisplay extends React.Component {
             }
         }
 
-        // Create plane
+        // Create tilt plane
         this.planeContainer = new THREE.Object3D();
         this.planeMat = new THREE.MeshToonMaterial({ color: 'red' });
         const arrowHead = new THREE.Mesh(
-            new THREE.ConeGeometry( 0.2, 1, 32 ),
+            new THREE.ConeGeometry(0.2, 1, 32),
             this.planeMat,
         );
         const arrowBody = new THREE.Mesh(
-            new THREE.CylinderGeometry( 0.1, 0.1, 1, 32 ),
+            new THREE.CylinderGeometry(0.1, 0.1, 1, 32),
             this.planeMat,
         );
-        arrowHead.rotation.set(0, 0, Math.PI/2);
-        arrowBody.rotation.set(0, 0, Math.PI/2);
+        arrowHead.rotation.set(0, 0, Math.PI / 2);
+        arrowBody.rotation.set(0, 0, Math.PI / 2);
         arrowHead.position.set(-0.5, 0, 0);
         arrowBody.position.set(0.5, 0, 0);
         this.planeContainer.add(arrowHead);
@@ -240,13 +240,13 @@ class ConvolutionLocalTopologyDisplay extends React.Component {
         const down = this.props.grid.getValue(2, 1);
 
         // Update arrow
-        if(right != null && left != null && up != null && down != null){
-            const diff =  right/255 - left/255;
+        if (right != null && left != null && up != null && down != null) {
+            const diff = right / 255 - left / 255;
             this.planeContainer.rotation.set(0, 0, Math.atan(diff));
             this.planeContainer.position.set(0, 2, 0);
             this.planeMat.color.set(redGreenMap(this.props.currGradValue));
         }
-        else{
+        else {
             // Hide arrow
             this.planeContainer.position.set(0, -2, 0);
         }
@@ -390,7 +390,7 @@ class ConvolutionDemo extends React.Component {
         const resValue = this.convolveResult.getValue(this.state.filterLocation.row, this.state.filterLocation.col);
 
         return e('div', { className: 'demo-container' },
-            e('div', { className: 'flex-container', style: {alignItems: 'baseline'} },
+            e('div', { className: 'flex-container', style: { alignItems: 'baseline' } },
                 e('div', null,
                     e('h4', { align: 'center' }, "Source"),
                     e(ConvolutionFilterGrid, {
