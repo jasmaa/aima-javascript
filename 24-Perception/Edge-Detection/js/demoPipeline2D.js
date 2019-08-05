@@ -3,18 +3,6 @@
 // === HELPER FUNCS ===
 
 /**
- * Resize canvas
- */
-function pipelineResize() {
-    if (innerWidth > 700) {
-        this.canvas.style.width = (innerWidth / 2 - 100) + 'px';
-    }
-    else {
-        this.canvas.style.width = (innerWidth - 30) + 'px';
-    }
-}
-
-/**
  * Change input method
  * @param {string} input - Input method identifier
  */
@@ -42,10 +30,19 @@ function pipelineChangeInput(input) {
 }
 
 /**
- * Render pipeline demo
+ * Render paired pipeline
  */
-function pipelineRender() {
+function pipelinePairRender() {
     return e('div', { className: 'demo-container' },
+
+
+        e(PixelMagnifier, {
+            imageId: `${this.imageId}-in`,
+        }, null),
+        e(PixelMagnifier, {
+            imageId: `${this.imageId}-out`,
+        }, null),
+
 
         e('div', { style: { display: 'flex', flexDirection: 'row' } },
             e(ImageUploader, {
@@ -65,13 +62,24 @@ function pipelineRender() {
         e('div', {
             style: {
                 display: 'flex',
-                justifyContent: 'center',
+                justifyContent: 'space-evenly'
             }
         },
             e('canvas', {
-                id: `${this.imageId}-canvas`,
+                id: `${this.imageId}-in-canvas`,
                 width: this.canvasWidth,
                 height: this.canvasHeight,
+                style: {
+                    width: '50%',
+                }
+            }, null),
+            e('canvas', {
+                id: `${this.imageId}-out-canvas`,
+                width: this.canvasWidth,
+                height: this.canvasHeight,
+                style: {
+                    width: '50%',
+                }
             }, null),
         ),
     );
@@ -96,16 +104,13 @@ class Pipeline2dDirectDemo extends React.Component {
     constructor(props) {
         super(props);
         this.imageId = 'pipeline2d-direct-image';
-        this.canvasWidth = 400;
+        this.canvasWidth = 200;
         this.canvasHeight = 200;
         this.canvas = null;
 
-        this.resize = pipelineResize.bind(this);
         this.changeInput = pipelineChangeInput.bind(this);
-        this.render = pipelineRender.bind(this);
+        this.render = pipelinePairRender.bind(this);
         this.componentDidMount = pipelineComponentDidMount.bind(this);
-
-        $(window).resize(() => this.resize());
     }
 
     /**
@@ -113,15 +118,18 @@ class Pipeline2dDirectDemo extends React.Component {
      */
     process() {
 
-        const size = 190;
-        this.canvas = document.getElementById(`${this.imageId}-canvas`);
-        const context = this.canvas.getContext('2d');
+        const size = 200;
+        const inCanvas = document.getElementById(`${this.imageId}-in-canvas`);
+        const inContext = inCanvas.getContext('2d');
+        const outCanvas = document.getElementById(`${this.imageId}-out-canvas`);
+        const outContext = outCanvas.getContext('2d');
 
         // Clear canvas
-        context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        inContext.clearRect(0, 0, inCanvas.width, inCanvas.height);
+        outContext.clearRect(0, 0, outCanvas.width, outCanvas.height);
 
-        context.drawImage(this.img, 0, 0, size, size);
-        let imgData = context.getImageData(0, 0, size, size);
+        inContext.drawImage(this.img, 0, 0, size, size);
+        let imgData = inContext.getImageData(0, 0, size, size);
         let source = new Array2D([...imgData.data], imgData.width, imgData.height, 4);
 
         // Convert to grayscale
@@ -153,9 +161,7 @@ class Pipeline2dDirectDemo extends React.Component {
 
         // Draw final
         fillArray(imgData.data, suppressed.data, imgData.data.length);
-        context.putImageData(imgData, 200, 0);
-
-        this.resize();
+        outContext.putImageData(imgData, 0, 0);
     }
 }
 
@@ -168,16 +174,12 @@ class Pipeline2dGrayscaleDemo extends React.Component {
     constructor(props) {
         super(props);
         this.imageId = 'pipeline2d-gray-image';
-        this.canvasWidth = 400;
+        this.canvasWidth = 200;
         this.canvasHeight = 200;
-        this.canvas = null;
 
-        this.resize = pipelineResize.bind(this);
         this.changeInput = pipelineChangeInput.bind(this);
-        this.render = pipelineRender.bind(this);
+        this.render = pipelinePairRender.bind(this);
         this.componentDidMount = pipelineComponentDidMount.bind(this);
-
-        $(window).resize(() => this.resize());
     }
 
     /**
@@ -185,24 +187,25 @@ class Pipeline2dGrayscaleDemo extends React.Component {
      */
     process() {
 
-        const size = 190;
-        this.canvas = document.getElementById(`${this.imageId}-canvas`);
-        const context = this.canvas.getContext('2d');
+        const size = 200;
+        const inCanvas = document.getElementById(`${this.imageId}-in-canvas`);
+        const inContext = inCanvas.getContext('2d');
+        const outCanvas = document.getElementById(`${this.imageId}-out-canvas`);
+        const outContext = outCanvas.getContext('2d');
 
         // Clear canvas
-        context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        inContext.clearRect(0, 0, inCanvas.width, inCanvas.height);
+        outContext.clearRect(0, 0, outCanvas.width, outCanvas.height);
 
-        context.drawImage(this.img, 0, 0, size, size);
-        let imgData = context.getImageData(0, 0, size, size);
+        inContext.drawImage(this.img, 0, 0, size, size);
+        let imgData = inContext.getImageData(0, 0, size, size);
         let source = new Array2D([...imgData.data], imgData.width, imgData.height, 4);
 
         // Convert to grayscale
         grayscale(source);
 
         fillArray(imgData.data, source.data, imgData.data.length);
-        context.putImageData(imgData, 200, 0);
-
-        this.resize();
+        outContext.putImageData(imgData, 0, 0);
     }
 }
 
@@ -219,11 +222,8 @@ class Pipeline2dShortDemo extends React.Component {
         this.canvasHeight = 420;
         this.canvas = null;
 
-        this.resize = pipelineResize.bind(this);
         this.changeInput = pipelineChangeInput.bind(this);
         this.componentDidMount = pipelineComponentDidMount.bind(this);
-
-        $(window).resize(() => this.resize());
     }
 
     /**
@@ -264,17 +264,10 @@ class Pipeline2dShortDemo extends React.Component {
         stretchColorRange(sobelXData, -1020, 1020, 0, 1);
         for (let i = 0; i < sobelXData.height; i++) {
             for (let j = 0; j < sobelXData.width; j++) {
-                const scaledValue = 2 * (sobelXData.getValue(i, j) - 0.5);
-                if (scaledValue < 0) {
-                    sobelXData.setValue(0, i, j, 0);
-                    sobelXData.setValue(Math.floor(-scaledValue * 255), i, j, 1);
-                    sobelXData.setValue(0, i, j, 2);
-                }
-                else {
-                    sobelXData.setValue(Math.floor(scaledValue * 255), i, j, 0);
-                    sobelXData.setValue(0, i, j, 1);
-                    sobelXData.setValue(0, i, j, 2);
-                }
+                const colorVals = divergingColormap(sobelXData.getValue(i, j));
+                sobelXData.setValue(colorVals[0], i, j, 0);
+                sobelXData.setValue(colorVals[1], i, j, 1);
+                sobelXData.setValue(colorVals[2], i, j, 2);
             }
         }
         fillArray(imgData.data, sobelXData.data, imgData.data.length);
@@ -283,17 +276,10 @@ class Pipeline2dShortDemo extends React.Component {
         stretchColorRange(sobelYData, -1020, 1020, 0, 1);
         for (let i = 0; i < sobelYData.height; i++) {
             for (let j = 0; j < sobelYData.width; j++) {
-                const scaledValue = 2 * (sobelYData.getValue(i, j) - 0.5);
-                if (scaledValue < 0) {
-                    sobelYData.setValue(0, i, j, 0);
-                    sobelYData.setValue(Math.floor(-scaledValue * 255), i, j, 1);
-                    sobelYData.setValue(0, i, j, 2);
-                }
-                else {
-                    sobelYData.setValue(Math.floor(scaledValue * 255), i, j, 0);
-                    sobelYData.setValue(0, i, j, 1);
-                    sobelYData.setValue(0, i, j, 2);
-                }
+                const colorVals = divergingColormap(sobelYData.getValue(i, j));
+                sobelYData.setValue(colorVals[0], i, j, 0);
+                sobelYData.setValue(colorVals[1], i, j, 1);
+                sobelYData.setValue(colorVals[2], i, j, 2);
             }
         }
         fillArray(imgData.data, sobelYData.data, imgData.data.length);
@@ -320,8 +306,6 @@ class Pipeline2dShortDemo extends React.Component {
         canvasArrowCurveX(context, 440 + size, 0 + size / 2, 660, 100 + size / 2);
         canvasArrowCurveX(context, 440 + size, 210 + size / 2, 660, 100 + size / 2);
         context.stroke();
-
-        this.resize();
     }
 
     render() {
@@ -339,8 +323,8 @@ class Pipeline2dShortDemo extends React.Component {
                     processHandler: () => this.process(),
                     changeHandler: () => this.changeInput('webcam'),
                 }, null),
-                e('div', {style: {display: 'flex', flex: 1}}, null),
-                e('div', { className: 'btn-group mr-2', role: 'group'},
+                e('div', { style: { display: 'flex', flex: 1 } }, null),
+                e('div', { className: 'btn-group mr-2', role: 'group' },
                     e('div', {
                         className: 'btn btn-info', onClick: () => {
                             this.img.src = "../images/vertLines.png";
@@ -362,20 +346,6 @@ class Pipeline2dShortDemo extends React.Component {
                             this.process();
                         }
                     }, '▦'),
-                    e('div', {
-                        className: 'btn btn-info', onClick: () => {
-                            this.img.src = "../images/radGrad.png";
-                            this.changeInput('image');
-                            this.process();
-                        }
-                    }, '◎'),
-                    e('div', {
-                        className: 'btn btn-info', onClick: () => {
-                            this.img.src = "../images/horiGrad.png";
-                            this.changeInput('image');
-                            this.process();
-                        }
-                    }, '◧'),
                 ),
             ),
 
@@ -407,15 +377,12 @@ class Pipeline2dLongDemo extends React.Component {
         this.imageId = 'pipeline2d-long-image';
         this.canvasWidth = 850;
         this.canvasHeight = 440;
-        this.canvas = null;
 
-        this.resize = pipelineResize.bind(this);
         this.changeInput = pipelineChangeInput.bind(this);
         this.render = pipelineRender.bind(this);
         this.componentDidMount = pipelineComponentDidMount.bind(this);
 
         this.canvas = null;
-        $(window).resize(() => this.resize());
     }
 
     /**
@@ -485,8 +452,6 @@ class Pipeline2dLongDemo extends React.Component {
         context.fillText("Non-Maximum Suppression", 200, 430);
         context.fillText("Double Thresholding", 400, 430);
         context.fillText("Edge Tracking by Hysteresis", 600, 430);
-
-        this.resize();
     }
 }
 
@@ -498,6 +463,13 @@ if (document.getElementById('pipeline2d-direct-root')) {
         document.getElementById('pipeline2d-direct-root')
     );
 }
+if (document.getElementById('pipeline2d-gray-root')) {
+    ReactDOM.render(
+        e(Pipeline2dGrayscaleDemo, null, null),
+        document.getElementById('pipeline2d-gray-root')
+    );
+}
+
 if (document.getElementById('pipeline2d-short-root')) {
     ReactDOM.render(
         e(Pipeline2dShortDemo, null, null),
@@ -508,11 +480,5 @@ if (document.getElementById('pipeline2d-long-root')) {
     ReactDOM.render(
         e(Pipeline2dLongDemo, null, null),
         document.getElementById('pipeline2d-long-root')
-    );
-}
-if (document.getElementById('pipeline2d-gray-root')) {
-    ReactDOM.render(
-        e(Pipeline2dGrayscaleDemo, null, null),
-        document.getElementById('pipeline2d-gray-root')
     );
 }

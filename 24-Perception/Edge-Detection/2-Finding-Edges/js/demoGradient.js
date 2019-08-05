@@ -1,5 +1,3 @@
-// Gradient detection demo
-
 /**
  * Top level gradient demo
  */
@@ -15,7 +13,7 @@ class GradientDemo extends React.Component {
         this.process();
     }
 
-    componentDidMount() {
+    loadStarter(){
         // Set starter image
         const img = new Image(20, 20);
         img.onload = () => {
@@ -30,6 +28,10 @@ class GradientDemo extends React.Component {
             });
         };
         img.src = "../images/starter.png";
+    }
+
+    componentDidMount() {
+        this.loadStarter();
     }
 
     /**
@@ -104,6 +106,11 @@ class GradientDemo extends React.Component {
                     e('div', { className: 'btn-group mr-2', role: 'group' },
                         e('div', {
                             className: 'btn btn-info', onClick: () => {
+                                this.loadStarter();
+                            }
+                        }, '↶'),
+                        e('div', {
+                            className: 'btn btn-info', onClick: () => {
                                 createVerticalLine(this.source);
                                 this.setState({
                                     grid: this.source,
@@ -161,10 +168,8 @@ class GradientDemo extends React.Component {
             )
         );
     }
-
 }
 
-// Render elements
 ReactDOM.render(
     e(GradientDemo, null, null),
     document.getElementById('gradient-root')
