@@ -239,3 +239,125 @@ class GradientGrid extends React.Component {
         )
     }
 }
+
+/**
+ * Displays RGB grid
+ */
+class RGBGrid extends React.Component {
+
+    render(){
+
+        let cells = [];
+        for(let i=0; i < this.props.grid.height; i++){
+            for(let j=0; j < this.props.grid.width; j++){
+                const r = this.props.grid.getValue(i, j, 0);
+                const g = this.props.grid.getValue(i, j, 1);
+                const b = this.props.grid.getValue(i, j, 2);
+                cells.push(
+                    e(Cell, {
+                        key: `rgbcell-${i}-${j}`,
+                        bgColor: `rgb(${r}, ${g}, ${b})`,
+                    }, null)
+                );
+            }
+        }
+
+        return e('div', {
+            className: 'square-grid-base',
+            style: {
+                gridTemplateColumns: `repeat(${this.props.grid.width}, ${this.props.cellSize}vmax)`,
+                gridTemplateRows: `repeat(${this.props.grid.height}, ${this.props.cellSize}vmax)`,
+            }
+        }, cells);
+    }
+}
+
+/**
+ * Magnifies pixel array
+ */
+class PixelMagnifier extends React.Component {
+
+    constructor(props) {
+        super(props);
+
+        this.magnifySize = 20;
+        this.cellSize = 0.3;
+
+        this.state = {
+            cursorX: 0,
+            cursorY: 0,
+            magnifyGrid: new Array2D([], 5, 5, 4),
+            magnifyVisible: false,
+        }
+    }
+
+    componentDidMount() {
+        // Create magnifier
+        const canvas = document.getElementById(`${this.props.imageId}-canvas`);
+        const context = canvas.getContext('2d');
+        const magnifier = document.getElementById(`${this.props.imageId}-rgb-magnifier`);
+        const updateFunc = (e) => {
+
+            e.preventDefault();
+
+            const a = canvas.getBoundingClientRect();
+
+            // Lock magnifier to image
+            let cursorX = e.pageX - magnifier.offsetWidth / 2;
+            let cursorY = e.pageY - magnifier.offsetHeight / 2;
+            cursorX = Math.min(a.right + window.pageXOffset - magnifier.offsetWidth, Math.max(a.left + window.pageXOffset, cursorX));
+            cursorY = Math.min(a.bottom + window.pageYOffset - magnifier.offsetHeight, Math.max(a.top + window.pageYOffset, cursorY));
+
+            // Get selected area
+            const ratioX = (cursorX + magnifier.offsetWidth / 2 - a.left - window.pageXOffset) / a.width;
+            const ratioY = (cursorY + magnifier.offsetHeight / 2 - a.top - window.pageYOffset) / a.height; //(e.pageY-a.top-window.pageYOffset) / a.height;
+            const imgData = context.getImageData(
+                Math.floor(ratioX * canvas.width) - Math.floor(this.magnifySize / 2),
+                Math.floor(ratioY * canvas.height) - Math.floor(this.magnifySize / 2),
+                this.magnifySize, this.magnifySize
+            );
+
+            this.setState({
+                cursorX: cursorX,
+                cursorY: cursorY,
+                magnifyGrid: new Array2D([...imgData.data], this.magnifySize, this.magnifySize, 4),
+                magnifyVisible: true,
+            });
+        }
+
+        // Magnifier events
+        magnifier.addEventListener('mouseleave', (e) => {
+            this.setState({ magnifyVisible: false, });
+        });
+        canvas.addEventListener('mouseleave', (e) => {
+            this.setState({ magnifyVisible: false, });
+        });
+        canvas.addEventListener('mousemove', updateFunc);
+        magnifier.addEventListener('mousemove', updateFunc);
+        canvas.addEventListener('touchmove', updateFunc);
+        magnifier.addEventListener('touchmove', updateFunc);
+    }
+
+    render() {
+        return e('div', {
+            id: `${this.props.imageId}-rgb-magnifier`,
+            style: {
+                position: 'absolute',
+                border: '3.2vmax solid pink',
+                cursor: 'none',
+                visibility: this.state.magnifyVisible ? 'visible' : 'hidden',
+
+                width: `${this.cellSize * (this.state.magnifyGrid.width + 0.5)}vmax`,
+                height: `${this.cellSize * (this.state.magnifyGrid.height + 0.5)}vmax`,
+                left: this.state.cursorX,
+                top: this.state.cursorY,
+
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+            }
+        },
+            e(RGBGrid, { grid: this.state.magnifyGrid, cellSize: this.cellSize }, null),
+        );
+    }
+}

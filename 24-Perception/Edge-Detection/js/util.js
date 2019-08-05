@@ -204,7 +204,7 @@ function createVerticalLineThick(source, offset=0){
     }
 }
 
-function createHorizontalLine(source, offset){
+function createHorizontalLine(source, offset=0){
     for(let i=0; i < source.height; i++){
         for(let j=0; j < source.width; j++){
 

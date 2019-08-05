@@ -1,38 +1,6 @@
 // RGB channel demo
 
 /**
- * Displays RGB grid
- */
-class RGBGrid extends React.Component {
-
-    render(){
-
-        let cells = [];
-        for(let i=0; i < this.props.grid.height; i++){
-            for(let j=0; j < this.props.grid.width; j++){
-                const r = this.props.grid.getValue(i, j, 0);
-                const g = this.props.grid.getValue(i, j, 1);
-                const b = this.props.grid.getValue(i, j, 2);
-                cells.push(
-                    e(Cell, {
-                        key: `rgbcell-${i}-${j}`,
-                        bgColor: `rgb(${r}, ${g}, ${b})`,
-                    }, null)
-                );
-            }
-        }
-
-        return e('div', {
-            className: 'square-grid-base',
-            style: {
-                gridTemplateColumns: `repeat(${this.props.grid.width}, ${this.props.cellSize}vmax)`,
-                gridTemplateRows: `repeat(${this.props.grid.height}, ${this.props.cellSize}vmax)`,
-            }
-        }, cells);
-    }
-}
-
-/**
  * Top level RGB demo
  */
 class RGBDemo extends React.Component {
@@ -40,20 +8,11 @@ class RGBDemo extends React.Component {
     constructor(props) {
         super(props);
         this.imageId = 'rgb';
-        this.size = 800;
-        this.magnifySize = 11;
-        this.cellSize = 0.5;
+        this.size = 200;
 
         this.showR = true;
         this.showG = true;
         this.showB = true;
-
-        this.state = {
-            cursorX: 0,
-            cursorY: 0,
-            magnifyGrid: new Array2D([], 5, 5, 4),
-            magnifyVisible: false,
-        }
 
         $(window).resize(() => this.resize());
     }
@@ -62,51 +21,6 @@ class RGBDemo extends React.Component {
         document.getElementById(`${this.imageId}-rButton`).style.backgroundColor = this.showR ? "red" : "gray";
         document.getElementById(`${this.imageId}-gButton`).style.backgroundColor = this.showG ? "green" : "gray";
         document.getElementById(`${this.imageId}-bButton`).style.backgroundColor = this.showB ? "blue" : "gray";
-
-        // Create magnifier
-        const canvas = document.getElementById(`${this.imageId}-canvas`);
-        const context = canvas.getContext('2d');
-        const magnifier = document.getElementById('rgb-magnifier');
-        const updateFunc = (e)=>{
-
-            e.preventDefault();
-
-            const a = canvas.getBoundingClientRect();
-
-            // Lock magnifier to image
-            let cursorX = e.pageX - magnifier.offsetWidth/2;
-            let cursorY = e.pageY - magnifier.offsetHeight/2;
-            cursorX = Math.min(a.right+window.pageXOffset - magnifier.offsetWidth, Math.max(a.left+window.pageXOffset, cursorX));
-            cursorY = Math.min(a.bottom+window.pageYOffset - magnifier.offsetHeight, Math.max(a.top + window.pageYOffset, cursorY));
-
-            // Get selected area
-            const ratioX = (e.pageX-a.left-window.pageXOffset) / a.width;
-            const ratioY = (e.pageY-a.top-window.pageYOffset) / a.height;
-            const imgData = context.getImageData(
-                Math.floor(ratioX*this.size)-Math.floor(this.magnifySize/2),
-                Math.floor(ratioY*this.size)-Math.floor(this.magnifySize/2),
-                this.magnifySize, this.magnifySize
-            );
-
-            this.setState({
-                cursorX: cursorX,
-                cursorY: cursorY,
-                magnifyGrid: new Array2D([...imgData.data], this.magnifySize, this.magnifySize, 4),
-                magnifyVisible: true,
-            });
-        }
-
-        // Magnifier events
-        magnifier.addEventListener('mouseleave', (e)=>{
-            this.setState({magnifyVisible: false,});
-        });
-        canvas.addEventListener('mouseleave', (e)=>{
-            this.setState({magnifyVisible: false,});
-        });
-        canvas.addEventListener('mousemove', updateFunc);
-        magnifier.addEventListener('mousemove', updateFunc);
-        canvas.addEventListener('touchmove', updateFunc);
-        magnifier.addEventListener('touchmove', updateFunc);
     }
 
     resize() {
@@ -158,26 +72,9 @@ class RGBDemo extends React.Component {
     render() {
         return e('div', { className: 'demo-container' },
 
-            e('div', {
-                id: 'rgb-magnifier',
-                style: {
-                    position: 'absolute',
-                    border: '0.5vmax solid pink',
-                    cursor: 'none',
-                    visibility: this.state.magnifyVisible ? 'visible' : 'hidden',
-
-                    width: `${this.cellSize*(this.state.magnifyGrid.width+0.5)}vmax`,
-                    height: `${this.cellSize*(this.state.magnifyGrid.height+0.5)}vmax`,
-                    left: this.state.cursorX,
-                    top: this.state.cursorY,
-
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                }
-            },
-                e(RGBGrid, {grid: this.state.magnifyGrid, cellSize: this.cellSize}, null),
-            ),
+            e(PixelMagnifier, {
+                imageId: this.imageId,
+            }, null),
 
             e(ImageUploader, {
                 imageId: this.imageId,
@@ -185,6 +82,7 @@ class RGBDemo extends React.Component {
                 processHandler: () => this.process(),
             }, null),
             e('br', null, null),
+
 
             e('div', {
                 style: {
@@ -198,7 +96,7 @@ class RGBDemo extends React.Component {
                     id: `${this.imageId}-canvas`,
                     width: this.size,
                     height: this.size,
-                    style: {cursor: 'none'}
+                    style: { cursor: 'none' }
                 }, null),
                 e('div', null,
                     e('button', {
