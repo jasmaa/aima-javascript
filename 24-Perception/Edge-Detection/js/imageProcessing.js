@@ -1,9 +1,10 @@
 // Image processing
+import { mag2d } from './util.js';
 
 /**
  * 2x2 grid with channels
  */
-class Array2D {
+export class Array2D {
 
 	constructor(data, width, height, channels=1){
 		this.data = data;
@@ -51,7 +52,7 @@ class Array2D {
 /**
  * Gaussian filter rough approximation
  */
-class GaussianFilter extends Array2D {
+export class GaussianFilter extends Array2D {
 
 	constructor(size, sigma=1){
 		super([], size, size);
@@ -81,7 +82,7 @@ class GaussianFilter extends Array2D {
  * 
  * @param {Array2D} source - RGBA source
  */
-function grayscale(source){
+export function grayscale(source){
     for(let i=0; i < source.height; i++){
         for(let j=0; j < source.width; j++){
             let index = 4*(source.width*i + j);
@@ -99,7 +100,7 @@ function grayscale(source){
  * @param {Array2D} source - RGBA source
  * @param {integer} channel - channel to isolate
  */
-function isolateColor(source, channel){
+export function isolateColor(source, channel){
     if(channel == 0){
         filterColor(source, true, false, false);
     }
@@ -119,7 +120,7 @@ function isolateColor(source, channel){
  * @param {boolean} showG 
  * @param {boolean} showB 
  */
-function filterColor(source, showR, showG, showB){
+export function filterColor(source, showR, showG, showB){
     for(let i=0; i < source.height; i++){
         for(let j=0; j < source.width; j++){
             source.setValue(showR ? source.getValue(i, j, 0) : 0, i, j, 0);
@@ -136,10 +137,10 @@ function filterColor(source, showR, showG, showB){
  * @param {Array2D} filter - Convolving 1 channel filter 
  * @param {integer} defaultValue - Default out of bounds value 
  */
-function convolve(source, filter, defaultValue=255){
+export function convolve(source, filter, defaultValue=255){
 
     // Copy data to buffer for output
-    buffer = [...source.data];
+    let buffer = [...source.data];
 
     for(let i=0; i < source.height; i++){
         for(let j=0; j < source.width; j++){
@@ -184,7 +185,7 @@ function convolve(source, filter, defaultValue=255){
  * @param {Array2D} sourceX 
  * @param {Array2D} sourceY 
  */
-function computeGradients(sourceX, sourceY){
+export function computeGradients(sourceX, sourceY){
     let mags = new Array2D(
         Array.from({length: 4*sourceX.width*sourceX.width}, ()=>255),
         sourceX.width, sourceX.height, 4
@@ -229,7 +230,7 @@ function computeGradients(sourceX, sourceY){
  * @param {Array2D} magGrid - Grid of magnitudes
  * @param {Array2D} angleGrid - Grid of angles
  */
-function nonMaxSuppress(magGrid, angleGrid){
+export function nonMaxSuppress(magGrid, angleGrid){
 
     let res = new Array2D(
         [...magGrid.data],
@@ -284,7 +285,7 @@ function nonMaxSuppress(magGrid, angleGrid){
  * @param {Number} hi - High threshold
  * @param {Number} lo - Low threshold
  */
-function doubleThreshold(source, hi, lo){
+export function doubleThreshold(source, hi, lo){
     for(let i=0; i < source.height; i++){
         for(let j=0; j < source.width; j++){
 
@@ -311,7 +312,7 @@ function doubleThreshold(source, hi, lo){
  * 
  * @param {Array2D} source - Grid with edge strength detected
  */
-function edgeConnect(source){
+export function edgeConnect(source){
     for(let i=1; i < source.height-1; i++){
         for(let j=1; j < source.width-1; j++){
 
@@ -343,7 +344,7 @@ function edgeConnect(source){
  * 
  * @param {Array2D} source - RGBA source
  */
-function stretchColor(source, targetMin=0, targetMax=255){
+export function stretchColor(source, targetMin=0, targetMax=255){
 
     let max = source.data.reduce(function(a, b) {
         return Math.max(a, b);
@@ -360,12 +361,12 @@ function stretchColor(source, targetMin=0, targetMax=255){
  * 
  * @param {Array2D} source - RGBA source
  */
-function stretchColorRange(source, min, max, targetMin=0, targetMax=255){
+export function stretchColorRange(source, min, max, targetMin=0, targetMax=255){
 
     for(let i=0; i < source.height; i++){
         for(let j=0; j < source.width; j++){
             for(let k=0; k < 3; k++){
-                value = source.getValue(i, j, k);
+                let value = source.getValue(i, j, k);
                 value = (value-min)/(max-min) * (targetMax-targetMin) + targetMin;
                 
                 source.setValue(value, i, j, k);
@@ -381,7 +382,7 @@ function stretchColorRange(source, min, max, targetMin=0, targetMax=255){
  * @param {Array} sourceData - RGBA source pixel data
  * @param {integer} length - Amount of data to copy
  */
-function fillArray(targetData, sourceData, length){
+export function fillArray(targetData, sourceData, length){
     for(let i=0; i < length; i++){
         targetData[i] = sourceData[i];
     }
@@ -389,7 +390,7 @@ function fillArray(targetData, sourceData, length){
 
 // === FILTERS ===
 
-const gaussianBlur5 = new Array2D([
+export const gaussianBlur5 = new Array2D([
     1/273, 4/273, 7/273, 4/273, 1/273,
     4/273, 16/273, 26/273, 16/273, 4/273,
     7/273, 26/273, 41/273, 26/273, 7/273,
@@ -397,13 +398,13 @@ const gaussianBlur5 = new Array2D([
     1/273, 4/273, 7/273, 4/273, 1/273
 ], 5, 5);
 
-const sobelX = new Array2D([
+export const sobelX = new Array2D([
     -1, 0, 1,
     -2, 0, 2,
     -1, 0, 1
 ], 3, 3);
 
-const sobelY = new Array2D([
+export const sobelY = new Array2D([
     1, 2, 1,
     0, 0, 0,
     -1, -2, -1

@@ -1,9 +1,12 @@
 // Non-maximum suppression demo UI
+import { createVerticalLineThick, createClear } from '../util.js';
+import { Array2D, sobelX, sobelY, convolve, computeGradients } from '../imageProcessing.js';
+import { GradientGrid } from '../ui.js';
 
 /**
  * Top level non-maximum suppression demo
  */
-class SuppressionDemo extends React.Component {
+export default class SuppressionDemo extends React.Component {
 
     constructor(props) {
         super(props);
@@ -160,9 +163,3 @@ class SuppressionDemo extends React.Component {
         );
     }
 }
-
-// Render elements
-ReactDOM.render(
-    e(SuppressionDemo, null, null),
-    document.getElementById('suppression-root')
-);

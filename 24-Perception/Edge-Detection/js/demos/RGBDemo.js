@@ -1,9 +1,11 @@
 // RGB channel demo
+import { Array2D, filterColor, fillArray } from '../imageProcessing.js';
+import { ImageUploader, PixelMagnifier } from '../ui.js';
 
 /**
  * Top level RGB demo
  */
-class RGBDemo extends React.Component {
+export default class RGBDemo extends React.Component {
 
     constructor(props) {
         super(props);
@@ -120,9 +122,3 @@ class RGBDemo extends React.Component {
         );
     }
 }
-
-// Render
-ReactDOM.render(
-    e(RGBDemo, null, null),
-    document.getElementById('rgb-root')
-);

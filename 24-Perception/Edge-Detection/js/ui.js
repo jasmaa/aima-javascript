@@ -1,9 +1,20 @@
 // Common UI elements
+import { readURL, canvasCross, heatMapColorforValue, canvas_arrow } from './util.js';
+import { Array2D } from './imageProcessing.js';
+
+/**
+ * Fallback component
+ */
+export class FallbackComponent extends React.Component {
+    render(){
+        return e('p', null, 'Loading...');
+    }
+}
 
 /**
  * Grid cell
  */
-class Cell extends React.Component {
+export class Cell extends React.Component {
 
     render() {
 
@@ -27,7 +38,7 @@ class Cell extends React.Component {
  * Provides button for uploading image to document
  * and processing it
  */
-class ImageUploader extends React.Component {
+export class ImageUploader extends React.Component {
 
     render() {
 
@@ -66,7 +77,7 @@ class ImageUploader extends React.Component {
 /**
  * Webcam capture
  */
-class WebcamCapture extends React.Component {
+export class WebcamCapture extends React.Component {
 
     render() {
         return e('div', { style: { marginRight: 10 } },
@@ -113,7 +124,6 @@ class GradientCell extends React.Component {
 
     constructor(props) {
         super(props);
-
         $(window).resize(() => this.resize());
     }
 
@@ -124,7 +134,7 @@ class GradientCell extends React.Component {
     }
 
     resize() {
-        this.canvas.style.width = (innerWidth / this.props.gridWidth) + 'px';
+        this.canvas.style.width = (0.5 * innerWidth / this.props.gridWidth) + 'px';
     }
 
     /**
@@ -163,7 +173,7 @@ class GradientCell extends React.Component {
         return e('div', {
             className: 'square',
             style: {
-                backgroundColor: gray2RGB(this.props.value),
+                backgroundColor: `rgb(${this.props.value}, ${this.props.value}, ${this.props.value})`,
                 border: this.props.isHighlighted ? 'solid red 0.5em' : 'solid gray 0.05em',
             },
             onMouseOver: () => {
@@ -186,7 +196,7 @@ class GradientCell extends React.Component {
 /**
  * Gradient grid container
  */
-class GradientGrid extends React.Component {
+export class GradientGrid extends React.Component {
 
     renderCells() {
 
@@ -275,7 +285,7 @@ class RGBGrid extends React.Component {
 /**
  * Magnifies pixel array
  */
-class PixelMagnifier extends React.Component {
+export class PixelMagnifier extends React.Component {
 
     constructor(props) {
         super(props);

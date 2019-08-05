@@ -1,7 +1,15 @@
+// Gradient demo
+import {
+    mag2d, createClear, createVerticalLine, createHorizontalLine, createDiagonalLine,
+    createRadialGradient, createLineGradient
+} from '../util.js';
+import { Array2D, convolve, sobelX, sobelY, computeGradients } from '../imageProcessing.js';
+import { GradientGrid } from '../ui.js';
+
 /**
  * Top level gradient demo
  */
-class GradientDemo extends React.Component {
+export default class GradientDemo extends React.Component {
 
     constructor(props) {
         super(props);
@@ -13,7 +21,7 @@ class GradientDemo extends React.Component {
         this.process();
     }
 
-    loadStarter(){
+    loadStarter() {
         // Set starter image
         const img = new Image(20, 20);
         img.onload = () => {
@@ -98,11 +106,11 @@ class GradientDemo extends React.Component {
             }, null),
             e('div', { className: 'demo-container' },
 
-                e('div', {style: {display: 'flex', flexDirection: 'row'}},
+                e('div', { style: { display: 'flex', flexDirection: 'row' } },
                     e('div', { className: 'btn btn-danger', onClick: () => this.reset() },
                         e('i', { className: 'fas fa-eraser' }, null)
                     ),
-                    e('div', {style: {display: 'flex', flex: 1}}, null),
+                    e('div', { style: { display: 'flex', flex: 1 } }, null),
                     e('div', { className: 'btn-group mr-2', role: 'group' },
                         e('div', {
                             className: 'btn btn-info', onClick: () => {
@@ -169,8 +177,3 @@ class GradientDemo extends React.Component {
         );
     }
 }
-
-ReactDOM.render(
-    e(GradientDemo, null, null),
-    document.getElementById('gradient-root')
-);

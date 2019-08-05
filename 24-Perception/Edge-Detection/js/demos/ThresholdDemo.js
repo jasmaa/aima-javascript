@@ -1,8 +1,13 @@
+import {
+    Array2D, sobelX, sobelY, gaussianBlur5, grayscale, convolve, computeGradients,
+    nonMaxSuppress, doubleThreshold, stretchColor, fillArray
+} from '../imageProcessing.js';
+import { ImageUploader } from '../ui.js';
 
 /**
  * Double threshold top-level demo
  */
-class ThresholdDemo extends React.Component {
+export default class ThresholdDemo extends React.Component {
 
     constructor(props) {
         super(props);
@@ -133,9 +138,3 @@ class ThresholdDemo extends React.Component {
         );
     }
 }
-
-// Render elements
-ReactDOM.render(
-    e(ThresholdDemo, null, null),
-    document.getElementById('threshold-root')
-);

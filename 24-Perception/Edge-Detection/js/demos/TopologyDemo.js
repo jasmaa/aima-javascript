@@ -1,9 +1,12 @@
+import { Array2D, grayscale, fillArray } from '../imageProcessing.js';
+import { ImageUploader } from '../ui.js';
+
 // Image intensity topology demo
 
 /**
  * Top level topology demo
  */
-class TopologyDemo extends React.Component {
+export default class TopologyDemo extends React.Component {
 
     constructor(props) {
         super(props);
@@ -56,7 +59,7 @@ class TopologyDemo extends React.Component {
             for (let j = 0; j < source.width; j++) {
                 if (i % this.graphInterval == 0 && j % this.graphInterval == 0) {
                     let value = source.getValue(i, j);
-                    topoData.push({ x: j, y: -i, z: value, style: gray2RGB(value) });
+                    topoData.push({ x: j, y: -i, z: value, style: `rgb(${value}, ${value}, ${value})`});
                 }
             }
         }
@@ -109,9 +112,3 @@ class TopologyDemo extends React.Component {
         );
     }
 }
-
-// Render elements
-ReactDOM.render(
-    e(TopologyDemo, null, null),
-    document.getElementById('topology-root')
-);
