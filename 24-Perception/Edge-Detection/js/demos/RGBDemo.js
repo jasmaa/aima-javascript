@@ -1,6 +1,7 @@
 // RGB channel demo
 import { Array2D, filterColor, fillArray } from '../imageProcessing.js';
-import { ImageUploader, PixelMagnifier } from '../ui.js';
+import { ImageUploader, WebcamCapture, PixelMagnifier } from '../ui.js';
+import { pipelineChangeInput } from './pipeline2d/pipelineHelpers.js';
 
 /**
  * Top level RGB demo
@@ -11,15 +12,20 @@ export default class RGBDemo extends React.Component {
         super(props);
         this.imageId = 'rgb';
         this.size = 200;
+        this.state = { isRecording: false };
 
         this.showR = true;
         this.showG = true;
         this.showB = true;
 
+        this.changeInput = pipelineChangeInput.bind(this);
+
         $(window).resize(() => this.resize());
     }
 
     componentDidMount() {
+        this.img = document.getElementById(`${this.imageId}-img`);
+
         document.getElementById(`${this.imageId}-rButton`).style.backgroundColor = this.showR ? "red" : "gray";
         document.getElementById(`${this.imageId}-gButton`).style.backgroundColor = this.showG ? "green" : "gray";
         document.getElementById(`${this.imageId}-bButton`).style.backgroundColor = this.showB ? "blue" : "gray";
@@ -35,14 +41,14 @@ export default class RGBDemo extends React.Component {
     }
 
     process() {
+        
         this.canvas = document.getElementById(`${this.imageId}-canvas`);
         const context = this.canvas.getContext('2d');
-        const img = document.getElementById(`${this.imageId}-img`);
 
         // Clear canvas
         context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        context.drawImage(img, 0, 0, this.size, this.size);
+        context.drawImage(this.img, 0, 0, this.size, this.size);
         let imgData = context.getImageData(0, 0, this.size, this.size);
         let source = new Array2D([...imgData.data], imgData.width, imgData.height, 4);
 
@@ -78,11 +84,20 @@ export default class RGBDemo extends React.Component {
                 imageId: this.imageId,
             }, null),
 
-            e(ImageUploader, {
-                imageId: this.imageId,
-                defaultImage: '/third-party/leds.jpg',
-                processHandler: () => this.process(),
-            }, null),
+            e('div', { style: { display: 'flex', flexDirection: 'row' } },
+                e(ImageUploader, {
+                    imageId: this.imageId,
+                    defaultImage: '/third-party/leds.jpg',
+                    processHandler: () => this.process(),
+                    changeHandler: () => this.changeInput('image'),
+                }, null),
+                e(WebcamCapture, {
+                    imageId: this.imageId,
+                    isRecording: this.state.isRecording,
+                    processHandler: () => this.process(),
+                    changeHandler: () => this.changeInput('webcam'),
+                }, null),
+            ),
             e('br', null, null),
 
 

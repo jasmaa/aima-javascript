@@ -1,5 +1,5 @@
 // Image processing
-import { mag2d } from './util.js';
+import { mag2d, gaussian } from './util.js';
 
 /**
  * 2x2 grid with channels

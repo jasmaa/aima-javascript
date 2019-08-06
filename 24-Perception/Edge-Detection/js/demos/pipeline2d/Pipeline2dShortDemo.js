@@ -18,6 +18,7 @@ export default class Pipeline2dShortDemo extends React.Component {
         this.canvasWidth = 850;
         this.canvasHeight = 420;
         this.canvas = null;
+        this.state = { isRecording: false };
 
         this.changeInput = pipelineChangeInput.bind(this);
         this.componentDidMount = pipelineComponentDidMount.bind(this);
@@ -117,6 +118,7 @@ export default class Pipeline2dShortDemo extends React.Component {
                 }, null),
                 e(WebcamCapture, {
                     imageId: this.imageId,
+                    isRecording: this.state.isRecording,
                     processHandler: () => this.process(),
                     changeHandler: () => this.changeInput('webcam'),
                 }, null),

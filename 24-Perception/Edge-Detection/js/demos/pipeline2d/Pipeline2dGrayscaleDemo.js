@@ -12,6 +12,7 @@ export default class Pipeline2dGrayscaleDemo extends React.Component {
         this.imageId = 'pipeline2d-gray-image';
         this.canvasWidth = 200;
         this.canvasHeight = 200;
+        this.state = { isRecording: false };
 
         this.changeInput = pipelineChangeInput.bind(this);
         this.render = pipelinePairRender.bind(this);

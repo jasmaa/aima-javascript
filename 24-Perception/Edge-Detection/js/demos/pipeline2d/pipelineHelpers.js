@@ -6,10 +6,36 @@ import { ImageUploader, WebcamCapture, PixelMagnifier } from '../../ui.js';
  * @param {string} input - Input method identifier
  */
 export function pipelineChangeInput(input) {
-    if (input == 'webcam') {
+    if (input == 'webcam' && !this.state.isRecording) {
         this.img = document.getElementById(`${this.imageId}-webcam`);
+
+        // Turn on webcam
+        if (navigator.mediaDevices.getUserMedia) {
+            let video = document.getElementById(`${this.imageId}-webcam`);
+
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then((stream) => {
+                    video.srcObject = stream;
+                })
+                .then(() => {
+
+                    this.setState({ isRecording: true });
+
+                    let update = () => {
+                        if (video.srcObject) {
+                            this.process();
+                            requestAnimationFrame(update);
+                        }
+                    }
+                    requestAnimationFrame(update);
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        }
     }
-    else if (input == 'image') {
+    else {
+
         this.img = document.getElementById(`${this.imageId}-img`);
 
         // Shut off webcam
@@ -24,6 +50,9 @@ export function pipelineChangeInput(input) {
             }
 
             video.srcObject = null;
+            this.process();
+
+            this.setState({ isRecording: false });
         }
     }
 }
@@ -52,6 +81,7 @@ export function pipelinePairRender() {
             }, null),
             e(WebcamCapture, {
                 imageId: this.imageId,
+                isRecording: this.state.isRecording,
                 processHandler: () => this.process(),
                 changeHandler: () => this.changeInput('webcam'),
             }, null),

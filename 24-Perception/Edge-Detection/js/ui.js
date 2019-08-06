@@ -1,4 +1,4 @@
-// Common UI elements
+// Common component elements
 import { readURL, canvasCross, heatMapColorforValue, canvas_arrow } from './util.js';
 import { Array2D } from './imageProcessing.js';
 
@@ -68,7 +68,7 @@ export class ImageUploader extends React.Component {
                     hidden: true,
                     onLoad: () => this.props.processHandler(),
                 }, null),
-                'Upload Image'
+                e('i', {className: 'fas fa-upload'}, null),
             )
         );
     }
@@ -87,32 +87,12 @@ export class WebcamCapture extends React.Component {
                 hidden: true,
             }, null),
             e('div', {
-                className: 'btn btn-primary',
+                className: this.props.isRecording ? 'btn btn-danger' : 'btn btn-primary',
                 onClick: () => {
                     this.props.changeHandler();
-
-                    if (navigator.mediaDevices.getUserMedia) {
-                        let video = document.getElementById(`${this.props.imageId}-webcam`);
-
-                        navigator.mediaDevices.getUserMedia({ video: true })
-                            .then((stream) => {
-                                video.srcObject = stream;
-                            })
-                            .then(() => {
-                                let update = () => {
-                                    if (video.srcObject) {
-                                        this.props.processHandler();
-                                        requestAnimationFrame(update);
-                                    }
-                                }
-                                requestAnimationFrame(update);
-                            })
-                            .catch((err) => {
-                                console.log(err);
-                            });
-                    }
                 },
-            }, 'Webcam Capture'),
+            },
+            e('i', {className: this.props.isRecording ? 'fas fa-stop': 'fas fa-video'}, null)),
         );
     }
 }

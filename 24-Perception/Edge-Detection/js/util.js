@@ -39,15 +39,6 @@ export function gaussian(x, y, sigma) {
 }
 
 /**
- * Converts grayscale value to rgb string
- * 
- * @param {integer} value - Grayscale value to convert
- */
-function gray2RGB(value) {
-    return `rgb(${value}, ${value}, ${value})`
-}
-
-/**
  * Gets magnitude of 2d vector from components
  * 
  * @param {Number} x 

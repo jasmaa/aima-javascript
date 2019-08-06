@@ -15,7 +15,7 @@ export default class Pipeline2dDirectDemo extends React.Component {
         this.imageId = 'pipeline2d-direct-image';
         this.canvasWidth = 200;
         this.canvasHeight = 200;
-        this.canvas = null;
+        this.state = { isRecording: false };
 
         this.changeInput = pipelineChangeInput.bind(this);
         this.render = pipelinePairRender.bind(this);

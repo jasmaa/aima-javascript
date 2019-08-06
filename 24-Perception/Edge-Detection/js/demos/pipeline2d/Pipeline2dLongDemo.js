@@ -16,6 +16,7 @@ export default class Pipeline2dLongDemo extends React.Component {
         this.imageId = 'pipeline2d-long-image';
         this.canvasWidth = 850;
         this.canvasHeight = 440;
+        this.state = { isRecording: false };
 
         this.changeInput = pipelineChangeInput.bind(this);
         this.componentDidMount = pipelineComponentDidMount.bind(this);
