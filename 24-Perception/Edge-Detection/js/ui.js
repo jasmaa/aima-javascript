@@ -27,7 +27,7 @@ export class Cell extends React.Component {
             },
             onMouseOver: this.props.handleMouseOver ? this.props.handleMouseOver : null,
         },
-            e('div', null, this.props.value)
+            this.props.children
         );
     }
 }
@@ -197,7 +197,7 @@ export class GradientGrid extends React.Component {
                     isHighlighted = this.props.highlightMask.getValue(i, j);
                 }
 
-                // Calculate arrow color from
+                // Calculate arrow color
                 const ratio = (this.props.magGrid.getValue(i, j) - minMag) / (maxMag - minMag);
 
                 cells.push(e(GradientCell, {
