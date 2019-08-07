@@ -131,6 +131,23 @@ export function filterColor(source, showR, showG, showB){
 }
 
 /**
+ * Adds grayscale noise
+ * @param {Array2D} source - Grayscale image
+ */
+export function noisify(source){
+    for(let i=0; i < source.height; i++){
+        for(let j=0; j < source.width; j++){
+            if(Math.random() > 0.9){
+                const value = source.getValue(i, j) + Math.floor(200*Math.random() - 100);
+                source.setValue(value, i, j, 0);
+                source.setValue(value, i, j, 1);
+                source.setValue(value, i, j, 2);
+            }
+        }
+    }
+}
+
+/**
  * Convolves filter on RGBA source
  * 
  * @param {Array2D} source - RGBA source

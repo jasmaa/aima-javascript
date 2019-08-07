@@ -105,6 +105,7 @@ export default class Pipeline2dLongDemo extends React.Component {
                 }, null),
                 e(WebcamCapture, {
                     imageId: this.imageId,
+                    isRecording: this.state.isRecording,
                     processHandler: () => this.process(),
                     changeHandler: () => this.changeInput('webcam'),
                 }, null),
