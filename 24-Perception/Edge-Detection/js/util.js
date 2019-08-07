@@ -97,8 +97,7 @@ export function canvasArrowCurveX(context, fromx, fromy, tox, toy) {
  * @param {Number} centerx 
  * @param {Number} centery 
  */
-export function canvasCross(context, centerx, centery) {
-    const len = 10;
+export function canvasCross(context, centerx, centery, len=10) {
     context.moveTo(centerx + len * Math.cos(Math.PI / 4), centery + len * Math.sin(Math.PI / 4));
     context.lineTo(centerx + len * Math.cos(5 * Math.PI / 4), centery + len * Math.sin(5 * Math.PI / 4));
     context.moveTo(centerx + len * Math.cos(3 * Math.PI / 4), centery + len * Math.sin(3 * Math.PI / 4));
@@ -133,7 +132,7 @@ function lerp(start, from, delta) {
  */
 export function divergingColormap(value) {
     const anchor1 = [59, 76, 192];
-    const anchor2 = [255, 255, 224];
+    const anchor2 = [240, 240, 214];
     const anchor3 = [180, 4, 38];
 
     // linear interpolation

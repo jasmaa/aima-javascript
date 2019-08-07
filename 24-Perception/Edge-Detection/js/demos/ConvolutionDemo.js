@@ -1,5 +1,5 @@
 // Convolution demo UI
-import { createVerticalLine, divergingColormap, canvas_arrow } from '../util.js';
+import { createVerticalLine, divergingColormap, canvas_arrow, canvasCross } from '../util.js';
 import { Array2D, sobelX, convolve, stretchColorRange } from '../imageProcessing.js';
 import { Cell } from '../ui.js';
 
@@ -28,7 +28,7 @@ export default class ConvolutionDemo extends React.Component {
                 '#0078ff', '#fd6600', '#0078ff',
                 '#0078ff', '#0078ff', '#0078ff',
             ], 3, 3),
-            gridSize: 1.5,
+            gridSize: 2,
         };
 
         // Calculate convolution
@@ -38,6 +38,8 @@ export default class ConvolutionDemo extends React.Component {
         );
         convolve(this.convolveResult, this.state.filter);
         stretchColorRange(this.convolveResult, -1020, 1020, 0, 1);
+
+        $(window).resize(() => this.resize());
     }
 
     componentDidMount(){
@@ -47,14 +49,33 @@ export default class ConvolutionDemo extends React.Component {
                 const canvas = document.getElementById(`convolution-cell-${i}-${j}`);
                 const context = canvas.getContext('2d');
 
-                context.lineWidth = 8;
+                if(i > 0 && i < this.convolveResult.height - 1 &&
+                    j > 0 && j < this.convolveResult.width - 1){
+                        context.lineWidth = 8;
+                        const arrowColors = divergingColormap(this.convolveResult.getValue(i, j));
+                        context.strokeStyle = `rgb(${arrowColors[0]}, ${arrowColors[1]}, ${arrowColors[2]})`;
+                        canvas_arrow(context, 40, 40, 20, 40);
+                 }
+                else{
+                    context.lineWidth = 3;
+                    context.strokeStyle = 'pink';
+                    canvasCross(context, 40, 40, 12);
+                }
 
-                const arrowColors = divergingColormap(this.convolveResult.getValue(i, j))
-                context.strokeStyle = `rgb(${arrowColors[0]}, ${arrowColors[1]}, ${arrowColors[2]})`;
-                canvas_arrow(context, 40, 40, 20, 40);
                 context.stroke();
             } 
-        }        
+        }
+
+        this.resize();
+    }
+
+    resize(){
+        for(let i = 0; i < this.convolveResult.height; i++){
+            for(let j = 0; j < this.convolveResult.width; j++){
+                const canvas = document.getElementById(`convolution-cell-${i}-${j}`);
+                canvas.style.width = (0.3 * innerWidth / this.convolveResult.width) + 'px';
+            }
+        }
     }
 
     render() {
@@ -83,12 +104,18 @@ export default class ConvolutionDemo extends React.Component {
         return e('div', { className: 'demo-container' },
 
             e(ConvolutionMagnifier, null,
-                e(ConvolutionLocalTopologyDisplay, {
-                    imageId: 'convolution-local-topology-local',
-                    grid: localSource,
-                    filterColor: this.state.filterColor,
-                    currGradValue: resValue,
-                }, null),
+                e('div', { className: 'demo-container', style: {display: 'flex', flexDirection: 'column'}},
+                    e(ConvolutionLocalTopologyDisplay, {
+                        imageId: 'convolution-local-topology-local',
+                        grid: localSource,
+                        filterColor: this.state.filterColor,
+                        currGradValue: resValue,
+                    }, null),
+                    e(ConvolutionChangeLabel, {
+                        grid: localSource,
+                        value: resValue,
+                    }, null),
+                ),
             ),
 
             e('div', { className: 'flex-container', style: { alignItems: 'baseline' } },
@@ -106,10 +133,7 @@ export default class ConvolutionDemo extends React.Component {
                 e('div', null,
                     e('h4', { align: 'center' }, "Local Area"),
                     
-                    e(ConvolutionChangeLabel, {
-                        grid: localSource,
-                        value: resValue,
-                    }, null),
+                    
                 ),
                 e('div', null,
                     e('h4', { align: 'center' }, "Sobel X Result"),
@@ -123,6 +147,32 @@ export default class ConvolutionDemo extends React.Component {
                 */
             ),
         );
+    }
+}
+
+/**
+ * Label with magnitude of change at indicated location
+ */
+class ConvolutionChangeLabel extends React.Component {
+    render() {
+
+        const right = this.props.grid.getValue(1, 2);
+        const left = this.props.grid.getValue(1, 0);
+        const up = this.props.grid.getValue(0, 1);
+        const down = this.props.grid.getValue(2, 1);
+
+        // Update text
+        let outStr = 'No Change';
+        if (right == null || left == null || up == null || down == null) {
+            outStr = 'Out of Bounds';
+        }
+        else if (Math.abs(Math.abs(this.props.value) - 0.5) > 0.0001) {
+            const signLabel = this.props.value > 0.5 ? 'Positive ' : 'Negative ';
+            const magLabel = Math.abs(this.props.value - 0.5) > 0.2 ? 'Large ' : 'Small ';
+            outStr = `${magLabel} ${signLabel} Change`;
+        }
+
+        return e('p', { align: 'center' }, outStr);
     }
 }
 
@@ -376,7 +426,7 @@ class ConvolutionMagnifier extends React.Component {
 
             this.setState({
                 cursorX: cursorX,
-                cursorY: cursorY - a.height/2.5,
+                cursorY: cursorY - 0.4*a.height,
                 magnifyVisible: true,
             });
         }
@@ -394,11 +444,10 @@ class ConvolutionMagnifier extends React.Component {
             id: `convolution-magnifier`,
             style: {
                 position: 'absolute',
-                //border: '1vmax solid pink',
                 cursor: 'none',
                 visibility: this.state.magnifyVisible ? 'visible' : 'hidden',
 
-                width: `10vmax`,
+                width: '200px',
                 left: this.state.cursorX,
                 top: this.state.cursorY,
 
@@ -416,33 +465,6 @@ class ConvolutionMagnifier extends React.Component {
 
 // === OLD ===
 
-
-
-/**
- * Label with magnitude of change at indicated location
- */
-class ConvolutionChangeLabel extends React.Component {
-    render() {
-
-        const right = this.props.grid.getValue(1, 2);
-        const left = this.props.grid.getValue(1, 0);
-        const up = this.props.grid.getValue(0, 1);
-        const down = this.props.grid.getValue(2, 1);
-
-        // Update text
-        let outStr = 'No Change';
-        if (right == null || left == null || up == null || down == null) {
-            outStr = 'Out of Bounds';
-        }
-        else if (Math.abs(Math.abs(this.props.value) - 0.5) > 0.0001) {
-            const signLabel = this.props.value > 0.5 ? 'Positive ' : 'Negative ';
-            const magLabel = Math.abs(this.props.value - 0.5) > 0.2 ? 'Large ' : 'Small ';
-            outStr = `${magLabel} ${signLabel} Change`;
-        }
-
-        return e('p', { align: 'center' }, outStr);
-    }
-}
 
 /**
  * Convolution demo grid

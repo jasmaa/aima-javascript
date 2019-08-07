@@ -7,7 +7,7 @@ import { Array2D } from './imageProcessing.js';
  */
 export class FallbackComponent extends React.Component {
     render(){
-        return e('p', null, 'Loading...');
+        return e('div', {className: "loader center"}, null);
     }
 }
 
