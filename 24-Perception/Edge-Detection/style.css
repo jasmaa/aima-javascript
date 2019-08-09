@@ -96,6 +96,18 @@ p {
     margin-bottom: 1vmax;
 }
 
+.rgb-control-button {
+    border: none;
+    padding: 1.5vmax;
+    margin: 0.2vmax;
+    border-radius: 10%;
+    color: white;
+    font-size: 120%;
+}
+.rgb-control-button:hover {
+    opacity: 0.8;
+}
+
 .loader {
     border: 4px solid lightgray;
     border-top: 4px solid gray;

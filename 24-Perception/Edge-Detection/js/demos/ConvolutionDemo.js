@@ -1,5 +1,5 @@
 // Convolution demo UI
-import { createVerticalLine, divergingColormap, canvas_arrow, canvasCross } from '../util.js';
+import { createVerticalLine, divergingColormap, canvas_arrow, canvasCross, createVerticalLineThick } from '../util.js';
 import { Array2D, sobelX, convolve, stretchColorRange } from '../imageProcessing.js';
 import { Cell } from '../ui.js';
 
@@ -17,7 +17,7 @@ export default class ConvolutionDemo extends React.Component {
             size, size, 4
         );
 
-        createVerticalLine(source);
+        createVerticalLineThick(source);
         
         this.state = {
             filter: sobelX,

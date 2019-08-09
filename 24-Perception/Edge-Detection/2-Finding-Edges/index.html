@@ -20,8 +20,15 @@
 <body class="flex-content-container">
 	<div class="flex-content">
 		<div class="content-container" id="content">
-			<div style="display: flex; flex-direction: column; row-gap: 1em;">
 
+			<br>
+			<div class="row">
+				<div class="col-sm-6 text-left">
+					<a href="../1-Introduction/"><i class="fas fa-arrow-left"></i> Prev</a>
+				</div>
+			</div>
+
+			<div style="display: flex; flex-direction: column; row-gap: 1em;">
 				<h1>Finding Edges</h1>
 
 				<p>
@@ -29,7 +36,7 @@
 					changes in intensity occur, but we do not have a way of quantifying this intensity change.
 				</p>
 
-				<h2>Edges from Intensities</h2>
+				<h2>Calculating Intensity Change</h2>
 
 				<p>
 					To aid us in our problem-solving, let us take a step back and re-imagine our problem.
@@ -75,7 +82,7 @@
 
 				<img src="../images/filters.png" alt="Sobel X and Y filters" class="center display-image">
 
-				<h2>Gradient Vectors</h2>
+				<h2>Change as a Vector</h2>
 
 				<p>
 					The end result of applying both the Sobel X and Sobel Y filters to our image is two new pixel arrays
@@ -108,7 +115,7 @@
 
 				<p>
 					Plugging images through this algorithm, you may have already noticed that Sobel by itself
-					does not perform very well. Our edge detection is not very good at producing clean and precise edges
+					does not perform very well. Our edge detection is not very good at producing clean and precise edges,
 					nor is it very good at dealing with grainy images.
 				</p>
 
@@ -116,9 +123,9 @@
 
 				<p>
 					To make edge detection robust, several pre and post-processing steps are required along with Sobel.
-					Our current algorithm with these additional steps was formulated in 1986 by John Canny and is
-					what we know today as <strong>Canny edge detection</strong>. The full Canny edge detection pipeline
-					is shown below.
+					In fact, our current algorithm with these additional steps was formulated in 1986 by John Canny and
+					is what we know today as <strong>Canny edge detection</strong>. The full Canny edge detection
+					pipeline can be seen below.
 				</p>
 
 				<div id="pipeline2d-long-root"></div>

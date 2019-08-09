@@ -66,9 +66,11 @@ export function pipelinePairRender() {
 
         e(PixelMagnifier, {
             imageId: `${this.imageId}-in`,
+            isRecording: this.state.isRecording,
         }, null),
         e(PixelMagnifier, {
             imageId: `${this.imageId}-out`,
+            isRecording: this.state.isRecording,
         }, null),
 
 

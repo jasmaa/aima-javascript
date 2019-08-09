@@ -41,7 +41,7 @@ export default class RGBDemo extends React.Component {
     }
 
     process() {
-        
+
         this.canvas = document.getElementById(`${this.imageId}-canvas`);
         const context = this.canvas.getContext('2d');
 
@@ -82,6 +82,7 @@ export default class RGBDemo extends React.Component {
 
             e(PixelMagnifier, {
                 imageId: this.imageId,
+                isRecording: this.state.isRecording,
             }, null),
 
             e('div', { style: { display: 'flex', flexDirection: 'row' } },
@@ -113,23 +114,22 @@ export default class RGBDemo extends React.Component {
                     id: `${this.imageId}-canvas`,
                     width: this.size,
                     height: this.size,
-                    style: { cursor: 'none' }
                 }, null),
                 e('div', null,
                     e('button', {
                         id: `${this.imageId}-rButton`,
-                        style: { border: 'none', padding: 15 },
+                        className: 'rgb-control-button',
                         onClick: () => this.toggleColor(0)
                     },
                         'R'),
                     e('button', {
                         id: `${this.imageId}-gButton`,
-                        style: { border: 'none', padding: 15 },
+                        className: 'rgb-control-button',
                         onClick: () => this.toggleColor(1),
                     }, 'G'),
                     e('button', {
                         id: `${this.imageId}-bButton`,
-                        style: { border: 'none', padding: 15 },
+                        className: 'rgb-control-button',
                         onClick: () => this.toggleColor(2),
                     }, 'B'),
                 ),

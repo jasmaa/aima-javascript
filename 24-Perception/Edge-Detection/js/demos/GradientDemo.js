@@ -107,16 +107,19 @@ export default class GradientDemo extends React.Component {
             e('div', { className: 'demo-container' },
 
                 e('div', { style: { display: 'flex', flexDirection: 'row' } },
-                    e('div', { className: 'btn btn-danger', onClick: () => this.reset() },
-                        e('i', { className: 'fas fa-eraser' }, null)
-                    ),
-                    e('div', { style: { display: 'flex', flex: 1 } }, null),
-                    e('div', { className: 'btn-group mr-2', role: 'group' },
+                    e('div', { className: 'btn-group' },
+                        e('div', { className: 'btn btn-danger', onClick: () => this.reset() },
+                            e('i', { className: 'fas fa-eraser' }, null),
+                        ),
                         e('div', {
                             className: 'btn btn-info', onClick: () => {
                                 this.loadStarter();
                             }
-                        }, '↶'),
+                        }, e('i', { className: 'fas fa-undo' }, null)),
+                    ),
+                    e('div', { style: { display: 'flex', flex: 1 } }, null),
+                    e('div', { className: 'btn-group mr-2', role: 'group' },
+
                         e('div', {
                             className: 'btn btn-info', onClick: () => {
                                 createVerticalLine(this.source);
@@ -124,7 +127,7 @@ export default class GradientDemo extends React.Component {
                                     grid: this.source,
                                 });
                             }
-                        }, '|'),
+                        }, e('strong', null, '|')),
                         e('div', {
                             className: 'btn btn-info', onClick: () => {
                                 createHorizontalLine(this.source);
@@ -132,7 +135,7 @@ export default class GradientDemo extends React.Component {
                                     grid: this.source,
                                 });
                             }
-                        }, '―'),
+                        }, e('strong', null, '―')),
                         e('div', {
                             className: 'btn btn-info', onClick: () => {
                                 createDiagonalLine(this.source);
@@ -140,7 +143,7 @@ export default class GradientDemo extends React.Component {
                                     grid: this.source,
                                 });
                             }
-                        }, '╲'),
+                        }, e('strong', null, '╲')),
                         e('div', {
                             className: 'btn btn-info', onClick: () => {
                                 createRadialGradient(this.source);
@@ -148,7 +151,7 @@ export default class GradientDemo extends React.Component {
                                     grid: this.source,
                                 });
                             }
-                        }, '◎'),
+                        }, e('strong', null, '◎')),
                         e('div', {
                             className: 'btn btn-info', onClick: () => {
                                 createLineGradient(this.source);
@@ -156,7 +159,7 @@ export default class GradientDemo extends React.Component {
                                     grid: this.source,
                                 });
                             }
-                        }, '◧'),
+                        }, e('strong', null, '◧')),
                     ),
                 ),
                 e('br', null, null),

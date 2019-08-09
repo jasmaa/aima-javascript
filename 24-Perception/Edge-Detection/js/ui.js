@@ -3,11 +3,11 @@ import { readURL, canvasCross, heatMapColorforValue, canvas_arrow } from './util
 import { Array2D } from './imageProcessing.js';
 
 /**
- * Fallback component
+ * Fallback component for loading
  */
 export class FallbackComponent extends React.Component {
-    render(){
-        return e('div', {className: "loader center"}, null);
+    render() {
+        return e('div', { className: "loader center" }, null);
     }
 }
 
@@ -43,33 +43,45 @@ export class ImageUploader extends React.Component {
     render() {
 
         return e('div', { style: { marginRight: 10 } },
-            e('label', { className: 'btn btn-success' },
-                e('input', {
-                    id: `${this.props.imageId}-input`,
-                    type: 'file',
-                    name: `${this.props.imageId}-input`,
-                    accept: 'image/x-png,image/gif,image/jpeg',
-                    style: { display: 'none' },
-                    onChange: () => {
-                        if (this.props.changeHandler) {
-                            this.props.changeHandler();
-                        }
-                        document.body.style.opacity = '0.3';
-                        readURL(`${this.props.imageId}-img`, document.getElementById(`${this.props.imageId}-input`))
-                            .then((result) => this.props.processHandler())
-                            .finally(() => {
-                                document.body.style.opacity = '';
-                            });
-                    },
-                }, null),
-                e('img', {
-                    src: this.props.defaultImage,
-                    id: `${this.props.imageId}-img`,
-                    hidden: true,
-                    onLoad: () => this.props.processHandler(),
-                }, null),
-                e('i', {className: 'fas fa-upload'}, null),
-            )
+            e('img', {
+                src: this.props.defaultImage,
+                id: `${this.props.imageId}-img`,
+                hidden: true,
+                onLoad: () => this.props.processHandler(),
+            }, null),
+
+            e('div', { className: 'btn-group' },
+                e('label', { className: 'btn btn-success' },
+                    e('input', {
+                        id: `${this.props.imageId}-input`,
+                        type: 'file',
+                        name: `${this.props.imageId}-input`,
+                        accept: 'image/x-png,image/gif,image/jpeg',
+                        style: { display: 'none' },
+                        onChange: () => {
+                            this.props.changeHandler && this.props.changeHandler();
+                            document.body.style.opacity = '0.3';
+                            readURL(`${this.props.imageId}-img`, document.getElementById(`${this.props.imageId}-input`))
+                                .then((result) => this.props.processHandler())
+                                .finally(() => {
+                                    document.body.style.opacity = '';
+                                });
+                        },
+                    }, null),
+                    e('i', { className: 'fas fa-upload' }, null),
+                ),
+                e('div', {
+                    className: 'btn btn-info',
+                    onClick: () => {
+                        this.props.changeHandler && this.props.changeHandler();
+                        let img = document.getElementById(`${this.props.imageId}-img`);
+                        img.src = this.props.defaultImage;
+                        this.props.processHandler();
+                    }
+                },
+                    e('i', { className: 'fas fa-undo' }, null)
+                ),
+            ),
         );
     }
 }
@@ -92,7 +104,7 @@ export class WebcamCapture extends React.Component {
                     this.props.changeHandler();
                 },
             },
-            e('i', {className: this.props.isRecording ? 'fas fa-stop': 'fas fa-video'}, null)),
+                e('i', { className: this.props.isRecording ? 'fas fa-stop' : 'fas fa-video' }, null)),
         );
     }
 }
@@ -235,11 +247,11 @@ export class GradientGrid extends React.Component {
  */
 class RGBGrid extends React.Component {
 
-    render(){
+    render() {
 
         let cells = [];
-        for(let i=0; i < this.props.grid.height; i++){
-            for(let j=0; j < this.props.grid.width; j++){
+        for (let i = 0; i < this.props.grid.height; i++) {
+            for (let j = 0; j < this.props.grid.width; j++) {
                 const r = this.props.grid.getValue(i, j, 0);
                 const g = this.props.grid.getValue(i, j, 1);
                 const b = this.props.grid.getValue(i, j, 2);
@@ -335,7 +347,7 @@ export class PixelMagnifier extends React.Component {
                 position: 'absolute',
                 border: '3.2vmax solid pink',
                 cursor: 'none',
-                visibility: this.state.magnifyVisible ? 'visible' : 'hidden',
+                visibility: this.state.magnifyVisible && !this.props.isRecording ? 'visible' : 'hidden',
 
                 width: `${this.cellSize * (this.state.magnifyGrid.width + 0.5)}vmax`,
                 height: `${this.cellSize * (this.state.magnifyGrid.height + 0.5)}vmax`,
