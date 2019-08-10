@@ -1,14 +1,16 @@
+/*
 import {
     Array2D, sobelX, sobelY, grayscale, convolve, fillArray, computeGradients, stretchColor,
     nonMaxSuppress, doubleThreshold, edgeConnect, gaussianBlur5
 } from '../../imageProcessing.js';
 import { pipelineChangeInput, pipelineComponentDidMount, pipelinePairRender } from './pipelineHelpers.js';
+*/
 
 /**
  * 2D pipeline top-level demo
  * Direct pipeline: color-> final
  */
-export default class Pipeline2dDirectDemo extends React.Component {
+class Pipeline2dDirectDemo extends React.Component {
 
     constructor(props) {
         super(props);

@@ -1,11 +1,13 @@
 // Pipeline 2d helpers
+/*
 import { ImageUploader, WebcamCapture, PixelMagnifier } from '../../ui.js';
+*/
 
 /**
  * Change input method
  * @param {string} input - Input method identifier
  */
-export function pipelineChangeInput(input) {
+function pipelineChangeInput(input) {
     if (input == 'webcam' && !this.state.isRecording) {
         this.img = document.getElementById(`${this.imageId}-webcam`);
 
@@ -60,7 +62,7 @@ export function pipelineChangeInput(input) {
 /**
  * Render paired pipeline
  */
-export function pipelinePairRender() {
+function pipelinePairRender() {
     return e('div', { className: 'demo-container' },
 
 
@@ -119,6 +121,6 @@ export function pipelinePairRender() {
 /**
  * Set image on mount
  */
-export function pipelineComponentDidMount() {
+function pipelineComponentDidMount() {
     this.img = document.getElementById(`${this.imageId}-img`);
 }

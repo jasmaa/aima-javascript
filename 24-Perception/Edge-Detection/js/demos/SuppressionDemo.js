@@ -1,7 +1,9 @@
 // Non-maximum suppression demo UI
+/*
 import { createVerticalLineThick, createClear } from '../util.js';
 import { Array2D, sobelX, sobelY, convolve, computeGradients } from '../imageProcessing.js';
 import { GradientGrid } from '../ui.js';
+*/
 
 /**
  * Top level non-maximum suppression demo

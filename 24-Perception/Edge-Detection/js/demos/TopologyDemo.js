@@ -1,12 +1,14 @@
+/*
 import { Array2D, grayscale, fillArray } from '../imageProcessing.js';
 import { ImageUploader } from '../ui.js';
+*/
 
 // Image intensity topology demo
 
 /**
  * Top level topology demo
  */
-export default class TopologyDemo extends React.Component {
+class TopologyDemo extends React.Component {
 
     constructor(props) {
         super(props);

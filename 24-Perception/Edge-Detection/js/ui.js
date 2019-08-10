@@ -1,11 +1,13 @@
 // Common component elements
+/*
 import { readURL, canvasCross, heatMapColorforValue, canvas_arrow } from './util.js';
 import { Array2D } from './imageProcessing.js';
+*/
 
 /**
  * Fallback component for loading
  */
-export class FallbackComponent extends React.Component {
+class FallbackComponent extends React.Component {
     render() {
         return e('div', { className: "loader center" }, null);
     }
@@ -14,7 +16,7 @@ export class FallbackComponent extends React.Component {
 /**
  * Grid cell
  */
-export class Cell extends React.Component {
+class Cell extends React.Component {
 
     render() {
 
@@ -38,7 +40,7 @@ export class Cell extends React.Component {
  * Provides button for uploading image to document
  * and processing it
  */
-export class ImageUploader extends React.Component {
+class ImageUploader extends React.Component {
 
     render() {
 
@@ -89,7 +91,7 @@ export class ImageUploader extends React.Component {
 /**
  * Webcam capture
  */
-export class WebcamCapture extends React.Component {
+class WebcamCapture extends React.Component {
 
     render() {
         return e('div', { style: { marginRight: 10 } },
@@ -188,7 +190,7 @@ class GradientCell extends React.Component {
 /**
  * Gradient grid container
  */
-export class GradientGrid extends React.Component {
+class GradientGrid extends React.Component {
 
     renderCells() {
 
@@ -277,7 +279,7 @@ class RGBGrid extends React.Component {
 /**
  * Magnifies pixel array
  */
-export class PixelMagnifier extends React.Component {
+class PixelMagnifier extends React.Component {
 
     constructor(props) {
         super(props);

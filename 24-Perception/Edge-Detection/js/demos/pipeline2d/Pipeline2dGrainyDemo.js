@@ -1,13 +1,15 @@
+/*
 import {
     Array2D, sobelX, sobelY, grayscale, convolve, fillArray, computeGradients, stretchColor, noisify
 } from '../../imageProcessing.js';
 import { pipelineChangeInput, pipelineComponentDidMount, pipelinePairRender } from './pipelineHelpers.js';
+*/
 
 /**
  * 2D pipeline top-level demo
  * Direct pipeline: grainy grayscale -> sobel
  */
-export default class Pipeline2dGrainyDemo extends React.Component {
+class Pipeline2dGrainyDemo extends React.Component {
 
     constructor(props) {
         super(props);

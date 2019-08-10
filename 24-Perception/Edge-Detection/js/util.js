@@ -7,7 +7,7 @@
  * @param {string} imgId - Id of destination image tag
  * @param {input} input - File upload input
  */
-export function readURL(imgId, input) {
+function readURL(imgId, input) {
 
     return new Promise((resolve, reject) => {
         if (input.files && input.files[0]) {
@@ -33,7 +33,7 @@ export function readURL(imgId, input) {
  * @param {Number} y 
  * @param {Number} sigma 
  */
-export function gaussian(x, y, sigma) {
+function gaussian(x, y, sigma) {
     let mult = 1 / (2 * Math.PI * Math.pow(sigma, 2));
     let exp = -(Math.pow(x, 2) + Math.pow(y, 2)) / (2 * Math.pow(sigma, 2));
     return mult * Math.pow(Math.E, exp);
@@ -45,7 +45,7 @@ export function gaussian(x, y, sigma) {
  * @param {Number} x 
  * @param {Number} y 
  */
-export function mag2d(x, y) {
+function mag2d(x, y) {
     return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
 }
 
@@ -59,7 +59,7 @@ export function mag2d(x, y) {
  * @param {Number} tox 
  * @param {Number} toy 
  */
-export function canvas_arrow(context, centerx, centery, tox, toy) {
+function canvas_arrow(context, centerx, centery, tox, toy) {
     const headlen = 10;   // length of head in pixels
     const angle = Math.atan2(toy - centery, tox - centerx);
     context.moveTo(centerx + centerx - tox, centery + centery - toy);
@@ -70,7 +70,7 @@ export function canvas_arrow(context, centerx, centery, tox, toy) {
     context.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
 }
 
-export function canvasArrowCurveX(context, fromx, fromy, tox, toy) {
+function canvasArrowCurveX(context, fromx, fromy, tox, toy) {
     const headlen = 8;
     const angle = tox - fromx > 0 ? 0 : Math.PI; // Snap angle to x axis
 
@@ -98,7 +98,7 @@ export function canvasArrowCurveX(context, fromx, fromy, tox, toy) {
  * @param {Number} centerx 
  * @param {Number} centery 
  */
-export function canvasCross(context, centerx, centery, len=10) {
+function canvasCross(context, centerx, centery, len = 10) {
     context.moveTo(centerx + len * Math.cos(Math.PI / 4), centery + len * Math.sin(Math.PI / 4));
     context.lineTo(centerx + len * Math.cos(5 * Math.PI / 4), centery + len * Math.sin(5 * Math.PI / 4));
     context.moveTo(centerx + len * Math.cos(3 * Math.PI / 4), centery + len * Math.sin(3 * Math.PI / 4));
@@ -111,7 +111,7 @@ export function canvasCross(context, centerx, centery, len=10) {
  * 
  * @param {Number} value 
  */
-export function heatMapColorforValue(value) {
+function heatMapColorforValue(value) {
     const h = Math.floor((1.0 - value) * 240);
     const s = Math.floor(60 * value + 30);
     return `hsl(${h}, ${s}%, 50%)`;
@@ -131,7 +131,7 @@ function lerp(start, from, delta) {
  * Maps (0, 1) to red-green color scale
  * @param {*} value 
  */
-export function divergingColormap(value) {
+function divergingColormap(value) {
     const anchor1 = [59, 76, 192];
     const anchor2 = [240, 240, 214];
     const anchor3 = [180, 4, 38];
@@ -180,7 +180,7 @@ async function swapCanvasTexture(canvas, mat) {
 
 // === GRID PATTERNS ===
 
-export function createVerticalLine(source, offset = 0) {
+function createVerticalLine(source, offset = 0) {
 
     for (let i = 0; i < source.height; i++) {
         for (let j = 0; j < source.width; j++) {
@@ -200,7 +200,7 @@ export function createVerticalLine(source, offset = 0) {
  * @param {Array2D} source 
  * @param {integer} offset 
  */
-export function createVerticalLineThick(source, offset = 0) {
+function createVerticalLineThick(source, offset = 0) {
 
     for (let i = 0; i < source.height; i++) {
         for (let j = 0; j < source.width; j++) {
@@ -215,7 +215,7 @@ export function createVerticalLineThick(source, offset = 0) {
     }
 }
 
-export function createHorizontalLine(source, offset = 0) {
+function createHorizontalLine(source, offset = 0) {
     for (let i = 0; i < source.height; i++) {
         for (let j = 0; j < source.width; j++) {
 
@@ -229,7 +229,7 @@ export function createHorizontalLine(source, offset = 0) {
     }
 }
 
-export function createDiagonalLine(source) {
+function createDiagonalLine(source) {
     for (let i = 0; i < source.height; i++) {
         for (let j = 0; j < source.width; j++) {
 
@@ -243,7 +243,7 @@ export function createDiagonalLine(source) {
     }
 }
 
-export function createLineGradient(source) {
+function createLineGradient(source) {
     for (let i = 0; i < source.height; i++) {
         for (let j = 0; j < source.width; j++) {
 
@@ -257,7 +257,7 @@ export function createLineGradient(source) {
     }
 }
 
-export function createRadialGradient(source) {
+function createRadialGradient(source) {
     for (let i = 0; i < source.height; i++) {
         for (let j = 0; j < source.width; j++) {
 
@@ -271,7 +271,7 @@ export function createRadialGradient(source) {
     }
 }
 
-export function createClear(source, color = 255) {
+function createClear(source, color = 255) {
     for (let i = 0; i < source.height; i++) {
         for (let j = 0; j < source.width; j++) {
 

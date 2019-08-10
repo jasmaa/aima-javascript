@@ -1,3 +1,4 @@
+/*
 import { divergingColormap, canvasArrowCurveX } from '../../util.js';
 import {
     Array2D, sobelX, sobelY, grayscale, convolve, fillArray, computeGradients, stretchColor,
@@ -5,12 +6,13 @@ import {
 } from '../../imageProcessing.js';
 import { ImageUploader, WebcamCapture } from '../../ui.js';
 import { pipelineChangeInput, pipelineComponentDidMount } from './pipelineHelpers.js';
+*/
 
 /**
  * 2D pipeline top-level demo
  * Short pipeline: color-> gray-> sobelx+y-> grads
  */
-export default class Pipeline2dShortDemo extends React.Component {
+class Pipeline2dShortDemo extends React.Component {
 
     constructor(props) {
         super(props);

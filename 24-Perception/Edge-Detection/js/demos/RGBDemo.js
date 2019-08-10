@@ -1,12 +1,14 @@
 // RGB channel demo
+/*
 import { Array2D, filterColor, fillArray } from '../imageProcessing.js';
 import { ImageUploader, WebcamCapture, PixelMagnifier } from '../ui.js';
 import { pipelineChangeInput } from './pipeline2d/pipelineHelpers.js';
+*/
 
 /**
  * Top level RGB demo
  */
-export default class RGBDemo extends React.Component {
+class RGBDemo extends React.Component {
 
     constructor(props) {
         super(props);
