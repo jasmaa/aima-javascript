@@ -95,12 +95,14 @@ class WebcamCapture extends React.Component {
 
     render() {
 
+        /*
         let buttonClass = 'btn btn-primary';
         let buttonText = '';
         if (navigator.mediaDevices.getUserMedia) {
             buttonClass = this.props.isRecording ? 'btn btn-danger' : 'btn btn-primary';
             buttonText = this.props.isRecording ? 'fas fa-stop' : 'fas fa-video';
         }
+        */
 
         return e('div', { style: { marginRight: 10 } },
             e('video', {
@@ -109,12 +111,12 @@ class WebcamCapture extends React.Component {
                 hidden: true,
             }, null),
             e('div', {
-                className: buttonClass,
+                className: this.props.isRecording ? 'btn btn-danger' : 'btn btn-primary',
                 onClick: () => {
                     this.props.changeHandler();
                 },
             },
-                e('i', { className: buttonText }, null)),
+                e('i', { className: this.props.isRecording ? 'fas fa-stop' : 'fas fa-video' }, null)),
         );
     }
 }
