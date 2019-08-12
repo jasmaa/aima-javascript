@@ -97,12 +97,9 @@ class WebcamCapture extends React.Component {
 
         let buttonClass = 'btn btn-primary';
         let buttonText = '';
-        if (!navigator.mediaDevices.getUserMedia) {
-            buttonClass = 'disabled';
-        }
-        else {
+        if (navigator.mediaDevices.getUserMedia) {
             buttonClass = this.props.isRecording ? 'btn btn-danger' : 'btn btn-primary';
-            buttonText = this.props.isRecording ? 'fas fa-stop' : 'fas fa-video'
+            buttonText = this.props.isRecording ? 'fas fa-stop' : 'fas fa-video';
         }
 
         return e('div', { style: { marginRight: 10 } },
@@ -114,7 +111,7 @@ class WebcamCapture extends React.Component {
             e('div', {
                 className: buttonClass,
                 onClick: () => {
-                    navigator.mediaDevices.getUserMedia && this.props.changeHandler();
+                    this.props.changeHandler();
                 },
             },
                 e('i', { className: buttonText }, null)),
@@ -152,7 +149,7 @@ class GradientGrid extends React.Component {
         }
 
         this.canvas.addEventListener('mousemove', (e) => isMouseDown && draw(e));
-        this.canvas.addEventListener('click', (e) => draw(e));
+        //this.canvas.addEventListener('click', (e) => draw(e));
 
         this.canvas.addEventListener('touchmove', (e) => draw(e.touches[0]));
     }
@@ -285,8 +282,6 @@ class PixelMagnifier extends React.Component {
         const context = canvas.getContext('2d');
         const magnifier = document.getElementById(`${this.props.imageId}-rgb-magnifier`);
         const updateFunc = (e) => {
-
-            e.preventDefault();
 
             const a = canvas.getBoundingClientRect();
 

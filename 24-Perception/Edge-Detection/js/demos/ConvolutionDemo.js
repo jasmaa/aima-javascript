@@ -30,7 +30,7 @@ class ConvolutionDemo extends React.Component {
                 '#0078ff', '#fd6600', '#0078ff',
                 '#0078ff', '#0078ff', '#0078ff',
             ], 3, 3),
-            gridSize: 2,
+            magnifyVisible: false,
         };
 
         // Calculate convolution
@@ -40,33 +40,6 @@ class ConvolutionDemo extends React.Component {
         );
         convolve(this.convolveResult, this.state.filter);
         stretchColorRange(this.convolveResult, -1020, 1020, 0, 1);
-    }
-
-    componentDidMount() {
-        /*
-        // Paint arrows
-        for (let i = 0; i < this.convolveResult.height; i++) {
-            for (let j = 0; j < this.convolveResult.width; j++) {
-                const canvas = document.getElementById(`convolution-cell-${i}-${j}`);
-                const context = canvas.getContext('2d');
-
-                if (i > 0 && i < this.convolveResult.height - 1 &&
-                    j > 0 && j < this.convolveResult.width - 1) {
-                    context.lineWidth = 8;
-                    const arrowColors = divergingColormap(this.convolveResult.getValue(i, j));
-                    context.strokeStyle = `rgb(${arrowColors[0]}, ${arrowColors[1]}, ${arrowColors[2]})`;
-                    canvas_arrow(context, 40, 40, 20, 40);
-                }
-                else {
-                    context.lineWidth = 3;
-                    context.strokeStyle = 'pink';
-                    canvasCross(context, 40, 40, 12);
-                }
-
-                context.stroke();
-            }
-        }
-        */
     }
 
     render() {
@@ -95,7 +68,11 @@ class ConvolutionDemo extends React.Component {
         return e('div', { className: 'demo-container' },
 
             e(ConvolutionMagnifier, null,
-                e('div', { className: 'demo-container', style: { display: 'flex', flexDirection: 'column' } },
+                e('div', { className: 'demo-container', style: {
+                    display: 'flex',
+                    flexDirection: 'column',
+                    visibility: this.state.magnifyVisible ? 'visible' : 'hidden',
+                }},
                     e(ConvolutionLocalTopologyDisplay, {
                         imageId: 'convolution-local-topology-local',
                         grid: localSource,
@@ -119,6 +96,7 @@ class ConvolutionDemo extends React.Component {
                         source: this.state.source,
                         convolveResult: this.convolveResult,
                         handleMouseOver: (r, c) => this.setState({ filterLocation: { row: r, col: c } }),
+                        setMagnifyVisible: (v) => this.setState({ magnifyVisible: v }),
                     }, null)
                 ),
             ),
@@ -169,6 +147,7 @@ class ConvolutionInputGrid extends React.Component {
         let currRow = -1;
         let currCol = -1;
         const moveFilter = (e) => {
+
             const a = this.canvas.getBoundingClientRect();
             const cursorRatioX = (e.pageX - a.left - window.pageXOffset) / a.width;
             const cursorRatioY = (e.pageY - a.top - window.pageYOffset) / a.height;
@@ -180,11 +159,23 @@ class ConvolutionInputGrid extends React.Component {
                 currCol = col;
                 this.props.handleMouseOver(currRow, currCol);
             }
+
+            this.props.setMagnifyVisible(true);
         }
-        
+
         this.canvas.addEventListener('mousemove', (e) => moveFilter(e));
+        this.canvas.addEventListener('mouseleave', (e) => {
+            this.props.setMagnifyVisible(false);
+        });
 
         this.canvas.addEventListener('touchmove', (e) => moveFilter(e.touches[0]));
+        this.canvas.addEventListener('touchend', (e) => {
+            this.props.setMagnifyVisible(false);
+        });
+
+        $(window).resize(() => {
+            this.props.setMagnifyVisible(false);
+        });
     }
 
     process() {
@@ -452,8 +443,6 @@ class ConvolutionMagnifier extends React.Component {
         const magnifier = document.getElementById('convolution-magnifier');
         const updateFunc = (e) => {
 
-            e.preventDefault();
-
             const a = container.getBoundingClientRect();
 
             // Lock magnifier to image
@@ -462,7 +451,7 @@ class ConvolutionMagnifier extends React.Component {
 
             this.setState({
                 cursorX: cursorX,
-                cursorY: cursorY - 0.4 * a.height,
+                cursorY: cursorY - magnifier.getBoundingClientRect().height,
                 magnifyVisible: true,
             });
         }
