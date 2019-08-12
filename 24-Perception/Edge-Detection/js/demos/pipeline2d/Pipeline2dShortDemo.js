@@ -151,21 +151,14 @@ class Pipeline2dShortDemo extends React.Component {
             ),
 
             e('br', null, null),
-            e('div', {
+            e('canvas', {
+                id: `${this.imageId}-canvas`,
+                width: this.canvasWidth,
+                height: this.canvasHeight,
                 style: {
-                    display: 'flex',
-                    justifyContent: 'center',
+                    width: '100%',
                 }
-            },
-                e('canvas', {
-                    id: `${this.imageId}-canvas`,
-                    width: this.canvasWidth,
-                    height: this.canvasHeight,
-                    style: {
-                        width: '90%',
-                    }
-                }, null),
-            ),
+            }, null),
         );
     }
 }

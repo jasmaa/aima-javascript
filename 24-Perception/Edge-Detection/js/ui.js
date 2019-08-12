@@ -331,15 +331,26 @@ class PixelMagnifier extends React.Component {
 
         // Magnifier events
         magnifier.addEventListener('mouseleave', (e) => {
-            this.setState({ magnifyVisible: false, });
+            this.setState({ magnifyVisible: false });
         });
         canvas.addEventListener('mouseleave', (e) => {
-            this.setState({ magnifyVisible: false, });
+            this.setState({ magnifyVisible: false });
         });
         canvas.addEventListener('mousemove', updateFunc);
         magnifier.addEventListener('mousemove', updateFunc);
+
+        magnifier.addEventListener('touchend', (e) => {
+            this.setState({ magnifyVisible: false });
+        });
+        canvas.addEventListener('touchend', (e) => {
+            this.setState({ magnifyVisible: false });
+        });
         canvas.addEventListener('touchmove', updateFunc);
         magnifier.addEventListener('touchmove', updateFunc);
+
+        $(window).resize(() => {
+            this.setState({ magnifyVisible: false });
+        });
     }
 
     render() {

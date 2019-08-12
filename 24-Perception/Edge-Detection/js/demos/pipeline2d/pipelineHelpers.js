@@ -92,29 +92,22 @@ function pipelinePairRender() {
         ),
 
         e('br', null, null),
-        e('div', {
+        e('canvas', {
+            id: `${this.imageId}-in-canvas`,
+            width: this.canvasWidth,
+            height: this.canvasHeight,
             style: {
-                display: 'flex',
-                justifyContent: 'space-evenly'
+                width: '50%',
             }
-        },
-            e('canvas', {
-                id: `${this.imageId}-in-canvas`,
-                width: this.canvasWidth,
-                height: this.canvasHeight,
-                style: {
-                    width: '50%',
-                }
-            }, null),
-            e('canvas', {
-                id: `${this.imageId}-out-canvas`,
-                width: this.canvasWidth,
-                height: this.canvasHeight,
-                style: {
-                    width: '50%',
-                }
-            }, null),
-        ),
+        }, null),
+        e('canvas', {
+            id: `${this.imageId}-out-canvas`,
+            width: this.canvasWidth,
+            height: this.canvasHeight,
+            style: {
+                width: '50%',
+            }
+        }, null),
     );
 }
 
