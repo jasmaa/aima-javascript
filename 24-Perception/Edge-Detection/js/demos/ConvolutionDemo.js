@@ -42,6 +42,15 @@ class ConvolutionDemo extends React.Component {
         stretchColorRange(this.convolveResult, -1020, 1020, 0, 1);
     }
 
+    setFilterLocation(r, c) {
+
+        if (r < 0 || r >= this.state.source.height || c < 0 || c >= this.state.source.width) {
+            return;
+        }
+
+        this.setState({ filterLocation: { row: r, col: c } })
+    }
+
     render() {
 
         // Get local source at filter
@@ -68,11 +77,13 @@ class ConvolutionDemo extends React.Component {
         return e('div', { className: 'demo-container' },
 
             e(ConvolutionMagnifier, null,
-                e('div', { className: 'demo-container', style: {
-                    display: 'flex',
-                    flexDirection: 'column',
-                    visibility: this.state.magnifyVisible ? 'visible' : 'hidden',
-                }},
+                e('div', {
+                    className: 'demo-container', style: {
+                        display: 'flex',
+                        flexDirection: 'column',
+                        visibility: this.state.magnifyVisible ? 'visible' : 'hidden',
+                    }
+                },
                     e(ConvolutionLocalTopologyDisplay, {
                         imageId: 'convolution-local-topology-local',
                         grid: localSource,
@@ -95,7 +106,7 @@ class ConvolutionDemo extends React.Component {
                         filterLocation: this.state.filterLocation,
                         source: this.state.source,
                         convolveResult: this.convolveResult,
-                        handleMouseOver: (r, c) => this.setState({ filterLocation: { row: r, col: c } }),
+                        handleMouseOver: (r, c) => this.setFilterLocation(r, c),
                         setMagnifyVisible: (v) => this.setState({ magnifyVisible: v }),
                     }, null)
                 ),
@@ -168,8 +179,12 @@ class ConvolutionInputGrid extends React.Component {
             this.props.setMagnifyVisible(false);
         });
 
-        this.canvas.addEventListener('touchmove', (e) => moveFilter(e.touches[0]));
+        this.canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            moveFilter(e.touches[0])
+        });
         this.canvas.addEventListener('touchend', (e) => {
+            e.preventDefault();
             this.props.setMagnifyVisible(false);
         });
 

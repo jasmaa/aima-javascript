@@ -149,9 +149,12 @@ class GradientGrid extends React.Component {
         }
 
         this.canvas.addEventListener('mousemove', (e) => isMouseDown && draw(e));
-        //this.canvas.addEventListener('click', (e) => draw(e));
+        this.canvas.addEventListener('click', (e) => draw(e));
 
-        this.canvas.addEventListener('touchmove', (e) => draw(e.touches[0]));
+        this.canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            draw(e.touches[0]);
+        });
     }
 
     process() {
@@ -319,13 +322,21 @@ class PixelMagnifier extends React.Component {
         magnifier.addEventListener('mousemove', updateFunc);
 
         magnifier.addEventListener('touchend', (e) => {
+            e.preventDefault();
             this.setState({ magnifyVisible: false });
         });
         canvas.addEventListener('touchend', (e) => {
+            e.preventDefault();
             this.setState({ magnifyVisible: false });
         });
-        canvas.addEventListener('touchmove', updateFunc);
-        magnifier.addEventListener('touchmove', updateFunc);
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            updateFunc(e.touches[0]);
+        });
+        magnifier.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            updateFunc(e.touches[0]);
+        });
 
         $(window).resize(() => {
             this.setState({ magnifyVisible: false });
