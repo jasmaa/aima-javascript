@@ -60,7 +60,7 @@ function mag2d(x, y) {
  * @param {Number} toy 
  */
 function canvas_arrow(context, centerx, centery, tox, toy) {
-    const headlen = 10;   // length of head in pixels
+    const headlen = 5;   // length of head in pixels
     const angle = Math.atan2(toy - centery, tox - centerx);
     context.moveTo(centerx + centerx - tox, centery + centery - toy);
     context.lineTo(tox, toy);

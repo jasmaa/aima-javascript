@@ -22,15 +22,15 @@ class TopologyDemo extends React.Component {
     }
 
     resize() {
-        if (innerWidth > 700) {
+        if (innerWidth > 800) {
             this.canvas.style.width = (innerWidth / 4 - 80) + 'px';
             this.graphContainer.childNodes[0].style.width = (innerWidth / 4 - 80) + 'px';
             this.graphContainer.childNodes[0].style.height = (innerWidth / 4 - 80) + 'px';
         }
         else {
-            this.canvas.style.width = (innerWidth / 2 - 30) + 'px';
-            this.graphContainer.childNodes[0].style.width = (innerWidth / 2 - 30) + 'px';
-            this.graphContainer.childNodes[0].style.height = (innerWidth / 2 - 30) + 'px';
+            this.canvas.style.width = (innerWidth / 2) + 'px';
+            this.graphContainer.childNodes[0].style.width = (innerWidth / 2) + 'px';
+            this.graphContainer.childNodes[0].style.height = (innerWidth / 2) + 'px';
         }
     }
 

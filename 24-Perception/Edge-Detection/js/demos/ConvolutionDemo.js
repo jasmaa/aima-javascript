@@ -20,7 +20,7 @@ class ConvolutionDemo extends React.Component {
         );
 
         createVerticalLineThick(source);
-        
+
         this.state = {
             filter: sobelX,
             source: source,
@@ -40,44 +40,33 @@ class ConvolutionDemo extends React.Component {
         );
         convolve(this.convolveResult, this.state.filter);
         stretchColorRange(this.convolveResult, -1020, 1020, 0, 1);
-
-        $(window).resize(() => this.resize());
     }
 
-    componentDidMount(){
+    componentDidMount() {
+        /*
         // Paint arrows
-        for(let i = 0; i < this.convolveResult.height; i++){
-            for(let j = 0; j < this.convolveResult.width; j++){
+        for (let i = 0; i < this.convolveResult.height; i++) {
+            for (let j = 0; j < this.convolveResult.width; j++) {
                 const canvas = document.getElementById(`convolution-cell-${i}-${j}`);
                 const context = canvas.getContext('2d');
 
-                if(i > 0 && i < this.convolveResult.height - 1 &&
-                    j > 0 && j < this.convolveResult.width - 1){
-                        context.lineWidth = 8;
-                        const arrowColors = divergingColormap(this.convolveResult.getValue(i, j));
-                        context.strokeStyle = `rgb(${arrowColors[0]}, ${arrowColors[1]}, ${arrowColors[2]})`;
-                        canvas_arrow(context, 40, 40, 20, 40);
-                 }
-                else{
+                if (i > 0 && i < this.convolveResult.height - 1 &&
+                    j > 0 && j < this.convolveResult.width - 1) {
+                    context.lineWidth = 8;
+                    const arrowColors = divergingColormap(this.convolveResult.getValue(i, j));
+                    context.strokeStyle = `rgb(${arrowColors[0]}, ${arrowColors[1]}, ${arrowColors[2]})`;
+                    canvas_arrow(context, 40, 40, 20, 40);
+                }
+                else {
                     context.lineWidth = 3;
                     context.strokeStyle = 'pink';
                     canvasCross(context, 40, 40, 12);
                 }
 
                 context.stroke();
-            } 
-        }
-
-        this.resize();
-    }
-
-    resize(){
-        for(let i = 0; i < this.convolveResult.height; i++){
-            for(let j = 0; j < this.convolveResult.width; j++){
-                const canvas = document.getElementById(`convolution-cell-${i}-${j}`);
-                canvas.style.width = (0.3 * innerWidth / this.convolveResult.width) + 'px';
             }
         }
+        */
     }
 
     render() {
@@ -106,7 +95,7 @@ class ConvolutionDemo extends React.Component {
         return e('div', { className: 'demo-container' },
 
             e(ConvolutionMagnifier, null,
-                e('div', { className: 'demo-container', style: {display: 'flex', flexDirection: 'column'}},
+                e('div', { className: 'demo-container', style: { display: 'flex', flexDirection: 'column' } },
                     e(ConvolutionLocalTopologyDisplay, {
                         imageId: 'convolution-local-topology-local',
                         grid: localSource,
@@ -123,30 +112,15 @@ class ConvolutionDemo extends React.Component {
             e('div', { className: 'flex-container', style: { alignItems: 'baseline' } },
                 e('div', null,
                     e(ConvolutionInputGrid, {
-                        gridSize: this.state.gridSize,
+                        idBase: 'convolution-input',
                         filter: this.state.filter,
                         filterColor: this.state.filterColor,
                         filterLocation: this.state.filterLocation,
                         source: this.state.source,
-                        handleMouseOver: (r, c) => this.setState({ filterLocation: {row: r, col: c}}),
+                        convolveResult: this.convolveResult,
+                        handleMouseOver: (r, c) => this.setState({ filterLocation: { row: r, col: c } }),
                     }, null)
                 ),
-                /*
-                e('div', null,
-                    e('h4', { align: 'center' }, "Local Area"),
-                    
-                    
-                ),
-                e('div', null,
-                    e('h4', { align: 'center' }, "Sobel X Result"),
-                    e(ConvolutionOutputGrid, {
-                        gridSize: this.state.gridSize,
-                        grid: this.convolveResult,
-                        filterLocation: this.state.filterLocation,
-                        handleMouseOver: (r, c) => this.handleMouseOver(r, c),
-                    }, null),
-                ),
-                */
             ),
         );
     }
@@ -182,14 +156,81 @@ class ConvolutionChangeLabel extends React.Component {
  * Convolution demo grid with filter applied
  */
 class ConvolutionInputGrid extends React.Component {
+    constructor(props) {
+        super(props);
+        this.canvas = null;
+    }
 
-    renderCells() {
+    componentDidMount() {
+        this.canvas = document.getElementById('convolution-filter-grid');
 
-        let cells = []
+        this.process();
+
+        let currRow = -1;
+        let currCol = -1;
+        const moveFilter = (e) => {
+            const a = this.canvas.getBoundingClientRect();
+            const cursorRatioX = (e.pageX - a.left - window.pageXOffset) / a.width;
+            const cursorRatioY = (e.pageY - a.top - window.pageYOffset) / a.height;
+            const col = Math.floor(this.props.source.width * cursorRatioX);
+            const row = Math.floor(this.props.source.height * cursorRatioY);
+
+            if (row != currRow || col != currCol) {
+                currRow = row;
+                currCol = col;
+                this.props.handleMouseOver(currRow, currCol);
+            }
+        }
+        
+        this.canvas.addEventListener('mousemove', (e) => moveFilter(e));
+
+        this.canvas.addEventListener('touchmove', (e) => moveFilter(e.touches[0]));
+    }
+
+    process() {
+        if (!this.canvas) {
+            return;
+        }
+
+        const context = this.canvas.getContext('2d');
+        const pixelDelta = this.canvas.width / this.props.source.width;
+
         for (let i = 0; i < this.props.source.height; i++) {
             for (let j = 0; j < this.props.source.width; j++) {
+                const value = this.props.source.getValue(i, j);
 
-                // Highlight cells
+                // Draw cell
+                context.fillStyle = `rgb(${value}, ${value}, ${value})`;
+                context.fillRect(j * pixelDelta, i * pixelDelta, pixelDelta, pixelDelta);
+                context.strokeStyle = 'grey';
+                context.strokeRect(j * pixelDelta, i * pixelDelta, pixelDelta, pixelDelta);
+
+                // Draw arrows
+                context.save();
+                context.beginPath();
+                if (i > 0 && i < this.props.convolveResult.height - 1 &&
+                    j > 0 && j < this.props.convolveResult.width - 1) {
+                    context.lineWidth = 2;
+                    const arrowColors = divergingColormap(this.props.convolveResult.getValue(i, j));
+                    context.strokeStyle = `rgb(${arrowColors[0]}, ${arrowColors[1]}, ${arrowColors[2]})`;
+                    const arrowX = j * pixelDelta + pixelDelta / 2;
+                    const arrowY = i * pixelDelta + pixelDelta / 2;
+                    canvas_arrow(context, arrowX, arrowY, arrowX - pixelDelta / 4, arrowY);
+                }
+                else {
+                    context.lineWidth = 2;
+                    context.strokeStyle = 'pink';
+                    canvasCross(context, j * pixelDelta + pixelDelta / 2, i * pixelDelta + pixelDelta / 2, 5);
+                }
+
+                context.stroke();
+                context.restore();
+            }
+        }
+
+        // Draw highlight cell
+        for (let i = 0; i < this.props.source.height; i++) {
+            for (let j = 0; j < this.props.source.width; j++) {
                 let isWithinFilter =
                     i >= this.props.filterLocation.row - this.props.filter.centerRow &&
                     i <= this.props.filterLocation.row + this.props.filter.centerRow &&
@@ -199,36 +240,29 @@ class ConvolutionInputGrid extends React.Component {
                 let filterRow = this.props.filter.height - (i - this.props.filterLocation.row + this.props.filter.centerRow) - 1;
                 let filterCol = this.props.filter.width - (j - this.props.filterLocation.col + this.props.filter.centerCol) - 1;
 
-                const value = this.props.source.getValue(i, j);
-                cells.push(e(Cell, {
-                    key: `cell-${i}-${j}`,
-                    highlightColor: isWithinFilter ? this.props.filterColor.getValue(filterRow, filterCol) : null,
-                    bgColor: `rgb(${value}, ${value}, ${value})`,
-                    handleMouseOver: () => this.props.handleMouseOver(i, j),
-                },
-                    e('canvas', {
-                        id: `convolution-cell-${i}-${j}`,
-                        width: 80,
-                        height: 80,
-                    }, null),
-                ));
+                if (isWithinFilter) {
+                    context.save();
+                    context.lineWidth = 3;
+                    context.strokeStyle = this.props.filterColor.getValue(filterRow, filterCol);
+                    context.strokeRect(j * pixelDelta - 1, i * pixelDelta + 1, pixelDelta - 2, pixelDelta - 2);
+                    context.restore();
+                }
             }
         }
-
-        return cells;
     }
 
     render() {
-        return e('div', {
+
+        this.process();
+
+        return e('canvas', {
             id: 'convolution-filter-grid',
-            className: 'square-grid-5',
+            width: 800,
+            height: 800,
             style: {
-                'gridTemplateColumns': `repeat(${this.props.source.width}, ${this.props.gridSize}vmax)`,
-                'gridTemplateRows': `repeat(${this.props.source.height}, ${this.props.gridSize}vmax)`,
-            },
-        },
-            this.renderCells()
-        );
+                width: '100%'
+            }
+        }, null);
     }
 }
 
@@ -428,7 +462,7 @@ class ConvolutionMagnifier extends React.Component {
 
             this.setState({
                 cursorX: cursorX,
-                cursorY: cursorY - 0.4*a.height,
+                cursorY: cursorY - 0.4 * a.height,
                 magnifyVisible: true,
             });
         }

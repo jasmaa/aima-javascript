@@ -41,20 +41,22 @@ function pipelineChangeInput(input) {
         this.img = document.getElementById(`${this.imageId}-img`);
 
         // Shut off webcam
-        let video = document.getElementById(`${this.imageId}-webcam`);
-        let stream = video.srcObject;
-        if (stream) {
-            let tracks = stream.getTracks();
+        if (navigator.mediaDevices.getUserMedia) {
+            let video = document.getElementById(`${this.imageId}-webcam`);
+            let stream = video.srcObject;
+            if (stream) {
+                let tracks = stream.getTracks();
 
-            for (let i = 0; i < tracks.length; i++) {
-                let track = tracks[i];
-                track.stop();
+                for (let i = 0; i < tracks.length; i++) {
+                    let track = tracks[i];
+                    track.stop();
+                }
+
+                video.srcObject = null;
+                this.process();
+
+                this.setState({ isRecording: false });
             }
-
-            video.srcObject = null;
-            this.process();
-
-            this.setState({ isRecording: false });
         }
     }
 }

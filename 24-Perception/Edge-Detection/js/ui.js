@@ -94,6 +94,17 @@ class ImageUploader extends React.Component {
 class WebcamCapture extends React.Component {
 
     render() {
+
+        let buttonClass = 'btn btn-primary';
+        let buttonText = '';
+        if (!navigator.mediaDevices.getUserMedia) {
+            buttonClass = 'disabled';
+        }
+        else {
+            buttonClass = this.props.isRecording ? 'btn btn-danger' : 'btn btn-primary';
+            buttonText = this.props.isRecording ? 'fas fa-stop' : 'fas fa-video'
+        }
+
         return e('div', { style: { marginRight: 10 } },
             e('video', {
                 autoPlay: true,
@@ -101,146 +112,119 @@ class WebcamCapture extends React.Component {
                 hidden: true,
             }, null),
             e('div', {
-                className: this.props.isRecording ? 'btn btn-danger' : 'btn btn-primary',
+                className: buttonClass,
                 onClick: () => {
-                    this.props.changeHandler();
+                    navigator.mediaDevices.getUserMedia && this.props.changeHandler();
                 },
             },
-                e('i', { className: this.props.isRecording ? 'fas fa-stop' : 'fas fa-video' }, null)),
+                e('i', { className: buttonText }, null)),
         );
     }
 }
 
 /**
- * Cell with gradient arrow
+ * Gradient grid canvas
  */
-class GradientCell extends React.Component {
+class GradientGrid extends React.Component {
 
     constructor(props) {
         super(props);
-        $(window).resize(() => this.resize());
+        this.canvas = null;
     }
 
     componentDidMount() {
         this.canvas = document.getElementById(`${this.props.idBase}-canvas`);
-        this.updateCanvas();
-        this.resize();
-    }
+        let currRow = -1;
+        let currCol = -1;
 
-    resize() {
-        this.canvas.style.width = (0.5 * innerWidth / this.props.gridWidth) + 'px';
-    }
+        const draw = (e) => {
+            const a = this.canvas.getBoundingClientRect();
+            const cursorRatioX = (e.pageX - a.left - window.pageXOffset) / a.width;
+            const cursorRatioY = (e.pageY - a.top - window.pageYOffset) / a.height;
+            const col = Math.floor(this.props.source.width * cursorRatioX);
+            const row = Math.floor(this.props.source.height * cursorRatioY);
 
-    /**
-     * Updates canvas with magnitude arrow
-     */
-    updateCanvas() {
-        if (this.canvas) {
-            const context = this.canvas.getContext('2d');
-            context.clearRect(0, 0, 80, 80);
-
-            context.lineWidth = 3;
-            context.beginPath();
-
-            if (Number.isNaN(this.props.dx) && Number.isNaN(this.props.dy)) {
-                context.globalAlpha = 0.5;
-                context.strokeStyle = 'pink';
-                canvasCross(context, 40, 40)
+            if (row != currRow || col != currCol) {
+                currRow = row;
+                currCol = col;
+                this.props.drawHandler(currRow, currCol);
             }
-            else {
-                context.globalAlpha = (this.props.ratio + 1) / 2;
-                context.lineWidth = 9 * this.props.ratio + 2;
-                context.strokeStyle = heatMapColorforValue(this.props.ratio);
-                const lenWeight = 15 * this.props.ratio + 8;
-                canvas_arrow(context, 40, 40, lenWeight * this.props.dx + 40, -lenWeight * this.props.dy + 40);
-            }
-            context.stroke();
-        }
-    }
-
-    render() {
-
-        if (this.props.isShowGrad) {
-            this.updateCanvas();
         }
 
-        return e('div', {
-            className: 'square',
-            style: {
-                backgroundColor: `rgb(${this.props.value}, ${this.props.value}, ${this.props.value})`,
-                border: this.props.isHighlighted ? 'solid red 0.5em' : 'solid gray 0.05em',
-            },
-            onMouseOver: () => {
-                if (!isMouseDown) {
-                    return;
-                }
-                this.props.drawHandler()
-            },
-            onClick: () => this.props.drawHandler(),
-        },
-            e('canvas', {
-                id: `${this.props.idBase}-canvas`,
-                width: '80px',
-                height: '80px',
-            }, null),
-        );
+        this.canvas.addEventListener('mousemove', (e) => isMouseDown && draw(e));
+        this.canvas.addEventListener('click', (e) => draw(e));
+
+        this.canvas.addEventListener('touchmove', (e) => draw(e.touches[0]));
     }
-}
 
-/**
- * Gradient grid container
- */
-class GradientGrid extends React.Component {
-
-    renderCells() {
+    process() {
+        if (!this.canvas) {
+            return;
+        }
 
         // Set max and min mags
         const minMag = 0;
         const maxMag = 1141;
 
-        let cells = [];
-        for (let i = 0; i < this.props.magGrid.height; i++) {
-            for (let j = 0; j < this.props.magGrid.width; j++) {
+        const context = this.canvas.getContext('2d');
+        const pixelDelta = this.canvas.width / this.props.source.width;
 
-                // Hide gradient on border
-                const isShowGrad = i > 0 && j > 0 && i < this.props.magGrid.height - 1 && j < this.props.magGrid.width - 1;
+        for (let i = 0; i < this.props.source.height; i++) {
+            for (let j = 0; j < this.props.source.width; j++) {
+                const value = this.props.source.getValue(i, j);
 
-                // Highlight cell
-                let isHighlighted = false;
+                // Draw cell
+                context.fillStyle = `rgb(${value}, ${value}, ${value})`;
+                context.fillRect(j * pixelDelta, i * pixelDelta, pixelDelta, pixelDelta);
+
+                // Draw cell border
+                context.strokeStyle = 'grey'
                 if (this.props.highlightMask) {
-                    isHighlighted = this.props.highlightMask.getValue(i, j);
+                    context.strokeStyle = this.props.highlightMask.getValue(i, j);
                 }
+                context.strokeRect(j * pixelDelta, i * pixelDelta, pixelDelta, pixelDelta);
 
-                // Calculate arrow color
+                // Draw gradient arrow
+                const isShowGrad = i > 0 && j > 0 && i < this.props.magGrid.height - 1 && j < this.props.magGrid.width - 1;
                 const ratio = (this.props.magGrid.getValue(i, j) - minMag) / (maxMag - minMag);
+                const dx = this.props.sobelX.getValue(i, j) / this.props.magGrid.getValue(i, j);
+                const dy = this.props.sobelY.getValue(i, j) / this.props.magGrid.getValue(i, j);
 
-                cells.push(e(GradientCell, {
-                    key: `${this.props.idBase}-gradient-cell-${i}-${j}`,
-                    idBase: `${this.props.idBase}-gradient-cell-${i}-${j}`,
-                    value: this.props.source.getValue(i, j),
-                    ratio: ratio,
-                    dx: this.props.sobelX.getValue(i, j) / this.props.magGrid.getValue(i, j),
-                    dy: this.props.sobelY.getValue(i, j) / this.props.magGrid.getValue(i, j),
-                    isShowGrad: isShowGrad,
-                    isHighlighted: isHighlighted,
-                    gridWidth: this.props.source.width,
-                    drawHandler: () => this.props.drawHandler(i, j),
-                }, null));
+                context.save();
+                context.lineWidth = 3;
+                context.beginPath();
+                if (!isShowGrad || Number.isNaN(dx) && Number.isNaN(dy)) {
+                    context.globalAlpha = 0.5;
+                    context.strokeStyle = 'pink';
+                    canvasCross(context, j * pixelDelta + pixelDelta / 2, i * pixelDelta + pixelDelta / 2, 5);
+                }
+                else {
+                    context.globalAlpha = (ratio + 1) / 2;
+                    context.lineWidth = 3 * ratio + 1;
+                    context.strokeStyle = heatMapColorforValue(ratio);
+                    const lenWeight = 6 * ratio + 3;
+                    const arrowX = j * pixelDelta + pixelDelta / 2;
+                    const arrowY = i * pixelDelta + pixelDelta / 2;
+                    canvas_arrow(context, arrowX, arrowY, lenWeight * dx + arrowX, -lenWeight * dy + arrowY);
+                }
+                context.stroke();
+                context.restore();
             }
         }
-        return cells;
     }
 
     render() {
-        return e('div', {
-            className: 'square-grid-base',
+
+        this.process();
+
+        return e('canvas', {
+            id: `${this.props.idBase}-canvas`,
+            width: 800,
+            height: 800,
             style: {
-                gridTemplateColumns: `repeat(${this.props.magGrid.width}, ${this.props.gridUnit}vmax)`,
-                gridTemplateRows: `repeat(${this.props.magGrid.height}, ${this.props.gridUnit}vmax)`,
+                width: '100%'
             }
-        },
-            this.renderCells(),
-        )
+        }, null);
     }
 }
 
@@ -269,8 +253,8 @@ class RGBGrid extends React.Component {
         return e('div', {
             className: 'square-grid-base',
             style: {
-                gridTemplateColumns: `repeat(${this.props.grid.width}, ${this.props.cellSize}vmax)`,
-                gridTemplateRows: `repeat(${this.props.grid.height}, ${this.props.cellSize}vmax)`,
+                gridTemplateColumns: `repeat(${this.props.grid.width}, ${this.props.cellSize}em)`,
+                gridTemplateRows: `repeat(${this.props.grid.height}, ${this.props.cellSize}em)`,
             }
         }, cells);
     }
@@ -358,12 +342,12 @@ class PixelMagnifier extends React.Component {
             id: `${this.props.imageId}-rgb-magnifier`,
             style: {
                 position: 'absolute',
-                border: '3.2vmax solid pink',
+                border: '3.2em solid pink',
                 cursor: 'none',
                 visibility: this.state.magnifyVisible && !this.props.isRecording ? 'visible' : 'hidden',
 
-                width: `${this.cellSize * (this.state.magnifyGrid.width + 0.5)}vmax`,
-                height: `${this.cellSize * (this.state.magnifyGrid.height + 0.5)}vmax`,
+                width: `${this.cellSize * (this.state.magnifyGrid.width + 0.5)}em`,
+                height: `${this.cellSize * (this.state.magnifyGrid.height + 0.5)}em`,
                 left: this.state.cursorX,
                 top: this.state.cursorY,
 
