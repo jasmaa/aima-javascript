@@ -13,17 +13,28 @@ class ConvolutionDemo extends React.Component {
     constructor(props) {
         super(props);
 
-        const size = 20;
-        let source = new Array2D(
-            Array.from({ length: 4 * size * size }, () => 0),
-            size, size, 4
+        this.source = new Array2D(
+            Array.from({ length: 4 * 20 * 10 }, () => 0),
+            20, 10, 4
         );
 
-        createVerticalLineThick(source);
+        
+        this.filter = null;
+        if(this.props.filterType == 'sobelX'){
+            createVerticalLine(this.source);
+            this.filter = sobelX;
+        }
+        else if(this.props.filterType == 'sobelY'){
+            createHorizontalLine(this.source);
+            this.filter = sobelY;
+        }
+
+        // Apply Sobel operator horizontally
+        this.convolveResult = new Array2D([...this.source.data], this.source.width, this.source.height, 4);
+        convolve(this.convolveResult, this.filter);
+        stretchColorRange(this.convolveResult, -1020, 1020, 0, 1);
 
         this.state = {
-            filter: sobelX,
-            source: source,
             filterLocation: { row: 1, col: 1 },
             filterColor: new Array2D([
                 '#0078ff', '#0078ff', '#0078ff',
@@ -32,51 +43,46 @@ class ConvolutionDemo extends React.Component {
             ], 3, 3),
             magnifyVisible: false,
         };
-
-        // Calculate convolution
-        this.convolveResult = new Array2D(
-            [...this.state.source.data],
-            this.state.source.width, this.state.source.height, this.state.source.channels
-        );
-        convolve(this.convolveResult, this.state.filter);
-        stretchColorRange(this.convolveResult, -1020, 1020, 0, 1);
     }
 
+    /**
+     * Sets row and column filter location
+     * @param {*} r 
+     * @param {*} c 
+     */
     setFilterLocation(r, c) {
 
-        if (r < 0 || r >= this.state.source.height || c < 0 || c >= this.state.source.width) {
+        if (r < 0 || r >= this.source.height || c < 0 || c >= this.source.width) {
             return;
         }
 
         this.setState({ filterLocation: { row: r, col: c } })
     }
 
-    render() {
+    renderGrid(filterType) {
+
+        const resValue = this.convolveResult.getValue(this.state.filterLocation.row, this.state.filterLocation.col);
 
         // Get local source at filter
         let localSourceData = [];
         for (let i = -1; i <= 1; i++) {
             for (let j = -1; j <= 1; j++) {
-                for (let chan = 0; chan < this.state.source.channels; chan++) {
+                for (let chan = 0; chan < this.source.channels; chan++) {
 
                     let value = null;
-                    if (this.state.filterLocation.row + i >= 0 && this.state.filterLocation.row + i < this.state.source.height &&
-                        this.state.filterLocation.col + j >= 0 && this.state.filterLocation.col + j < this.state.source.width) {
-                        value = this.state.source.getValue(this.state.filterLocation.row + i, this.state.filterLocation.col + j);
+                    if (this.state.filterLocation.row + i >= 0 && this.state.filterLocation.row + i < this.source.height &&
+                        this.state.filterLocation.col + j >= 0 && this.state.filterLocation.col + j < this.source.width) {
+                        value = this.source.getValue(this.state.filterLocation.row + i, this.state.filterLocation.col + j);
                     }
 
                     localSourceData.push(value);
                 }
             }
         }
-        let localSource = new Array2D(localSourceData, this.state.filter.width, this.state.filter.height, this.state.source.channels);
+        let localSource = new Array2D(localSourceData, this.filter.width, this.filter.height, this.source.channels);
 
-        // Get current gradient value
-        const resValue = this.convolveResult.getValue(this.state.filterLocation.row, this.state.filterLocation.col);
-
-        return e('div', { className: 'demo-container' },
-
-            e(ConvolutionMagnifier, null,
+        return e('div', null,
+            e(ConvolutionMagnifier, {filterType: filterType},
                 e('div', {
                     className: 'demo-container', style: {
                         display: 'flex',
@@ -86,9 +92,10 @@ class ConvolutionDemo extends React.Component {
                     }
                 },
                     e(ConvolutionLocalTopologyDisplay, {
-                        imageId: 'convolution-local-topology-local',
+                        imageId: 'convolution-local-topology-' + filterType,
                         grid: localSource,
                         filterColor: this.state.filterColor,
+                        filterType: filterType,
                         currGradValue: resValue,
                     }, null),
                     e(ConvolutionChangeLabel, {
@@ -101,17 +108,24 @@ class ConvolutionDemo extends React.Component {
             e('div', { className: 'flex-container', style: { alignItems: 'baseline' } },
                 e('div', null,
                     e(ConvolutionInputGrid, {
-                        idBase: 'convolution-input',
-                        filter: this.state.filter,
+                        idBase: `convolution-input-${filterType}`,
+                        filter: this.filter,
                         filterColor: this.state.filterColor,
                         filterLocation: this.state.filterLocation,
-                        source: this.state.source,
+                        filterType: filterType,
+                        source: this.source,
                         convolveResult: this.convolveResult,
                         handleMouseOver: (r, c) => this.setFilterLocation(r, c),
                         setMagnifyVisible: (v) => this.setState({ magnifyVisible: v }),
                     }, null)
                 ),
             ),
+        )
+    }
+
+    render() {
+        return e('div', { className: 'demo-container' },
+            this.renderGrid(this.props.filterType),
         );
     }
 }
@@ -152,7 +166,7 @@ class ConvolutionInputGrid extends React.Component {
     }
 
     componentDidMount() {
-        this.canvas = document.getElementById('convolution-filter-grid');
+        this.canvas = document.getElementById(`convolution-filter-grid-${this.props.filterType}`);
 
         this.process();
 
@@ -215,19 +229,35 @@ class ConvolutionInputGrid extends React.Component {
                 // Draw arrows
                 context.save();
                 context.beginPath();
+                const arrowValue = this.props.convolveResult.getValue(i, j);
+                const arrowX = j * pixelDelta + pixelDelta / 2;
+                const arrowY = i * pixelDelta + pixelDelta / 2;
                 if (i > 0 && i < this.props.convolveResult.height - 1 &&
-                    j > 0 && j < this.props.convolveResult.width - 1) {
+                    j > 0 && j < this.props.convolveResult.width - 1 &&
+                    Math.abs(arrowValue - 0.5) > 0.0001) {
                     context.lineWidth = 2;
-                    const arrowColors = divergingColormap(this.props.convolveResult.getValue(i, j));
+                    const arrowColors = divergingColormap(arrowValue);
                     context.strokeStyle = `rgb(${arrowColors[0]}, ${arrowColors[1]}, ${arrowColors[2]})`;
-                    const arrowX = j * pixelDelta + pixelDelta / 2;
-                    const arrowY = i * pixelDelta + pixelDelta / 2;
-                    canvas_arrow(context, arrowX, arrowY, arrowX - pixelDelta / 4, arrowY);
+
+                    // Graph sobel x or y
+                    if (this.props.filterType == 'sobelX') {
+                        canvas_arrow(
+                            context, arrowX, arrowY,
+                            arrowX + (arrowValue > 0.5 ? 1 : -1) * pixelDelta / 4, arrowY
+                        );
+                    }
+                    else if (this.props.filterType == 'sobelY') {
+                        canvas_arrow(
+                            context, arrowX, arrowY,
+                            arrowX, arrowY + (arrowValue > 0.5 ? -1 : 1) * pixelDelta / 4
+                        );
+                    }
                 }
                 else {
                     context.lineWidth = 2;
                     context.strokeStyle = 'pink';
-                    canvasCross(context, j * pixelDelta + pixelDelta / 2, i * pixelDelta + pixelDelta / 2, 5);
+                    context.globalAlpha = 0.5;
+                    canvasCross(context, arrowX, arrowY, 5);
                 }
 
                 context.stroke();
@@ -263,11 +293,12 @@ class ConvolutionInputGrid extends React.Component {
         this.process();
 
         return e('canvas', {
-            id: 'convolution-filter-grid',
+            id: `convolution-filter-grid-${this.props.filterType}`,
             width: 800,
-            height: 800,
+            height: 400,
             style: {
-                width: '100%'
+                width: '100%',
+                height: '50%',
             }
         }, null);
     }
@@ -342,7 +373,7 @@ class ConvolutionLocalTopologyDisplay extends React.Component {
             }
         }
 
-        // Create tilt plane
+        // Create tilt arrow
         this.planeContainer = new THREE.Object3D();
         this.planeMat = new THREE.MeshToonMaterial({ color: 'red' });
         const arrowHead = new THREE.Mesh(
@@ -389,9 +420,27 @@ class ConvolutionLocalTopologyDisplay extends React.Component {
         const down = this.props.grid.getValue(2, 1);
 
         // Update arrow
-        if (right != null && left != null && up != null && down != null) {
-            const diff = right / 255 - left / 255;
-            this.planeContainer.rotation.set(0, 0, Math.atan(diff));
+        if (right != null && left != null && up != null && down != null &&
+            Math.abs(this.props.currGradValue - 0.5) > 0.0001) {
+
+            // Switch for sobel type
+            if (this.props.filterType == 'sobelX') {
+                const diff = right / 255 - left / 255;
+                this.planeContainer.rotation.set(
+                    0,
+                    this.props.currGradValue < 0.5 ? 0 : Math.PI,
+                    (this.props.currGradValue < 0.5 ? 1 : -1) * Math.atan(diff),
+                );
+            }
+            else if (this.props.filterType == 'sobelY') {
+                const diff = up / 255 - down / 255;
+                this.planeContainer.rotation.set(
+                    Math.atan(diff),
+                    this.props.currGradValue < 0.5 ? Math.PI / 2 : -Math.PI / 2,
+                    0,
+                );
+            }
+
             this.planeContainer.position.set(0, 2, 0);
 
             const colorVals = divergingColormap(this.props.currGradValue);
@@ -399,7 +448,7 @@ class ConvolutionLocalTopologyDisplay extends React.Component {
         }
         else {
             // Hide arrow
-            this.planeContainer.position.set(0, -2, 0);
+            this.planeContainer.position.set(10, 10, 10);
         }
 
         // Update pillars
@@ -455,8 +504,8 @@ class ConvolutionMagnifier extends React.Component {
 
     componentDidMount() {
         // Create magnifier
-        const container = document.getElementById('convolution-filter-grid');
-        const magnifier = document.getElementById('convolution-magnifier');
+        const container = document.getElementById(`convolution-filter-grid-${this.props.filterType}`);
+        const magnifier = document.getElementById(`convolution-magnifier-${this.props.filterType}`);
         const updateFunc = (e) => {
 
             const a = container.getBoundingClientRect();
@@ -482,7 +531,7 @@ class ConvolutionMagnifier extends React.Component {
 
     render() {
         return e('div', {
-            id: `convolution-magnifier`,
+            id: `convolution-magnifier-${this.props.filterType}`,
             style: {
                 position: 'absolute',
                 cursor: 'none',

@@ -205,7 +205,7 @@ function createVerticalLineThick(source, offset = 0) {
     for (let i = 0; i < source.height; i++) {
         for (let j = 0; j < source.width; j++) {
 
-            let value = Math.abs(source.centerCol - j + offset) < 2 ? Math.floor(Math.random() * 50) : Math.floor(Math.abs(source.centerCol - j + offset) / 2 * 100 + Math.random() * 10);
+            let value = Math.abs(source.centerCol - j + offset) < 2 ? 50 : Math.floor(Math.abs(source.centerCol - j + offset) / 2 * 80);
             value = Math.max(Math.min(value, 255), 0);
 
             source.setValue(value, i, j, 0);

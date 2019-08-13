@@ -134,33 +134,36 @@ class Pipeline2dShortDemo extends React.Component {
                     e('ul', { className: 'dropdown-menu dropdown-menu-right' },
                         e('li', null,
                             e('a', {
-                                href: "javascript:void(0);",
-                                onClick: () => {
+                                href: "#",
+                                onClick: (e) => {
+                                    e.preventDefault();
                                     this.img.src = "../images/vertLines.png";
                                     this.changeInput('image');
                                     this.process();
                                 }
-                            }, '▥ Vertical Lines')
+                            }, 'Vertical Lines')
                         ),
                         e('li', null,
                             e('a', {
-                                href: "javascript:void(0);",
-                                onClick: () => {
+                                href: "#",
+                                onClick: (e) => {
+                                    e.preventDefault();
                                     this.img.src = "../images/horiLines.png";
                                     this.changeInput('image');
                                     this.process();
                                 }
-                            }, '▤ Horizontal Lines')
+                            }, 'Horizontal Lines')
                         ),
                         e('li', null,
                             e('a', {
-                                href: "javascript:void(0);",
-                                onClick: () => {
+                                href: "#",
+                                onClick: (e) => {
+                                    e.preventDefault();
                                     this.img.src = "../images/gridLines.png";
                                     this.changeInput('image');
                                     this.process();
                                 }
-                            }, '▦ Crosshatch')
+                            }, 'Crosshatch')
                         ),
                     ),
                 ),

@@ -128,58 +128,63 @@ class GradientDemo extends React.Component {
                         e('ul', { className: 'dropdown-menu dropdown-menu-right' },
                             e('li', null,
                                 e('a', {
-                                    href: "javascript:void(0);",
-                                    onClick: () => {
+                                    href: "#",
+                                    onClick: (e) => {
+                                        e.preventDefault();
                                         createVerticalLine(this.source);
                                         this.setState({
                                             grid: this.source,
                                         });
                                     }
-                                }, '| Vertical Line')
+                                }, 'Vertical Line')
                             ),
                             e('li', null,
                                 e('a', {
-                                    href: "javascript:void(0);",
-                                    onClick: () => {
+                                    href: "#",
+                                    onClick: (e) => {
+                                        e.preventDefault();
                                         createHorizontalLine(this.source);
                                         this.setState({
                                             grid: this.source,
                                         });
                                     }
-                                }, '― Horizontal Line')
+                                }, 'Horizontal Line')
                             ),
                             e('li', null,
                                 e('a', {
-                                    href: "javascript:void(0);",
-                                    onClick: () => {
+                                    href: "#",
+                                    onClick: (e) => {
+                                        e.preventDefault();
                                         createDiagonalLine(this.source);
                                         this.setState({
                                             grid: this.source,
                                         });
                                     }
-                                }, '╲ Diagonal Line')
+                                }, 'Diagonal Line')
                             ),
                             e('li', null,
                                 e('a', {
-                                    href: "javascript:void(0);",
-                                    onClick: () => {
+                                    href: "#",
+                                    onClick: (e) => {
+                                        e.preventDefault();
                                         createRadialGradient(this.source);
                                         this.setState({
                                             grid: this.source,
                                         });
                                     }
-                                }, '◎ Radial Gradient')
+                                }, 'Radial Gradient')
                             ),
                             e('li', null,
                                 e('a', {
-                                    href: "javascript:void(0);",
-                                    onClick: () => {
+                                    href: "#",
+                                    onClick: (e) => {
+                                        e.preventDefault();
                                         createLineGradient(this.source);
                                         this.setState({
                                             grid: this.source,
                                         });
                                     }
-                                }, '◧ Horizontal Gradient')
+                                }, 'Horizontal Gradient')
                             ),
                         ),
                     ),
