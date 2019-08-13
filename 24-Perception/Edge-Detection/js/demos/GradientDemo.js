@@ -120,48 +120,68 @@ class GradientDemo extends React.Component {
                         }, e('i', { className: 'fas fa-undo' }, null)),
                     ),
                     e('div', { style: { display: 'flex', flex: 1 } }, null),
-                    e('div', { className: 'btn-group mr-2', role: 'group' },
-
-                        e('div', {
-                            className: 'btn btn-info', onClick: () => {
-                                createVerticalLine(this.source);
-                                this.setState({
-                                    grid: this.source,
-                                });
-                            }
-                        }, e('strong', null, '|')),
-                        e('div', {
-                            className: 'btn btn-info', onClick: () => {
-                                createHorizontalLine(this.source);
-                                this.setState({
-                                    grid: this.source,
-                                });
-                            }
-                        }, e('strong', null, '―')),
-                        e('div', {
-                            className: 'btn btn-info', onClick: () => {
-                                createDiagonalLine(this.source);
-                                this.setState({
-                                    grid: this.source,
-                                });
-                            }
-                        }, e('strong', null, '╲')),
-                        e('div', {
-                            className: 'btn btn-info', onClick: () => {
-                                createRadialGradient(this.source);
-                                this.setState({
-                                    grid: this.source,
-                                });
-                            }
-                        }, e('strong', null, '◎')),
-                        e('div', {
-                            className: 'btn btn-info', onClick: () => {
-                                createLineGradient(this.source);
-                                this.setState({
-                                    grid: this.source,
-                                });
-                            }
-                        }, e('strong', null, '◧')),
+                    e('div', { className: 'dropdown' },
+                        e('a', {
+                            className: 'btn btn-info dropdown-toggle',
+                            'data-toggle': 'dropdown',
+                        }, 'Presets ', e('b', { className: 'caret' }, null)),
+                        e('ul', { className: 'dropdown-menu dropdown-menu-right' },
+                            e('li', null,
+                                e('a', {
+                                    href: "javascript:void(0);",
+                                    onClick: () => {
+                                        createVerticalLine(this.source);
+                                        this.setState({
+                                            grid: this.source,
+                                        });
+                                    }
+                                }, '| Vertical Line')
+                            ),
+                            e('li', null,
+                                e('a', {
+                                    href: "javascript:void(0);",
+                                    onClick: () => {
+                                        createHorizontalLine(this.source);
+                                        this.setState({
+                                            grid: this.source,
+                                        });
+                                    }
+                                }, '― Horizontal Line')
+                            ),
+                            e('li', null,
+                                e('a', {
+                                    href: "javascript:void(0);",
+                                    onClick: () => {
+                                        createDiagonalLine(this.source);
+                                        this.setState({
+                                            grid: this.source,
+                                        });
+                                    }
+                                }, '╲ Diagonal Line')
+                            ),
+                            e('li', null,
+                                e('a', {
+                                    href: "javascript:void(0);",
+                                    onClick: () => {
+                                        createRadialGradient(this.source);
+                                        this.setState({
+                                            grid: this.source,
+                                        });
+                                    }
+                                }, '◎ Radial Gradient')
+                            ),
+                            e('li', null,
+                                e('a', {
+                                    href: "javascript:void(0);",
+                                    onClick: () => {
+                                        createLineGradient(this.source);
+                                        this.setState({
+                                            grid: this.source,
+                                        });
+                                    }
+                                }, '◧ Horizontal Gradient')
+                            ),
+                        ),
                     ),
                 ),
                 e('br', null, null),

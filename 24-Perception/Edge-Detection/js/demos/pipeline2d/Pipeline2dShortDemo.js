@@ -125,28 +125,44 @@ class Pipeline2dShortDemo extends React.Component {
                     changeHandler: () => this.changeInput('webcam'),
                 }, null),
                 e('div', { style: { display: 'flex', flex: 1 } }, null),
-                e('div', { className: 'btn-group mr-2', role: 'group' },
-                    e('div', {
-                        className: 'btn btn-info', onClick: () => {
-                            this.img.src = "../images/vertLines.png";
-                            this.changeInput('image');
-                            this.process();
-                        }
-                    }, '▥'),
-                    e('div', {
-                        className: 'btn btn-info', onClick: () => {
-                            this.img.src = "../images/horiLines.png";
-                            this.changeInput('image');
-                            this.process();
-                        }
-                    }, '▤'),
-                    e('div', {
-                        className: 'btn btn-info', onClick: () => {
-                            this.img.src = "../images/gridLines.png";
-                            this.changeInput('image');
-                            this.process();
-                        }
-                    }, '▦'),
+
+                e('div', { className: 'dropdown' },
+                    e('a', {
+                        className: 'btn btn-info dropdown-toggle',
+                        'data-toggle': 'dropdown',
+                    }, 'Presets ', e('b', {className: 'caret'}, null)),
+                    e('ul', { className: 'dropdown-menu dropdown-menu-right' },
+                        e('li', null,
+                            e('a', {
+                                href: "javascript:void(0);",
+                                onClick: () => {
+                                    this.img.src = "../images/vertLines.png";
+                                    this.changeInput('image');
+                                    this.process();
+                                }
+                            }, '▥ Vertical Lines')
+                        ),
+                        e('li', null,
+                            e('a', {
+                                href: "javascript:void(0);",
+                                onClick: () => {
+                                    this.img.src = "../images/horiLines.png";
+                                    this.changeInput('image');
+                                    this.process();
+                                }
+                            }, '▤ Horizontal Lines')
+                        ),
+                        e('li', null,
+                            e('a', {
+                                href: "javascript:void(0);",
+                                onClick: () => {
+                                    this.img.src = "../images/gridLines.png";
+                                    this.changeInput('image');
+                                    this.process();
+                                }
+                            }, '▦ Crosshatch')
+                        ),
+                    ),
                 ),
             ),
 

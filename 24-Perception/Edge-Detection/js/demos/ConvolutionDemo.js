@@ -81,6 +81,7 @@ class ConvolutionDemo extends React.Component {
                     className: 'demo-container', style: {
                         display: 'flex',
                         flexDirection: 'column',
+                        alignItems: 'center',
                         visibility: this.state.magnifyVisible ? 'visible' : 'hidden',
                     }
                 },
@@ -430,8 +431,8 @@ class ConvolutionLocalTopologyDisplay extends React.Component {
         return e('div', null,
             e('canvas', {
                 id: `${this.props.imageId}-canvas3d`,
-                width: 200,
-                height: 200,
+                width: 300,
+                height: 300,
             }, null),
         );
     }

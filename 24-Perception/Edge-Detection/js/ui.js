@@ -98,7 +98,7 @@ class WebcamCapture extends React.Component {
         /*
         let buttonClass = 'btn btn-primary';
         let buttonText = '';
-        if (navigator.mediaDevices.getUserMedia) {
+        if (!!navigator.mediaDevices.getUserMedia) {
             buttonClass = this.props.isRecording ? 'btn btn-danger' : 'btn btn-primary';
             buttonText = this.props.isRecording ? 'fas fa-stop' : 'fas fa-video';
         }
@@ -204,7 +204,7 @@ class GradientGrid extends React.Component {
                     context.globalAlpha = (ratio + 1) / 2;
                     context.lineWidth = 3 * ratio + 1;
                     context.strokeStyle = heatMapColorforValue(ratio);
-                    const lenWeight = 6 * ratio + 3;
+                    const lenWeight = 8 * ratio + 3;
                     const arrowX = j * pixelDelta + pixelDelta / 2;
                     const arrowY = i * pixelDelta + pixelDelta / 2;
                     canvas_arrow(context, arrowX, arrowY, lenWeight * dx + arrowX, -lenWeight * dy + arrowY);
@@ -298,7 +298,7 @@ class PixelMagnifier extends React.Component {
 
             // Get selected area
             const ratioX = (cursorX + magnifier.offsetWidth / 2 - a.left - window.pageXOffset) / a.width;
-            const ratioY = (cursorY + magnifier.offsetHeight / 2 - a.top - window.pageYOffset) / a.height; //(e.pageY-a.top-window.pageYOffset) / a.height;
+            const ratioY = (cursorY + magnifier.offsetHeight / 2 - a.top - window.pageYOffset) / a.height;
             const imgData = context.getImageData(
                 Math.floor(ratioX * canvas.width) - Math.floor(this.magnifySize / 2),
                 Math.floor(ratioY * canvas.height) - Math.floor(this.magnifySize / 2),

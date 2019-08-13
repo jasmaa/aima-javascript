@@ -65,7 +65,6 @@ function pipelineChangeInput(input) {
 function pipelinePairRender() {
     return e('div', { className: 'demo-container' },
 
-        /*
         e(PixelMagnifier, {
             imageId: `${this.imageId}-in`,
             isRecording: this.state.isRecording,
@@ -74,7 +73,6 @@ function pipelinePairRender() {
             imageId: `${this.imageId}-out`,
             isRecording: this.state.isRecording,
         }, null),
-        */
 
         e('div', { style: { display: 'flex', flexDirection: 'row' } },
             e(ImageUploader, {
