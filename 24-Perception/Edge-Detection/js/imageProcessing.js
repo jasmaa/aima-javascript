@@ -80,6 +80,14 @@ class GaussianFilter extends Array2D {
 }
 
 /**
+ * Expands rgb into linear colorspace
+ * @param {number} c - R, G, or B value as percentage 
+ */
+function gammaExpand(c) {
+    return c <= 0.04045 ? c / 12.96 : Math.pow((c + 0.055 / 1.055), 2.4);
+}
+
+/**
  * Converts image to greyscale
  * 
  * @param {Array2D} source - RGBA source
@@ -88,10 +96,16 @@ function grayscale(source) {
     for (let i = 0; i < source.height; i++) {
         for (let j = 0; j < source.width; j++) {
             let index = 4 * (source.width * i + j);
-            let avg = Math.floor((source.data[index + 0] + source.data[index + 1] + source.data[index + 2]) / 3);
-            source.data[index + 0] = avg;
-            source.data[index + 1] = avg;
-            source.data[index + 2] = avg;
+
+            const rlin = gammaExpand(source.data[index + 0] / 255);
+            const glin = gammaExpand(source.data[index + 1] / 255);
+            const blin = gammaExpand(source.data[index + 2] / 255);
+            const ylin = 0.2126 * rlin + 0.7152 * glin + 0.0722 * blin;
+            const y = ylin <= 0.0031308 ? 12.92 * ylin : 1.055 * Math.pow(ylin, 1 / 2.4);
+
+            source.data[index + 0] = Math.floor(255*y);
+            source.data[index + 1] = Math.floor(255*y);
+            source.data[index + 2] = Math.floor(255*y);
         }
     }
 }

@@ -88,7 +88,7 @@ class Pipeline2dLongDemo extends React.Component {
         context.font = "11px Arial";
         context.fillText("Color", 0, 200);
         context.fillText("Grayscale", 200, 200);
-        context.fillText("Blurred", 400, 200);
+        context.fillText("Gaussian Blur", 400, 200);
         context.fillText("Gradients", 600, 200);
         context.fillText("Non-Maximum Suppression", 200, 430);
         context.fillText("Double Thresholding", 400, 430);

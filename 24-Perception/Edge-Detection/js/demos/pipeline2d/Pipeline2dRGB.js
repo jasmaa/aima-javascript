@@ -97,7 +97,7 @@ class Pipeline2dRGB extends React.Component {
                                     this.changeInput('image');
                                     this.process();
                                 }
-                            }, 'RGB Components')
+                            }, 'RGB')
                         ),
                         e('li', null,
                             e('a', {
@@ -108,7 +108,7 @@ class Pipeline2dRGB extends React.Component {
                                     this.changeInput('image');
                                     this.process();
                                 }
-                            }, 'Red-Green Unclear')
+                            }, 'Red-Green')
                         ),
                         e('li', null,
                             e('a', {
@@ -119,7 +119,7 @@ class Pipeline2dRGB extends React.Component {
                                     this.changeInput('image');
                                     this.process();
                                 }
-                            }, 'Green-Blue Unclear')
+                            }, 'Green-Blue')
                         ),
                     ),
                 ),

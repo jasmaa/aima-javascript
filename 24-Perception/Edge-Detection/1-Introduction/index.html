@@ -56,29 +56,33 @@
 				<h2>Image Representation</h2>
 
 				<p>
-					Before coming up with an algorithm for edge detection, we must first understand what kind of data it
-					will work with. While our toddler workforce may work with images as physical photographs, computers
-					work with images as 2D grids known as <strong>pixel arrays</strong>. A color image is commonly
-					represented with 3 pixel arrays, storing the red, green, and blue color values for each pixel.
-				</p>
-
-				<p>
-					With edge detection, since we are only interested in the intensity of a given pixel, we want our
-					images to be represented as <strong>grayscale intensities</strong>. The intensity of a pixel can be
-					directly calculated from its red, green, and blue color values. This allows us to easily convert
-					color images to grayscale before trying to detect any edges.
+					Before jumping into edge detection, we still need to do a little work with images. Computers
+					generally store images as grids of values or <strong>pixel arrays</strong>. A color image, for
+					instance, is decomposable into three pixel arrays storing the RGB color channels. While RGB is
+					convenient for representing color, edge detection is only interested in looking at intensity values.
+					Fortunately for us, it is possible to directly compute intensity from RGB values, giving us a pixel
+					array of grayscale intensities.
 				</p>
 
 				<div id="rgb-root"></div>
-				
+
+				<div class="blurb-container">
+					<h4><strong>From RGB to Intensity</strong></h4>
+					<p>
+						The conversion from RGB to intensity is a somewhat involved process that delves into color
+						science and human perception. While RGB is a helpful model, in reality, humans do not perceive
+						color linearly or equally among the three channels. To convert RGB to intensity, each RGB value
+						must first be mapped into a linear color space. These values are then put through a weighted sum
+						and converted back to our non-linear RGB color space for display.
+					</p>
+				</div>
+
 				<h2>Summary</h2>
 
 				<p>
-					We have introduced edge detection as a problem of finding the boundaries
-					dividing sharp intensity changes in an image. We have also formulated the
-					type of input we are interested in processing by understanding an image as a set of
-					pixel arrays. In the next section, we will explore the underlying mechanism
-					for detecting edges.
+					We have introduced edge detection as the problem of finding the boundaries dividing sharp intensity
+					changes in an image as well as understanding computer images as pixel arrays. In the next section,
+					we will explore the underlying mechanism for detecting edges.
 				</p>
 			</div>
 

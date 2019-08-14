@@ -49,6 +49,13 @@ p {
     align-items: center;
 }
 
+.blurb-container {
+    background-color: lightyellow;
+    color: gray;
+    padding: 1vmax;
+    border-radius: 0.5vmax;
+}
+
 .control-btn {
     margin: 0.1em 0.1em 0.1em 0.1em;
 }
@@ -91,7 +98,7 @@ p {
 }
 
 .display-image {
-    width: 40vmax;
+    width: 100%;
     margin-top: 1vmax;
     margin-bottom: 1vmax;
 }

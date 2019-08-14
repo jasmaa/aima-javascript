@@ -63,7 +63,7 @@
 					vertical intensity changes respectively. For each target pixel in the image, the kernel selects and
 					performs an operation on a neighborhood of surrounding pixels. This compares the intensity of the
 					neighboring pixels with each other and uses them to compute the change in intensity at the target
-					pixel. To demonstrate this, below is are two interactive examples using the Sobel X
+					pixel. To demonstrate this, below are two interactive examples using the Sobel X
 					and Sobel Y filters. Drag the filters around and see how different areas reflect different
 					intensity changes.
 				</p>
@@ -71,18 +71,18 @@
 				<div id="convolution-root-x"></div>
 				<div id="convolution-root-y"></div>
 
-				<p>
-					Under the hood, these filters are actually grids of numerical weights that are matched up to a
-					neighborhood of pixels. The filter weights and the pixel intensities are run through a weighted sum
-					that
-					calculates a number representing the intensity change for each target pixel. In general, this
-					concept of
-					operating on a grid of numbers by dragging a smaller grid of numbers across it is a powerful
-					mathematical
-					tool that goes beyond edge detection known as a <strong>convolution</strong>.
-				</p>
-
-				<img src="../images/filters.png" alt="Sobel X and Y filters" class="center display-image">
+				<div class="blurb-container">
+					<h4><strong>Math in the Filter</strong></h4>
+					<p>
+						Under the hood, filters are grids of numerical weights that are matched up to each neighborhood
+						of pixels. The filter weights and the pixel intensities are used to calculate a weighted sum
+						that represents the change at each target pixel. This general process of dragging a grid across
+						a larger grid is called <strong>cross correlation</strong>. Doing this with a flipped filter is
+						a slightly different process called <strong>convolution</strong>. In general, we prefer doing
+						convolutions because of their nice mathematical properties, such as being able to
+						compose many convolutions into one convolution.
+					</p>
+				</div>
 
 				<h2>Change as a Vector</h2>
 
@@ -91,10 +91,8 @@
 					containing values that represent horizontal and vertical changes respectively. These values can also
 					be thought of as the X and Y components for a grid of 2D arrows or <strong>vectors</strong>.
 					The vectors gotten using the Sobel operator are known as <strong>gradients</strong>. For a given
-					pixel,
-					the magnitude of the gradient tells us how much overall intensity change occurs at that pixel and
-					the
-					angle tells us the general direction of that intensity change.
+					pixel, the magnitude of the gradient tells us how much overall intensity change occurs at that pixel
+					and the angle tells us the general direction of that intensity change.
 				</p>
 
 				<p>
@@ -113,13 +111,12 @@
 
 				<div id="pipeline2d-short-root"></div>
 
-				<h2>Problems and Shortcomings with Sobel</h2>
+				<h2>Problems and Shortcomings</h2>
 
 				<p>
 					Plugging images through this algorithm, you may have already noticed that Sobel by itself
 					does not perform very well. Our edge detection is not very good at producing clean and precise
-					edges,
-					nor is it very good at dealing with grainy images.
+					edges, nor is it very good at dealing with grainy images.
 				</p>
 
 				<div id="pipeline2d-grainy-root"></div>
@@ -187,11 +184,11 @@
 		);
 
 		ReactDOM.render(
-			e(ConvolutionDemo, {filterType: 'sobelX'}, null),
+			e(ConvolutionDemo, { filterType: 'sobelX' }, null),
 			document.getElementById('convolution-root-x')
 		);
 		ReactDOM.render(
-			e(ConvolutionDemo, {filterType: 'sobelY'}, null),
+			e(ConvolutionDemo, { filterType: 'sobelY' }, null),
 			document.getElementById('convolution-root-y')
 		);
 
