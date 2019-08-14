@@ -62,8 +62,6 @@
 					represented with 3 pixel arrays, storing the red, green, and blue color values for each pixel.
 				</p>
 
-				<div id="rgb-root"></div>
-
 				<p>
 					With edge detection, since we are only interested in the intensity of a given pixel, we want our
 					images to be represented as <strong>grayscale intensities</strong>. The intensity of a pixel can be
@@ -71,8 +69,8 @@
 					color images to grayscale before trying to detect any edges.
 				</p>
 
-				<div id="pipeline2d-gray-root"></div>
-
+				<div id="rgb-root"></div>
+				
 				<h2>Summary</h2>
 
 				<p>
@@ -109,6 +107,7 @@
 	<script type="text/javascript" src="../js/demos/pipeline2d/pipelineHelpers.js"></script>
 
 	<script type="text/javascript" src="../js/demos/pipeline2d/Pipeline2dDirectDemo.js"></script>
+	<script type="text/javascript" src="../js/demos/pipeline2d/Pipeline2dRGB.js"></script>
 	<script type="text/javascript" src="../js/demos/RGBDemo.js"></script>
 	<script type="text/javascript" src="../js/demos/pipeline2d/Pipeline2dGrayscaleDemo.js"></script>
 
@@ -120,14 +119,8 @@
 	</script>
 	<script>
 		ReactDOM.render(
-			e(RGBDemo, null, null),
+			e(Pipeline2dRGB, null, null),
 			document.getElementById('rgb-root')
-		);
-	</script>
-	<script>
-		ReactDOM.render(
-			e(Pipeline2dGrayscaleDemo, null, null),
-			document.getElementById('pipeline2d-gray-root')
 		);
 	</script>
 </body>
