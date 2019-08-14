@@ -22,6 +22,7 @@ class TopologyDemo extends React.Component {
     }
 
     resize() {
+        /*
         if (innerWidth > 800) {
             this.canvas.style.width = (innerWidth / 4 - 80) + 'px';
             this.graphContainer.childNodes[0].style.width = (innerWidth / 4 - 80) + 'px';
@@ -32,6 +33,7 @@ class TopologyDemo extends React.Component {
             this.graphContainer.childNodes[0].style.width = (innerWidth / 2) + 'px';
             this.graphContainer.childNodes[0].style.height = (innerWidth / 2) + 'px';
         }
+        */
     }
 
     /**
@@ -61,15 +63,14 @@ class TopologyDemo extends React.Component {
             for (let j = 0; j < source.width; j++) {
                 if (i % this.graphInterval == 0 && j % this.graphInterval == 0) {
                     let value = source.getValue(i, j);
-                    topoData.push({ x: j, y: -i, z: value, style: `rgb(${value}, ${value}, ${value})`});
+                    topoData.push({ x: j, y: -i, z: value, style: `rgb(${value}, ${value}, ${value})` });
                 }
             }
         }
 
         // Draw topology map
         let options = {
-            width: `${this.size}px`,
-            height: `${this.size}px`,
+            width: '100%',
             style: 'surface',
             xBarWidth: this.graphInterval,
             yBarWidth: this.graphInterval,
@@ -86,8 +87,8 @@ class TopologyDemo extends React.Component {
         };
 
         this.graphContainer = document.getElementById(`${this.imageId}-topology`);
-        let graph = new vis.Graph3d(this.graphContainer, topoData, options);
-        graph.setCameraPosition({ horizontal: 0, vertical: Math.PI / 2, distance: 1.3 });
+        this.graph = new vis.Graph3d(this.graphContainer, topoData, options);
+        this.graph.setCameraPosition({ horizontal: 0, vertical: Math.PI / 2, distance: 2 });
 
         this.resize();
     }
@@ -100,17 +101,22 @@ class TopologyDemo extends React.Component {
                 defaultImage: '../images/test.png',
                 processHandler: () => this.process(),
             }, null),
-            e('br', null, null),
-            e('div', { className: 'flex-container' },
+            e('div', null,
                 e('canvas', {
                     id: `${this.imageId}-canvas`,
                     width: this.size,
                     height: this.size,
+                    className: 'center',
+                    style: {
+                        width: '50%',
+                    }
                 }, null),
-                e('div', {
-                    id: `${this.imageId}-topology`,
-                }, null)
             ),
+            e('br', null, null),
+            e('div', {
+                id: `${this.imageId}-topology`,
+            }, null)
+
         );
     }
 }

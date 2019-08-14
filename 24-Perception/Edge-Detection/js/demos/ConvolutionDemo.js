@@ -516,7 +516,7 @@ class ConvolutionMagnifier extends React.Component {
 
             this.setState({
                 cursorX: cursorX,
-                cursorY: cursorY - magnifier.getBoundingClientRect().height,
+                cursorY: cursorY - 0.8*magnifier.getBoundingClientRect().height,
                 magnifyVisible: true,
             });
         }
