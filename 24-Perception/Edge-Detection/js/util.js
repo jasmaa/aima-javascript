@@ -58,9 +58,9 @@ function mag2d(x, y) {
  * @param {Number} centery 
  * @param {Number} tox 
  * @param {Number} toy 
+ * @param {Number} headlen - Length of arrow head in pixels
  */
-function canvas_arrow(context, centerx, centery, tox, toy) {
-    const headlen = 5;   // length of head in pixels
+function canvas_arrow(context, centerx, centery, tox, toy, headlen=5) {
     const angle = Math.atan2(toy - centery, tox - centerx);
     context.moveTo(centerx + centerx - tox, centery + centery - toy);
     context.lineTo(tox, toy);
@@ -70,6 +70,14 @@ function canvas_arrow(context, centerx, centery, tox, toy) {
     context.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
 }
 
+/**
+ * Draw curved arrow along x axis
+ * @param {CanvasRenderingContext2D} context 
+ * @param {Number} fromx 
+ * @param {Number} fromy 
+ * @param {Number} tox 
+ * @param {Number} toy 
+ */
 function canvasArrowCurveX(context, fromx, fromy, tox, toy) {
     const headlen = 8;
     const angle = tox - fromx > 0 ? 0 : Math.PI; // Snap angle to x axis

@@ -201,13 +201,13 @@ class GradientGrid extends React.Component {
                     canvasCross(context, j * pixelDelta + pixelDelta / 2, i * pixelDelta + pixelDelta / 2, 5);
                 }
                 else {
-                    context.globalAlpha = (ratio + 1) / 2;
-                    context.lineWidth = 3 * ratio + 1;
-                    context.strokeStyle = heatMapColorforValue(ratio);
-                    const lenWeight = 8 * ratio + 3;
+                    context.lineWidth = 5 * ratio + 1;
+                    context.strokeStyle = 'blue';
+                    const lenWeight = 10 * ratio + 2;
+                    const headLen = 5 * ratio + 2
                     const arrowX = j * pixelDelta + pixelDelta / 2;
                     const arrowY = i * pixelDelta + pixelDelta / 2;
-                    canvas_arrow(context, arrowX, arrowY, lenWeight * dx + arrowX, -lenWeight * dy + arrowY);
+                    canvas_arrow(context, arrowX, arrowY, lenWeight * dx + arrowX, -lenWeight * dy + arrowY, headLen);
                 }
                 context.stroke();
                 context.restore();

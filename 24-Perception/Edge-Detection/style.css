@@ -25,22 +25,11 @@ p {
     display: list-item;
 }
 
-.content-container {
-    margin-left: 25%;
-    margin-right: 25%;
-}
-@media only screen and (max-width: 800px) {
-    .content-container {
-        margin-left: 5%;
-        margin-right: 5%;
-    }
-}
-
 .demo-container {
     background-color: gainsboro;
-    padding: 1vmax;
-    margin: 1vmax;
-    border-radius: 0.5vmax;
+    padding: 1em;
+    margin: 1em;
+    border-radius: 0.5em;
 }
 
 .flex-container {
@@ -52,8 +41,8 @@ p {
 .blurb-container {
     background-color: lightyellow;
     color: gray;
-    padding: 1vmax;
-    border-radius: 0.5vmax;
+    padding: 1em;
+    border-radius: 0.5em;
 }
 
 .control-btn {

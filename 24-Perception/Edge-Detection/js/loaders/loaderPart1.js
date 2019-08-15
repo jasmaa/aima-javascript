@@ -1,3 +1,5 @@
+// Lazy loader for modules
+
 import { FallbackComponent } from '../ui.js';
 
 // Render elements

@@ -1,4 +1,4 @@
-// Pipeline 2d helpers
+// Pipeline 2d helper functions
 /*
 import { ImageUploader, WebcamCapture, PixelMagnifier } from '../../ui.js';
 */
