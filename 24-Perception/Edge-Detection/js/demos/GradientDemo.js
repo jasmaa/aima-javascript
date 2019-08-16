@@ -1,12 +1,4 @@
 // Gradient demo
-/*
-import {
-    mag2d, createClear, createVerticalLine, createHorizontalLine, createDiagonalLine,
-    createRadialGradient, createLineGradient
-} from '../util.js';
-import { Array2D, convolve, sobelX, sobelY, computeGradients } from '../imageProcessing.js';
-import { GradientGrid } from '../ui.js';
-*/
 
 /**
  * Top level gradient demo

@@ -1,9 +1,4 @@
 // Convolution demo UI
-/*
-import { createVerticalLine, divergingColormap, canvas_arrow, canvasCross, createVerticalLineThick } from '../util.js';
-import { Array2D, sobelX, convolve, stretchColorRange } from '../imageProcessing.js';
-import { Cell } from '../ui.js';
-*/
 
 /**
  * Top-level convolution demo

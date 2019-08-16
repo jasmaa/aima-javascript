@@ -1,8 +1,3 @@
-/*
-import { Array2D, grayscale, fillArray } from '../imageProcessing.js';
-import { ImageUploader } from '../ui.js';
-*/
-
 // Image intensity topology demo
 
 /**
@@ -15,25 +10,6 @@ class TopologyDemo extends React.Component {
         this.imageId = 'topology-image';
         this.size = 400;
         this.graphInterval = 8;
-        this.canvas = null;
-        this.graphContainer = null;
-
-        $(window).resize(() => this.resize());
-    }
-
-    resize() {
-        /*
-        if (innerWidth > 800) {
-            this.canvas.style.width = (innerWidth / 4 - 80) + 'px';
-            this.graphContainer.childNodes[0].style.width = (innerWidth / 4 - 80) + 'px';
-            this.graphContainer.childNodes[0].style.height = (innerWidth / 4 - 80) + 'px';
-        }
-        else {
-            this.canvas.style.width = (innerWidth / 2) + 'px';
-            this.graphContainer.childNodes[0].style.width = (innerWidth / 2) + 'px';
-            this.graphContainer.childNodes[0].style.height = (innerWidth / 2) + 'px';
-        }
-        */
     }
 
     /**
@@ -86,11 +62,9 @@ class TopologyDemo extends React.Component {
             backgroundColor: 'pink',
         };
 
-        this.graphContainer = document.getElementById(`${this.imageId}-topology`);
-        this.graph = new vis.Graph3d(this.graphContainer, topoData, options);
-        this.graph.setCameraPosition({ horizontal: 0, vertical: Math.PI / 2, distance: 2 });
-
-        this.resize();
+        const graphContainer = document.getElementById(`${this.imageId}-topology`);
+        const  graph = new vis.Graph3d(graphContainer, topoData, options);
+        graph.setCameraPosition({ horizontal: 0, vertical: Math.PI / 2, distance: 2 });
     }
 
     render() {
@@ -101,6 +75,7 @@ class TopologyDemo extends React.Component {
                 defaultImage: '../images/test.png',
                 processHandler: () => this.process(),
             }, null),
+            e('br', null, null),
             e('div', null,
                 e('canvas', {
                     id: `${this.imageId}-canvas`,

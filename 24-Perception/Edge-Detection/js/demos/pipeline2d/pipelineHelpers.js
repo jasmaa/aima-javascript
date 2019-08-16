@@ -1,7 +1,4 @@
 // Pipeline 2d helper functions
-/*
-import { ImageUploader, WebcamCapture, PixelMagnifier } from '../../ui.js';
-*/
 
 /**
  * Change input method

@@ -1,11 +1,3 @@
-/*
-import {
-    Array2D, sobelX, sobelY, gaussianBlur5, grayscale, convolve, computeGradients,
-    nonMaxSuppress, doubleThreshold, stretchColor, fillArray
-} from '../imageProcessing.js';
-import { ImageUploader } from '../ui.js';
-*/
-
 /**
  * Double threshold top-level demo
  */

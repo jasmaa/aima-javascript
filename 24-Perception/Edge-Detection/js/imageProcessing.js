@@ -1,7 +1,4 @@
 // Image processing
-/*
-import { mag2d, gaussian } from './util.js';
-*/
 
 /**
  * 2x2 grid with channels
@@ -103,9 +100,9 @@ function grayscale(source) {
             const ylin = 0.2126 * rlin + 0.7152 * glin + 0.0722 * blin;
             const y = ylin <= 0.0031308 ? 12.92 * ylin : 1.055 * Math.pow(ylin, 1 / 2.4);
 
-            source.data[index + 0] = Math.floor(255*y);
-            source.data[index + 1] = Math.floor(255*y);
-            source.data[index + 2] = Math.floor(255*y);
+            source.data[index + 0] = Math.floor(255 * y);
+            source.data[index + 1] = Math.floor(255 * y);
+            source.data[index + 2] = Math.floor(255 * y);
         }
     }
 }

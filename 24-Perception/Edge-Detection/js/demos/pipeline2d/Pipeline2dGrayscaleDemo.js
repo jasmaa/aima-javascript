@@ -1,8 +1,3 @@
-/*
-import { Array2D, grayscale, fillArray } from '../../imageProcessing.js';
-import { pipelineChangeInput, pipelineComponentDidMount, pipelinePairRender } from './pipelineHelpers.js';
-*/
-
 /**
  * 2D pipeline top-level demo
  * Direct pipeline: color-> gray

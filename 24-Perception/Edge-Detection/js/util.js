@@ -1,4 +1,3 @@
-
 // Utility functions and classes
 
 /**
@@ -152,38 +151,6 @@ function divergingColormap(value) {
     ];
 
     return vals;
-}
-
-/**
- * Texture load as promise
- * https://gist.github.com/zadvorsky/a79787a4703ecc74cab2fdbd05888e9b
- * 
- * @param {string} url - URL of image texture
- */
-function loadTexture(url) {
-    return new Promise(resolve => {
-        new THREE.TextureLoader().load(url, resolve);
-    });
-}
-
-/**
- * Swap and load texture from canvas
- * @param {Canvas} canvas 
- * @param {THREE.Material} mat 
- */
-async function swapCanvasTexture(canvas, mat) {
-    if (mat == null) {
-        return;
-    }
-
-    let texture = await loadTexture(canvas.toDataURL("image/png"));
-
-    if (mat.map != null) {
-        mat.map.dispose();
-    }
-    texture.magFilter = THREE.NearestFilter;
-    mat.map = texture;
-    mat.needsUpdate = true;
 }
 
 // === GRID PATTERNS ===

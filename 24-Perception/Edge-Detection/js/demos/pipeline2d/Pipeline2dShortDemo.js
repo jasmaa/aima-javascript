@@ -1,13 +1,3 @@
-/*
-import { divergingColormap, canvasArrowCurveX } from '../../util.js';
-import {
-    Array2D, sobelX, sobelY, grayscale, convolve, fillArray, computeGradients, stretchColor,
-    stretchColorRange
-} from '../../imageProcessing.js';
-import { ImageUploader, WebcamCapture } from '../../ui.js';
-import { pipelineChangeInput, pipelineComponentDidMount } from './pipelineHelpers.js';
-*/
-
 /**
  * 2D pipeline top-level demo
  * Short pipeline: color-> gray-> sobelx+y-> grads
@@ -137,8 +127,8 @@ class Pipeline2dShortDemo extends React.Component {
                                 href: "#",
                                 onClick: (e) => {
                                     e.preventDefault();
-                                    this.img.src = "../images/vertLines.png";
                                     this.changeInput('image');
+                                    this.img.src = "../images/vertLines.png";
                                     this.process();
                                 }
                             }, 'Vertical Lines')
@@ -148,8 +138,8 @@ class Pipeline2dShortDemo extends React.Component {
                                 href: "#",
                                 onClick: (e) => {
                                     e.preventDefault();
-                                    this.img.src = "../images/horiLines.png";
                                     this.changeInput('image');
+                                    this.img.src = "../images/horiLines.png";
                                     this.process();
                                 }
                             }, 'Horizontal Lines')
@@ -159,8 +149,8 @@ class Pipeline2dShortDemo extends React.Component {
                                 href: "#",
                                 onClick: (e) => {
                                     e.preventDefault();
-                                    this.img.src = "../images/gridLines.png";
                                     this.changeInput('image');
+                                    this.img.src = "../images/gridLines.png";
                                     this.process();
                                 }
                             }, 'Crosshatch')

@@ -1,12 +1,3 @@
-/*
-import {
-    Array2D, sobelX, sobelY, grayscale, convolve, fillArray, computeGradients, stretchColor,
-    nonMaxSuppress, doubleThreshold, edgeConnect, gaussianBlur5
-} from '../../imageProcessing.js';
-import { ImageUploader, WebcamCapture } from '../../ui.js';
-import { pipelineChangeInput, pipelineComponentDidMount } from './pipelineHelpers.js';
-*/
-
 /**
  * 2D pipeline top-level demo
  * Long pipeline: color-> gray-> blur-> grads-> nonmax-> dubthresh-> hystersis

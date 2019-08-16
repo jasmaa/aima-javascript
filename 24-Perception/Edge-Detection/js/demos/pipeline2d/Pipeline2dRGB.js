@@ -1,4 +1,3 @@
-
 /**
  * 2D pipeline top-level demo
  * RGB pipeline color -> rgb -> grayscale
@@ -93,8 +92,8 @@ class Pipeline2dRGB extends React.Component {
                                 href: "#",
                                 onClick: (e) => {
                                     e.preventDefault();
-                                    this.img.src = "/third-party/leds.jpg";
                                     this.changeInput('image');
+                                    this.img.src = "/third-party/leds.jpg";
                                     this.process();
                                 }
                             }, 'RGB')
@@ -104,8 +103,8 @@ class Pipeline2dRGB extends React.Component {
                                 href: "#",
                                 onClick: (e) => {
                                     e.preventDefault();
-                                    this.img.src = "/third-party/piripiri.jpg";
                                     this.changeInput('image');
+                                    this.img.src = "/third-party/piripiri.jpg";
                                     this.process();
                                 }
                             }, 'Red-Green')
@@ -115,8 +114,8 @@ class Pipeline2dRGB extends React.Component {
                                 href: "#",
                                 onClick: (e) => {
                                     e.preventDefault();
-                                    this.img.src = "../images/world.jpg";
                                     this.changeInput('image');
+                                    this.img.src = "../images/world.jpg";
                                     this.process();
                                 }
                             }, 'Green-Blue')

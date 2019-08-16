@@ -1,8 +1,4 @@
 // Common component elements
-/*
-import { readURL, canvasCross, heatMapColorforValue, canvas_arrow } from './util.js';
-import { Array2D } from './imageProcessing.js';
-*/
 
 /**
  * Fallback component for loading

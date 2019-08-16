@@ -1,11 +1,3 @@
-/*
-import {
-    Array2D, sobelX, sobelY, grayscale, convolve, fillArray, computeGradients, stretchColor,
-    nonMaxSuppress, doubleThreshold, edgeConnect, gaussianBlur5
-} from '../../imageProcessing.js';
-import { pipelineChangeInput, pipelineComponentDidMount, pipelinePairRender } from './pipelineHelpers.js';
-*/
-
 /**
  * 2D pipeline top-level demo
  * Direct pipeline: color-> final

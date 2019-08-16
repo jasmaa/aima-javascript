@@ -1,10 +1,3 @@
-/*
-import {
-    Array2D, sobelX, sobelY, grayscale, convolve, fillArray, computeGradients, stretchColor, noisify
-} from '../../imageProcessing.js';
-import { pipelineChangeInput, pipelineComponentDidMount, pipelinePairRender } from './pipelineHelpers.js';
-*/
-
 /**
  * 2D pipeline top-level demo
  * Direct pipeline: grainy grayscale -> sobel
