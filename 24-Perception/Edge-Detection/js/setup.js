@@ -11,3 +11,8 @@ document.body.onmousedown = function () {
 document.body.onmouseup = function () {
     isMouseDown = false;
 }
+
+// mobile setup
+document.ontouchmove = function (event) {
+    event.preventDefault();
+}

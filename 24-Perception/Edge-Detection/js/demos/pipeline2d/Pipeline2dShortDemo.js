@@ -104,7 +104,7 @@ class Pipeline2dShortDemo extends React.Component {
             e('div', { style: { display: 'flex', flexDirection: 'row' } },
                 e(ImageUploader, {
                     imageId: this.imageId,
-                    defaultImage: '../images/test.png',
+                    defaultImage: './images/test.png',
                     processHandler: () => this.process(),
                     changeHandler: () => this.changeInput('image'),
                 }, null),
@@ -128,7 +128,7 @@ class Pipeline2dShortDemo extends React.Component {
                                 onClick: (e) => {
                                     e.preventDefault();
                                     this.changeInput('image');
-                                    this.img.src = "../images/vertLines.png";
+                                    this.img.src = "./images/vertLines.png";
                                     this.process();
                                 }
                             }, 'Vertical Lines')
@@ -139,7 +139,7 @@ class Pipeline2dShortDemo extends React.Component {
                                 onClick: (e) => {
                                     e.preventDefault();
                                     this.changeInput('image');
-                                    this.img.src = "../images/horiLines.png";
+                                    this.img.src = "./images/horiLines.png";
                                     this.process();
                                 }
                             }, 'Horizontal Lines')
@@ -150,7 +150,7 @@ class Pipeline2dShortDemo extends React.Component {
                                 onClick: (e) => {
                                     e.preventDefault();
                                     this.changeInput('image');
-                                    this.img.src = "../images/gridLines.png";
+                                    this.img.src = "./images/gridLines.png";
                                     this.process();
                                 }
                             }, 'Crosshatch')

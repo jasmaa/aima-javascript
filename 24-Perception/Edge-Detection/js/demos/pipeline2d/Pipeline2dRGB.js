@@ -6,7 +6,7 @@ class Pipeline2dRGB extends React.Component {
 
     constructor(props) {
         super(props);
-        this.imageId = 'pipeline2d-short-image';
+        this.imageId = 'pipeline2d-rgb-image';
         this.canvasWidth = 1000;
         this.canvasHeight = 600;
         this.canvas = null;
@@ -69,7 +69,7 @@ class Pipeline2dRGB extends React.Component {
             e('div', { style: { display: 'flex', flexDirection: 'row' } },
                 e(ImageUploader, {
                     imageId: this.imageId,
-                    defaultImage: '../images/test.png',
+                    defaultImage: './images/test.png',
                     processHandler: () => this.process(),
                     changeHandler: () => this.changeInput('image'),
                 }, null),
@@ -115,7 +115,7 @@ class Pipeline2dRGB extends React.Component {
                                 onClick: (e) => {
                                     e.preventDefault();
                                     this.changeInput('image');
-                                    this.img.src = "../images/world.jpg";
+                                    this.img.src = "./images/world.jpg";
                                     this.process();
                                 }
                             }, 'Green-Blue')

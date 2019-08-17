@@ -92,7 +92,7 @@ class Pipeline2dLongDemo extends React.Component {
             e('div', { style: { display: 'flex', flexDirection: 'row' } },
                 e(ImageUploader, {
                     imageId: this.imageId,
-                    defaultImage: '../images/test.png',
+                    defaultImage: './images/test.png',
                     processHandler: () => this.process(),
                     changeHandler: () => this.changeInput('image'),
                 }, null),

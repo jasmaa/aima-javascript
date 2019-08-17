@@ -59,12 +59,11 @@ class TopologyDemo extends React.Component {
             showShadow: false,
             keepAspectRatio: true,
             verticalRatio: 0.5,
-            backgroundColor: 'pink',
         };
 
         const graphContainer = document.getElementById(`${this.imageId}-topology`);
-        const  graph = new vis.Graph3d(graphContainer, topoData, options);
-        graph.setCameraPosition({ horizontal: 0, vertical: Math.PI / 2, distance: 2 });
+        const graph = new vis.Graph3d(graphContainer, topoData, options);
+        graph.setCameraPosition({ horizontal: 0, vertical: Math.PI / 2, distance: 1.5 });
     }
 
     render() {
@@ -72,26 +71,31 @@ class TopologyDemo extends React.Component {
         return e('div', { className: 'demo-container' },
             e(ImageUploader, {
                 imageId: this.imageId,
-                defaultImage: '../images/test.png',
+                defaultImage: './images/test.png',
                 processHandler: () => this.process(),
             }, null),
-            e('br', null, null),
-            e('div', null,
-                e('canvas', {
-                    id: `${this.imageId}-canvas`,
-                    width: this.size,
-                    height: this.size,
-                    className: 'center',
-                    style: {
-                        width: '50%',
-                    }
-                }, null),
-            ),
-            e('br', null, null),
-            e('div', {
-                id: `${this.imageId}-topology`,
-            }, null)
+            e('div', { className: 'row row-eq-height' },
+                e('div', { className: 'col-xs-6'},
 
+                    e('div', null,
+                        e('canvas', {
+                            id: `${this.imageId}-canvas`,
+                            width: this.size,
+                            height: this.size,
+                            className: 'center',
+                            style: {
+                                width: '100%',
+                            }
+                        }, null),
+                    ),
+
+                ),
+                e('div', { className: 'col-xs-6' },
+                    e('div', {
+                        id: `${this.imageId}-topology`,
+                    }, null),
+                ),
+            ),
         );
     }
 }

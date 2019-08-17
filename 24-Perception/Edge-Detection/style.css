@@ -16,6 +16,17 @@ p {
     font-size: 1.2em;
 }
 
+.row-eq-height {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+  }
+  
+
 .list-group {
     list-style: decimal inside;
     color: grey;
