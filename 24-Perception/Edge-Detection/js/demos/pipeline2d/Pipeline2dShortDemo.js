@@ -54,10 +54,10 @@ class Pipeline2dShortDemo extends React.Component {
         stretchColorRange(sobelXData, -1020, 1020, 0, 1);
         for (let i = 0; i < sobelXData.height; i++) {
             for (let j = 0; j < sobelXData.width; j++) {
-                const colorVals = divergingColormap(sobelXData.getValue(i, j));
-                sobelXData.setValue(colorVals[0], i, j, 0);
-                sobelXData.setValue(colorVals[1], i, j, 1);
-                sobelXData.setValue(colorVals[2], i, j, 2);
+                const colorVal = Math.floor(255 * sobelXData.getValue(i, j));
+                sobelXData.setValue(colorVal, i, j, 0);
+                sobelXData.setValue(colorVal, i, j, 1);
+                sobelXData.setValue(colorVal, i, j, 2);
             }
         }
         fillArray(imgData.data, sobelXData.data, imgData.data.length);
@@ -66,10 +66,10 @@ class Pipeline2dShortDemo extends React.Component {
         stretchColorRange(sobelYData, -1020, 1020, 0, 1);
         for (let i = 0; i < sobelYData.height; i++) {
             for (let j = 0; j < sobelYData.width; j++) {
-                const colorVals = divergingColormap(sobelYData.getValue(i, j));
-                sobelYData.setValue(colorVals[0], i, j, 0);
-                sobelYData.setValue(colorVals[1], i, j, 1);
-                sobelYData.setValue(colorVals[2], i, j, 2);
+                const colorVal = Math.floor(255 * sobelYData.getValue(i, j));
+                sobelYData.setValue(colorVal, i, j, 0);
+                sobelYData.setValue(colorVal, i, j, 1);
+                sobelYData.setValue(colorVal, i, j, 2);
             }
         }
         fillArray(imgData.data, sobelYData.data, imgData.data.length);
@@ -120,7 +120,7 @@ class Pipeline2dShortDemo extends React.Component {
                     e('a', {
                         className: 'btn btn-info dropdown-toggle',
                         'data-toggle': 'dropdown',
-                    }, 'Presets ', e('b', {className: 'caret'}, null)),
+                    }, 'Presets ', e('b', { className: 'caret' }, null)),
                     e('ul', { className: 'dropdown-menu dropdown-menu-right' },
                         e('li', null,
                             e('a', {

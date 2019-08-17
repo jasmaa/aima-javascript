@@ -99,8 +99,7 @@
 					intensity changes.
 				</p>
 
-				<div id="convolution-root-x"></div>
-				<div id="convolution-root-y"></div>
+				<div id="convolution-root"></div>
 
 				<div class="blurb-container">
 					<h4><strong>Math in the Filter</strong></h4>
@@ -218,12 +217,8 @@
 		);
 
 		ReactDOM.render(
-			e(ConvolutionDemo, { filterType: 'sobelX' }, null),
-			document.getElementById('convolution-root-x')
-		);
-		ReactDOM.render(
-			e(ConvolutionDemo, { filterType: 'sobelY' }, null),
-			document.getElementById('convolution-root-y')
+			e(ConvolutionDemo, null, null),
+			document.getElementById('convolution-root')
 		);
 
 		ReactDOM.render(
