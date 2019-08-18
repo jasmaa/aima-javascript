@@ -113,12 +113,13 @@ class ConvolutionDemo extends React.Component {
                 ),
 
                 e('div', { style: { display: 'flex', flexDirection: 'row' } },
+                    e('h4', null, this.state.filterType == 'sobelX' ? "Sobel X" : "Sobel Y"),
                     e('div', { style: { display: 'flex', flex: 1 } }, null),
                     e('div', { className: 'dropdown' },
                         e('a', {
                             className: 'btn btn-info dropdown-toggle',
                             'data-toggle': 'dropdown',
-                        }, 'Filter ', e('b', { className: 'caret' }, null)),
+                        }, 'Filters ', e('b', { className: 'caret' }, null)),
                         e('ul', { className: 'dropdown-menu dropdown-menu-right' },
                             e('li', null,
                                 e('a', {

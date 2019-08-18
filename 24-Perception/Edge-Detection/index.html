@@ -11,6 +11,7 @@
 	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 	<link rel="stylesheet" href="/styles.css">
 	<link rel="stylesheet" href="./style.css">
+
 	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
@@ -36,8 +37,8 @@
 
 				<p>
 					Formally, edge detection is the process of detecting the boundaries in an image that separate great
-					changes in brightness or <strong>intensity</strong>. One of the reasons to do edge detection is that
-					it is able to reduce a complex image down to a simpler one where only these edges are marked.
+					changes in brightness or <strong>intensity</strong>. One of the reasons for doing edge detection is
+					that it is able to reduce a complex image down to a simpler one where only edges are marked.
 					Because of this, edge detection often acts as a preliminary step to other computer vision processes.
 				</p>
 
@@ -51,7 +52,7 @@
 					instance, is decomposable into three pixel arrays storing the RGB color channels. While RGB is
 					convenient for representing color, edge detection is only interested in looking at intensity values.
 					Fortunately for us, it is possible to directly compute intensity from RGB values, giving us a pixel
-					array of grayscale intensities.
+					array of grayscale intensities to start working with.
 				</p>
 
 				<div id="rgb-root"></div>
@@ -70,19 +71,22 @@
 				<h2>Finding Edges</h2>
 
 				<p>
-					To aid us in our problem-solving, let us take a step back and re-imagine our problem.
+					How do we begin searching for edges? We need some natural intuition for what an edge is.
+					To aid us in this question, let us take a step back and re-imagine our problem.
 					Suppose our pixel array is put into 3D space as a topological map where the intensity of
-					each pixel becomes some height. It may look something like the example shown below.
+					each pixel becomes some height. Looking at the example below, it becomes clear that edges are
+					analogous to sharp drops and inclines on this map.
 				</p>
 
 				<div id="topology-root"></div>
 
 				<p>
-					Picking some point on this map, we want to figure out the change in height around that
-					point. Knowing our point’s height alone is relatively unhelpful since, although it may tell us how
-					high up it is, we get no information about how the height has changed. What if, in addition, we also
-					considered the heights of points a small radius away from our chosen point? Ah-hah! Now by comparing
-					these nearby heights, we can get some idea of the local changes around our point!
+					How do we locate areas with these sharp changes in height? Let's pick some point on this map.
+					Knowing our point’s height alone is relatively unhelpful since although it may tell us how
+					high up it is, we get no information about how the height has changed around it. What if, in
+					addition, we also considered the heights of points a small radius away from our chosen point?
+					Ah-hah! Now by comparing these nearby heights, we can get some measurement of the height changes
+					around our point!
 				</p>
 
 				<img src="./images/elevation.png" alt="Elevation comparison example" class="center display-image">
@@ -94,7 +98,7 @@
 					vertical intensity changes respectively. For each target pixel in the image, the kernel selects and
 					performs an operation on a neighborhood of surrounding pixels. This compares the intensity of the
 					neighboring pixels with each other and uses them to compute the change in intensity at the target
-					pixel. To demonstrate this, below are two interactive examples using the Sobel X
+					pixel. To demonstrate this, below is an interactive example using the Sobel X
 					and Sobel Y filters. Drag the filters around and see how different areas reflect different
 					intensity changes.
 				</p>
@@ -102,15 +106,15 @@
 				<div id="convolution-root"></div>
 
 				<div class="blurb-container">
-					<h4><strong>Math in the Filter</strong></h4>
+					<h4><strong>The Math Behind the Filter</strong></h4>
 					<p>
 						Under the hood, filters are grids of numerical weights that are matched up to each neighborhood
 						of pixels. The filter weights and the pixel intensities are used to calculate a weighted sum
-						that represents the change at each target pixel. This general process of dragging a grid across
+						that represents the change at each target pixel. This process of dragging a grid across
 						a larger grid is called <strong>cross correlation</strong>. Doing this with a flipped filter is
 						a slightly different process called <strong>convolution</strong>. In general, we prefer doing
-						convolutions because of their nice mathematical properties, such as being able to
-						compose many convolutions into one convolution.
+						convolutions because of their nicer properties, such as being able to
+						compose a series of convolutions into a single convolution.
 					</p>
 				</div>
 
@@ -135,8 +139,8 @@
 				<p>
 					So far, our algorithm consists of taking a color image, converting it to grayscale intensities,
 					and applying the Sobel operator to it to find the image's gradients. Observing the magnitudes
-					of these gradients, we can already see edges begin to manifest as brighter pixels where intensity
-					change is strong.
+					of these gradients at the end of the pipeline below, we can already begin to see edges manifest
+					as brighter pixels where intensity change is strong.
 				</p>
 
 				<div id="pipeline2d-short-root"></div>
@@ -154,24 +158,27 @@
 				<p>
 					To make edge detection robust, several pre and post-processing steps are required along with Sobel.
 					In fact, our current algorithm with these additional steps was formulated in 1986 by John Canny and
-					is what we know today as <strong>Canny edge detection</strong>. The full Canny edge detection
+					is what we know as <strong>Canny edge detection</strong>. The full Canny edge detection
 					pipeline can be seen below.
 				</p>
 
 				<div id="pipeline2d-long-root"></div>
 
+				<p>
+					Since the advent of Canny edge detection, many more methods of edge detection have been
+					proposed and experimented with such as second-differential approaches to looking at intensity
+					or physics-based approaches to name a few.
+				</p>
+
 				<h2>Summary</h2>
 
 				<p>
-					One way to approach detecting edges is to compare a given pixel's neighbors with each other
-					to evaluate local changes in intensity. This is the principle that the Sobel operator uses to detect
-					edges and generate gradients. While Sobel acts as the core of edge detection, several extra
-					steps are required to make it robust. The addition of these extra steps to Sobel forms a
-					widely-used edge detection algorithm known as Canny edge detection which is still popular
-					in computer vision today.
+					Edge detection is the problem of locating the boundaries among objects in a scene. The core
+					principle behind locating edges is to look for areas of sharp intensity change which can be achieved
+					with the Sobel operator. While this is a start to finding edges, there are many more steps involved
+					in producing clean and reliable edges. The culmination of these steps is an early edge detection
+					algorithm called Canny edge detection which still remains in popular use today.
 				</p>
-
-				<br>
 			</div>
 		</div>
 
@@ -191,7 +198,6 @@
 
 	<script type="text/javascript" src="./js/demos/pipeline2d/Pipeline2dDirectDemo.js"></script>
 	<script type="text/javascript" src="./js/demos/pipeline2d/Pipeline2dRGB.js"></script>
-	<script type="text/javascript" src="./js/demos/RGBDemo.js"></script>
 	<script type="text/javascript" src="./js/demos/pipeline2d/Pipeline2dGrayscaleDemo.js"></script>
 	<script type="text/javascript" src="./js/demos/TopologyDemo.js"></script>
 	<script type="text/javascript" src="./js/demos/ConvolutionDemo.js"></script>
@@ -207,7 +213,12 @@
 		);
 
 		ReactDOM.render(
-			e(Pipeline2dRGB, null, null),
+			e(Revealer, {
+				baseId: 'pipeline2d-rgb-collapse',
+				promptText: 'See a Demo'
+			},
+				e(Pipeline2dRGB, null, null),
+			),
 			document.getElementById('rgb-root')
 		);
 

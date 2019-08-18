@@ -16,6 +16,10 @@ p {
     font-size: 1.2em;
 }
 
+h2 {
+    margin-top: 8%;
+}
+
 .row-eq-height {
     display: -webkit-box;
     display: -webkit-flex;

@@ -10,6 +10,31 @@ class FallbackComponent extends React.Component {
 }
 
 /**
+ * Reveals child component
+ */
+class Revealer extends React.Component {
+    componentDidMount(){
+        $(`#${this.props.baseId}-container`).hide();
+    }
+    render(){
+        return e('div', null,
+            e('div', {
+                id: `${this.props.baseId}-button`,
+                className: 'center btn btn-info',
+                style: {marginTop: '5%', marginBottom: '5%'},
+                onClick: ()=>{
+                    $(`#${this.props.baseId}-container`).slideDown();
+                    $(`#${this.props.baseId}-button`).hide();
+                }
+            }, this.props.promptText),
+            e('div', {id: `${this.props.baseId}-container`},
+                this.props.children
+            ),
+        );
+    }
+}
+
+/**
  * Grid cell
  */
 class Cell extends React.Component {
@@ -91,14 +116,12 @@ class WebcamCapture extends React.Component {
 
     render() {
 
-        /*
-        let buttonClass = 'btn btn-primary';
+        let buttonClass = 'btn btn-primary hidden';
         let buttonText = '';
         if (!!navigator.mediaDevices.getUserMedia) {
             buttonClass = this.props.isRecording ? 'btn btn-danger' : 'btn btn-primary';
             buttonText = this.props.isRecording ? 'fas fa-stop' : 'fas fa-video';
         }
-        */
 
         return e('div', { style: { marginRight: 10 } },
             e('video', {
@@ -107,12 +130,12 @@ class WebcamCapture extends React.Component {
                 hidden: true,
             }, null),
             e('div', {
-                className: this.props.isRecording ? 'btn btn-danger' : 'btn btn-primary',
+                className: buttonClass,
                 onClick: () => {
                     this.props.changeHandler();
                 },
             },
-                e('i', { className: this.props.isRecording ? 'fas fa-stop' : 'fas fa-video' }, null)),
+                e('i', { className: buttonText }, null)),
         );
     }
 }
