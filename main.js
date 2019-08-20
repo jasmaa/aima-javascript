@@ -1,4 +1,5 @@
 /* Load the scripts, html, and css needed for the chapter pages.
+
    The project uses Bootstrap 3, which requires JQuery 1. We load
    Bootstrap JS, a common header menu, and a common footer.
    The individual pages don't need to load these.
