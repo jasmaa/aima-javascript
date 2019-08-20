@@ -29,10 +29,9 @@
 				<p>
 					For many of us, it is easy to find both the objects in a picture and their boundaries. Humans are
 					very good at identifying what something is and where it is given a clear line of sight, but what if
-					we need to find the boundaries of many objects in an enormously large number photos? While we could
-					put a room full of toddlers with markers at work and tell them to outline the edges in a stack of
-					photos, we can do better in both performance and morals by making a computer do this task for us! In
-					fact, in computer vision, this is a general problem known as <strong>edge detection</strong>.
+					we need to find the boundaries of many objects in an enormously large number photos? This is too
+					much work for one person. Why don't we just make a computer find the edges for us instead?
+					In computer vision, this is a general problem known as <strong>edge detection</strong>.
 				</p>
 
 				<p>
@@ -47,7 +46,7 @@
 				<h2>Image Representation</h2>
 
 				<p>
-					Before jumping into edge detection, we still need to do a little work with images. Computers
+					Before jumping into edge detection, let's go over how computers represent images. Computers
 					generally store images as grids of values or <strong>pixel arrays</strong>. A color image, for
 					instance, is decomposable into three pixel arrays storing the RGB color channels. While RGB is
 					convenient for representing color, edge detection is only interested in looking at intensity values.
